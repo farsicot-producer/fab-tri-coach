@@ -31,6 +31,13 @@ export default async (req) => {
     history = [];
   }
 
+  // Mode diagnostic : ?debug=1 renvoie l'historique complet jour par jour,
+  // pour voir exactement quelles métriques sont stockées à quelles dates.
+  const url = new URL(req.url);
+  if (url.searchParams.get("debug") === "1") {
+    return json({ ...buildLatest(history), history });
+  }
+
   return json(buildLatest(history));
 };
 
