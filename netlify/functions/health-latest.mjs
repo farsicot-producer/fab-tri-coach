@@ -23,7 +23,7 @@ export default async (req) => {
   if (!expected) return json({ error: "server_misconfigured", detail: "READ_TOKEN manquant" }, 500);
   if (suppliedToken(req) !== expected) return json({ error: "unauthorized" }, 401);
 
-  const store = getStore(STORE);
+  const store = getStore({ name: STORE, consistency: "strong" });
   let history = [];
   try {
     history = (await store.get(KEY, { type: "json" })) || [];
