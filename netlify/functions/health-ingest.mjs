@@ -30,7 +30,7 @@ export default async (req) => {
 
   const incoming = normalizePayload(payload);
 
-  const store = getStore(STORE);
+  const store = getStore({ name: STORE, consistency: "strong" });
   let existing = [];
   try {
     existing = (await store.get(KEY, { type: "json" })) || [];
