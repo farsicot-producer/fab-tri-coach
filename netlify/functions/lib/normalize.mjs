@@ -85,7 +85,7 @@ export function aggregateDay(date, raw) {
     sleep_h: round1(sum(raw.sleep_h)),
     resting_hr: round1(avg(raw.resting_hr)),
     hrv_ms: round1(avg(raw.hrv_ms)),
-    steps: sum(raw.steps),
+    steps: ((s) => (s == null ? null : Math.round(s)))(sum(raw.steps)),
   };
 }
 
