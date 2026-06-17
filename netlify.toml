@@ -1,0 +1,18 @@
+# netlify.toml — config Netlify : dossier des fonctions + routage /api/*
+
+[build]
+  # Site statique : pas de commande de build. Netlify lance `npm install` tout seul
+  # parce qu'il voit le package.json (pour la dépendance @netlify/blobs).
+  publish = "."
+  functions = "netlify/functions"
+
+# Jolis chemins /api/... -> fonctions Netlify
+[[redirects]]
+  from = "/api/health/ingest"
+  to = "/.netlify/functions/health-ingest"
+  status = 200
+
+[[redirects]]
+  from = "/api/health/latest"
+  to = "/.netlify/functions/health-latest"
+  status = 200

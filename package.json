@@ -1,0 +1,10 @@
+{
+  "name": "tri-coach-fab",
+  "version": "1.0.0",
+  "description": "Backend santé pour tri-coach-fab : ingestion Health Auto Export + lecture briefing",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

@@ -1,0 +1,2360 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programme coaching tri 2026 — Web app</title>
+<meta name="theme-color" content="#071423">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tri 2026">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<style>
+:root{
+  --bg:#f5f7fc;
+  --ink:#121826;
+  --muted:#667085;
+  --line:#e5e9f2;
+  --sidebar:#071423;
+  --sidebar2:#101935;
+  --white:#ffffff;
+  --purple:#6f55f2;
+  --purple-soft:#eee9ff;
+  --blue:#3e7df6;
+  --blue-soft:#eaf1ff;
+  --green:#1d9a57;
+  --green-soft:#eaf8ef;
+  --orange:#d66b00;
+  --orange-soft:#fff3df;
+  --red:#ef4d5d;
+  --red-soft:#fff0f1;
+  --yellow:#ffc93d;
+  --shadow:0 20px 60px rgba(20, 32, 54, .09);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+button,input,select,textarea{font:inherit}
+.app{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:280px minmax(0,1fr);
+}
+.sidebar{
+  position:sticky;
+  top:0;
+  height:100vh;
+  padding:28px 18px;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(111,85,242,.28), transparent 36%),
+    linear-gradient(180deg, #061322 0%, #0a1424 55%, #080f1b 100%);
+  color:white;
+  display:flex;
+  flex-direction:column;
+  gap:26px;
+}
+.brand{
+  display:flex;
+  gap:13px;
+  align-items:center;
+  padding:2px 8px 18px;
+}
+.logo{
+  width:46px;height:46px;border-radius:15px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,#eef6ff,#7cd2ff);
+  color:#061322;
+  box-shadow:0 16px 35px rgba(84,135,255,.28);
+}
+.brand strong{display:block;font-size:19px;line-height:1}
+.brand span{display:block;color:#cad4e3;font-size:14px;margin-top:5px}
+.nav{display:grid;gap:8px}
+.nav button{
+  width:100%;
+  padding:14px 16px;
+  border:0;
+  border-radius:13px;
+  background:transparent;
+  color:#d4dceb;
+  display:flex;
+  gap:13px;
+  align-items:center;
+  cursor:pointer;
+  text-align:left;
+}
+.nav button:hover{background:rgba(255,255,255,.08);color:white}
+.nav button.active{
+  background:linear-gradient(90deg, rgba(111,85,242,.32), rgba(62,125,246,.14));
+  color:white;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.nav .ico{
+  width:22px;height:22px;display:grid;place-items:center;
+}
+.garmin-card{
+  margin-top:18px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;
+  padding:18px;
+}
+.sync-row{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#26d27e;box-shadow:0 0 0 5px rgba(38,210,126,.12)}
+.side-btn{
+  width:100%;
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:12px;
+  background:transparent;
+  color:white;
+  padding:11px 13px;
+  cursor:pointer;
+}
+.athlete{
+  display:flex;gap:12px;align-items:center;
+  padding:6px 6px 0;
+}
+.avatar{width:48px;height:48px;border-radius:18px;background:linear-gradient(135deg,#a961e9,#3e7df6);display:grid;place-items:center;font-weight:800}
+.main{
+  padding:24px 28px 44px;
+  overflow:auto;
+  min-width:0;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:24px;
+}
+.eyebrow{
+  color:var(--muted);
+  font-size:14px;
+  margin-top:4px;
+}
+h1,h2,h3,p{margin-top:0}
+h1{
+  font-size:28px;
+  letter-spacing:-.03em;
+  margin-bottom:4px;
+}
+h2{font-size:22px;letter-spacing:-.025em;margin-bottom:8px}
+h3{font-size:17px;margin-bottom:8px}
+p{line-height:1.55;color:var(--muted)}
+.toolbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.btn{
+  border:0;
+  background:var(--white);
+  color:var(--ink);
+  border-radius:12px;
+  padding:11px 14px;
+  box-shadow:0 8px 24px rgba(20,32,54,.08);
+  border:1px solid var(--line);
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  justify-content:center;
+}
+.btn.primary{
+  background:var(--purple);
+  color:white;
+  border-color:var(--purple);
+}
+.btn.ghost{background:transparent;box-shadow:none}
+.btn.small{padding:8px 10px;font-size:13px}
+.btn.block{width:100%}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+  margin-bottom:18px;
+}
+.block-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:20px;
+  min-height:142px;
+  cursor:pointer;
+  background:white;
+}
+.block-card::after{
+  content:"";
+  position:absolute;
+  right:-28px;
+  top:-28px;
+  width:122px;height:122px;
+  opacity:.25;
+  border:16px solid currentColor;
+  border-radius:40px;
+  transform:rotate(24deg);
+}
+.block-card.blue{background:linear-gradient(135deg,#3f80ff,#5fa4ff);color:white;border-color:#6fa9ff}
+.block-card.purple{background:linear-gradient(135deg,#f4efff,#eee9ff);color:#5e40df}
+.block-card.green{background:linear-gradient(135deg,#eef9f0,#e5f4ea);color:#0b7f46}
+.block-card.orange{background:linear-gradient(135deg,#fff6e7,#fff0d7);color:#c25700}
+.block-card .title{font-weight:800;margin-bottom:8px;font-size:17px}
+.block-card .desc{font-size:13px;opacity:.9;min-height:36px}
+.block-card .mini-progress{
+  height:8px;
+  border-radius:999px;
+  background:rgba(10,20,40,.1);
+  overflow:hidden;
+  margin-top:14px;
+}
+.block-card.blue .mini-progress{background:rgba(255,255,255,.32)}
+.block-card .mini-progress span{display:block;height:100%;width:0%;background:currentColor;border-radius:999px}
+.block-card.blue .mini-progress span{background:white}
+.block-foot{display:flex;justify-content:space-between;font-size:13px;margin-top:9px;align-items:center}
+.rule-banner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  padding:15px 18px;
+  border-radius:16px;
+  background:linear-gradient(90deg,#fff7e8,#fffaf2);
+  color:#533b18;
+  border:1px solid #ffdfaf;
+  margin-bottom:18px;
+}
+.rule-banner p{margin:0;color:#533b18}
+.panel{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.section{display:none}
+.section.active{display:block}
+.calendar-panel{padding:20px 20px 10px}
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  align-items:flex-start;
+  margin-bottom:14px;
+}
+.week-pills{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:16px 0 18px;
+}
+.week-pill{
+  width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--line);
+  background:white;
+  cursor:pointer;
+  color:#465266;
+}
+.week-pill:hover{border-color:#b8c3d6}
+.week-pill.active{
+  background:var(--blue);
+  color:white;
+  border-color:var(--blue);
+  box-shadow:0 10px 24px rgba(62,125,246,.28);
+}
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(118px,1fr));
+  border:1px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  background:#fafbfe;
+}
+.day{
+  min-height:206px;
+  border-right:1px solid var(--line);
+  padding:10px;
+}
+.day:last-child{border-right:0}
+.day-name{
+  text-align:center;
+  color:#1e293b;
+  font-weight:800;
+  font-size:13px;
+  margin-bottom:12px;
+}
+.empty-slot{
+  height:174px;
+  display:grid;
+  place-items:center;
+  border:1.6px dashed #d6dce8;
+  border-radius:14px;
+  color:#8a96aa;
+}
+.session-card{
+  width:100%;
+  min-height:174px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:white;
+  padding:12px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  cursor:pointer;
+  text-align:left;
+  box-shadow:0 12px 26px rgba(20,32,54,.06);
+}
+.session-card:hover{transform:translateY(-1px);box-shadow:0 16px 32px rgba(20,32,54,.1)}
+.session-card.selected{outline:2px solid var(--purple);border-color:transparent}
+.session-card.done{background:#fbfefc;border-color:#bfe9cc}
+.session-card.missed{background:#fffafa;border-color:#ffcbd2}
+.session-card.z2{background:#f4f8ff;border-color:#bed1ff}
+.sport-line{display:flex;gap:9px;align-items:center;font-weight:800}
+.sport-icon{
+  width:32px;height:32px;border-radius:12px;
+  display:grid;place-items:center;
+  flex:0 0 32px;
+}
+.sport-natation .sport-icon{background:var(--blue-soft);color:#2c6fe8}
+.sport-cap .sport-icon{background:#fff0dc;color:#d66b00}
+.sport-velo .sport-icon{background:var(--green-soft);color:#118248}
+.sport-ppg .sport-icon{background:var(--purple-soft);color:#6f55f2}
+.session-name{
+  font-weight:760;
+  font-size:13px;
+  color:#111827;
+  line-height:1.32;
+  overflow-wrap:anywhere;
+  hyphens:auto;
+  display:-webkit-box;
+  -webkit-line-clamp:4;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.session-meta{
+  margin-top:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:6px;
+  color:#667085;
+  font-size:12px;
+  min-width:0;
+}
+.status-chip{
+  border-radius:999px;
+  padding:5px 7px;
+  font-size:11px;
+  font-weight:800;
+  background:#f2f4f8;
+  color:#667085;
+}
+.status-chip.done{background:#eaf8ef;color:#128046}
+.status-chip.missed{background:#fff0f1;color:#c63e4c}
+.status-chip.z2{background:#eaf1ff;color:#2d6de2}
+.mini-illus{display:none}
+.mini-illus svg{display:none}
+.tip{
+  margin:14px 0 0;
+  background:linear-gradient(90deg,#eef5ff,#f7f9ff);
+  border:1px solid #dbe7ff;
+  color:#24437a;
+  border-radius:14px;
+  padding:13px 15px;
+  font-size:14px;
+}
+.metrics{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:16px;
+}
+.metric-panel{padding:18px}
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.metric{
+  border-right:1px solid var(--line);
+  padding-right:10px;
+}
+.metric:last-child{border-right:0}
+.metric .label{color:var(--muted);font-size:12px;margin-bottom:8px}
+.metric strong{font-size:22px}
+.intensity-bar{
+  height:9px;border-radius:999px;background:#edf1f7;overflow:hidden;display:flex;margin-top:13px
+}
+.intensity-bar span{display:block;height:100%}
+.zone1{background:#9ec5ff}.zone2{background:#1d9a57}.zone3{background:#ffb33c}.zone4{background:#ef4d5d}
+.progress-ring{
+  width:128px;height:128px;border-radius:50%;
+  background:conic-gradient(var(--blue) 0deg, #edf1f7 0deg);
+  display:grid;place-items:center;
+  margin:6px auto 14px;
+}
+.progress-ring-inner{
+  width:92px;height:92px;border-radius:50%;background:white;display:grid;place-items:center;font-weight:900;font-size:22px
+}
+.checklist{display:grid;gap:8px;margin-top:10px}
+.checklist div{display:flex;gap:8px;align-items:center;font-size:13px;color:#344054}
+.check{width:17px;height:17px;border-radius:50%;background:#1d9a57;color:white;display:grid;place-items:center;font-size:11px;flex:0 0 17px}
+.actions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.action-card{
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#fbfcff;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+}
+.action-card:hover{border-color:#b8c4dc;background:white}
+.library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.library-card{padding:16px}
+.week-list{display:grid;gap:12px}
+.week-row{
+  display:grid;
+  grid-template-columns:90px 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:14px 16px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:white;
+}
+.row-sessions{display:flex;gap:6px;flex-wrap:wrap}
+.session-dot{
+  width:10px;height:10px;border-radius:50%;
+}
+.dot-natation{background:#3e7df6}.dot-cap{background:#d66b00}.dot-velo{background:#1d9a57}.dot-ppg{background:#6f55f2}
+.adapt-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-card{padding:20px}
+label{display:block;font-size:13px;color:#475467;font-weight:700;margin:14px 0 7px}
+select,input,textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fbfcff;
+  padding:12px;
+  color:var(--ink);
+}
+textarea{min-height:92px;resize:vertical}
+.result-box{
+  margin-top:14px;
+  padding:15px;
+  border-radius:15px;
+  background:#f4f7ff;
+  color:#233d78;
+  border:1px solid #dbe5ff;
+}
+.garmin-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.export-card{padding:20px}
+.day-mover{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:12px;
+  padding:12px 14px;
+  background:#f4f7ff;
+  border:1px solid #dbe5ff;
+  border-radius:14px;
+}
+.day-mover select{max-width:140px;background:white}
+.field-hint{font-size:12px;color:var(--muted);margin:6px 0 0;line-height:1.45}
+.settings-status{
+  font-size:12px;
+  font-weight:800;
+  padding:5px 10px;
+  border-radius:999px;
+  background:#f2f4f8;
+  color:#667085;
+  white-space:nowrap;
+}
+.settings-status.on{background:#eaf8ef;color:#128046}
+.countdown{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:16px 20px;
+  border-radius:16px;
+  margin-bottom:18px;
+  background:linear-gradient(110deg,#101935,#1b2a55);
+  color:white;
+  box-shadow:0 16px 40px rgba(16,25,53,.22);
+  position:relative;
+  overflow:hidden;
+}
+.countdown::after{
+  content:"";
+  position:absolute;right:-30px;top:-30px;
+  width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(124,210,255,.4),transparent 70%);
+}
+.countdown .cd-info strong{font-size:16px;display:block}
+.countdown .cd-info span{font-size:13px;color:#aebbd6}
+.countdown .cd-days{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+}
+.countdown .cd-num{font-size:34px;font-weight:900;line-height:1;letter-spacing:-.02em}
+.countdown .cd-label{font-size:13px;color:#aebbd6}
+.zones-table{
+  margin-top:16px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+}
+.zone-row{
+  display:grid;
+  grid-template-columns:54px 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:11px 14px;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+.zone-row:last-child{border-bottom:0}
+.zone-chip{
+  width:100%;height:10px;border-radius:999px;
+}
+.zone-row .zr-name{font-weight:700;color:#1e293b}
+.zone-row .zr-val{color:#475467;text-align:right;font-variant-numeric:tabular-nums}
+.zone-zones-box{
+  margin-top:14px;
+  background:#f4f7ff;
+  border:1px solid #dbe5ff;
+  border-radius:14px;
+  padding:14px;
+}
+.zone-zones-box .zz-title{font-size:13px;font-weight:800;color:#233d78;margin-bottom:10px}
+.zone-zones-box .zone-row{border-color:#dbe5ff;padding:8px 0}
+.modal-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(10,18,36,.54);
+  backdrop-filter:blur(4px);
+  z-index:200;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  background:white;
+  border-radius:24px;
+  padding:28px;
+  width:100%;
+  max-width:600px;
+  max-height:90vh;
+  overflow-y:auto;
+  position:relative;
+  box-shadow:0 32px 80px rgba(10,18,36,.22);
+  animation:modalIn .22s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-adapt{max-width:520px}
+@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(16px)}to{opacity:1;transform:none}}
+.modal-close{
+  position:absolute;
+  top:16px;right:18px;
+  width:32px;height:32px;
+  border-radius:50%;
+  border:0;
+  background:#f0f2f7;
+  color:#475467;
+  font-size:16px;
+  cursor:pointer;
+  display:grid;place-items:center;
+}
+.modal-close:hover{background:#e2e6ee}
+.adapt-proposal{
+  background:linear-gradient(135deg,#f4f7ff,#f8faff);
+  border:1px solid #dbe5ff;
+  border-radius:16px;
+  padding:18px;
+  color:#233d78;
+  line-height:1.6;
+  font-size:15px;
+}
+
+/* Drag & drop */
+.day{transition:background .15s}
+.day.drag-over{
+  background:linear-gradient(135deg,#f0ecff,#e8f0ff);
+  outline:2px dashed var(--purple);
+  outline-offset:-4px;
+  border-radius:12px;
+}
+.session-card[draggable="true"]{cursor:grab}
+.session-card[draggable="true"]:active{cursor:grabbing;opacity:.7}
+.session-card.dragging{opacity:.4;transform:scale(.97)}
+.detail-title{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}
+.detail-title h2{font-size:19px;margin-bottom:2px}
+.duration-chip{
+  background:var(--purple-soft);
+  color:var(--purple);
+  font-weight:900;
+  border-radius:10px;
+  padding:7px 10px;
+  white-space:nowrap;
+}
+.tabs{display:flex;border-bottom:1px solid var(--line);gap:16px;margin:10px 0 18px}
+.tab{
+  border:0;background:transparent;color:#475467;padding:12px 0 13px;cursor:pointer;font-weight:700
+}
+.tab.active{color:var(--purple);box-shadow:0 2px 0 var(--purple)}
+.objective{
+  display:flex;gap:12px;
+  background:linear-gradient(135deg,#f2eeff,#faf8ff);
+  border:1px solid #e7ddff;
+  color:#3b2a78;
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:16px;
+}
+.detail-list{display:grid;gap:12px}
+.detail-item{
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:14px;
+  background:white;
+}
+.detail-item strong{display:block;margin-bottom:4px}
+.detail-item p{font-size:13px;margin-bottom:0}
+.ppg-item{
+  display:grid;
+  grid-template-columns:145px 1fr;
+  gap:14px;
+  align-items:center;
+  min-height:120px;
+}
+.ppg-art{
+  background:linear-gradient(180deg,#ffffff,#f7f9fd);
+  border-radius:14px;
+  min-height:108px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+.ppg-art svg{width:145px;height:108px}
+.exercise-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px}
+.tag{
+  border-radius:9px;
+  background:var(--purple-soft);
+  color:var(--purple);
+  font-size:12px;
+  padding:5px 8px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.status-actions{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:9px;
+  margin-top:16px;
+}
+.note{
+  margin-top:12px;
+  font-size:12px;
+  color:var(--muted);
+}
+.svg-skin{fill:#e7b98f}.svg-skin-line{stroke:#c69372}
+.svg-shirt{fill:#58708c}.svg-short{fill:#4f5a66}.svg-shoe{fill:#a9b0bb}.svg-hair{fill:#050505}.svg-line{stroke:#303844;stroke-width:2.2;stroke-linecap:round;fill:none;opacity:.85}
+.svg-ground{stroke:#d9e1ec;stroke-width:3;stroke-linecap:round}
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:24px;
+  transform:translateX(-50%) translateY(20px);
+  background:#101828;
+  color:white;
+  padding:12px 16px;
+  border-radius:13px;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s ease;
+  z-index:20;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:1280px){
+  .app{grid-template-columns:240px minmax(0,1fr)}
+  .cards{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:920px){
+  .app{display:block}
+  .sidebar{position:relative;height:auto;padding:18px}
+  .nav{grid-template-columns:repeat(2,1fr)}
+  .main{padding:18px}
+  .cards,.metrics,.adapt-grid,.garmin-layout{grid-template-columns:1fr}
+  .calendar{grid-template-columns:1fr}
+  .day{border-right:0;border-bottom:1px solid var(--line);min-height:auto}
+  .session-card{min-height:132px}
+}
+
+/* --- Patch v4 : calendrier compact, sans débordement à 100% zoom --- */
+.app{
+  grid-template-columns:240px minmax(0,1fr);
+}
+.main{
+  padding:20px 22px 38px;
+}
+.cards{
+  gap:12px;
+}
+.block-card{
+  padding:16px;
+  min-height:126px;
+}
+.calendar-panel{
+  padding:18px 18px 10px;
+  overflow:hidden;
+}
+.calendar{
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  width:100%;
+}
+.day{
+  min-width:0;
+  padding:8px;
+  min-height:184px;
+}
+.day-name{
+  font-size:12px;
+  margin-bottom:9px;
+}
+.session-card{
+  min-width:0;
+  min-height:146px;
+  padding:10px;
+  gap:6px;
+  border-radius:12px;
+}
+.sport-line{
+  min-width:0;
+  gap:7px;
+  font-size:12px;
+}
+.sport-line span:last-child{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:12px;
+  line-height:1.2;
+}
+.sport-icon{
+  width:28px;
+  height:28px;
+  flex-basis:28px;
+  border-radius:10px;
+  font-size:13px;
+}
+.session-name{
+  font-size:12px;
+  line-height:1.25;
+  -webkit-line-clamp:3;
+}
+.session-card .eyebrow{
+  font-size:10px !important;
+}
+.session-meta{
+  font-size:11px;
+}
+.status-chip{
+  padding:4px 6px;
+  font-size:10px;
+  max-width:54px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.empty-slot{
+  height:146px;
+  font-size:24px;
+}
+.week-pills{
+  gap:7px;
+  margin:13px 0 15px;
+}
+.week-pill{
+  width:32px;
+  height:32px;
+  font-size:13px;
+}
+.section-head h2{
+  font-size:20px;
+}
+.section-head p{
+  font-size:14px;
+}
+.rule-banner{
+  padding:13px 16px;
+}
+.tip{
+  font-size:13px;
+  padding:12px 14px;
+}
+@media(max-width:1500px){
+  .app{grid-template-columns:220px minmax(0,1fr)}
+  .main{padding:18px}
+  .session-card{padding:9px;min-height:138px}
+  .day{padding:7px;min-height:176px}
+  .empty-slot{height:138px}
+  .session-name{font-size:11.5px}
+}
+@media(max-width:1180px){
+  .app{grid-template-columns:220px minmax(0,1fr)}
+}
+
+
+/* --- PWA iPhone v7 --- */
+@media(max-width:760px){
+  body{background:#f6f8fc}
+  .app{
+    display:block;
+    min-height:100vh;
+    padding-bottom:88px;
+  }
+  .sidebar{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    top:auto;
+    height:76px;
+    z-index:50;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    border-radius:24px 24px 0 0;
+    background:rgba(7,20,35,.96);
+    backdrop-filter:blur(18px);
+    display:block;
+  }
+  .brand,.garmin-card{display:none}
+  .nav{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:4px;
+  }
+  .nav button{
+    justify-content:center;
+    flex-direction:column;
+    gap:2px;
+    padding:8px 4px;
+    border-radius:14px;
+    font-size:10px;
+    line-height:1.05;
+    text-align:center;
+  }
+  .nav button.mobile-hide{display:none}
+  .nav .ico{
+    width:20px;
+    height:20px;
+    font-size:15px;
+  }
+  .main{
+    padding:16px 14px 22px;
+  }
+  .topbar{
+    align-items:stretch;
+    flex-direction:column;
+    margin-bottom:14px;
+  }
+  h1{
+    font-size:22px;
+    line-height:1.15;
+  }
+  .eyebrow{font-size:12px}
+  .toolbar{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .btn{
+    padding:10px 11px;
+    border-radius:12px;
+    font-size:13px;
+  }
+  .cards{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .block-card{
+    min-height:112px;
+    padding:13px;
+    border-radius:16px;
+  }
+  .block-card .title{font-size:15px}
+  .block-card .desc{font-size:12px;min-height:32px}
+  .rule-banner{
+    display:block;
+    padding:12px;
+    font-size:13px;
+    margin-bottom:12px;
+  }
+  .rule-banner .btn{margin-top:10px;width:100%}
+  .panel{
+    border-radius:18px;
+  }
+  .calendar-panel{
+    padding:14px;
+  }
+  .section-head{
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .section-head h2{font-size:19px}
+  .section-head p{font-size:13px}
+  .week-pills{
+    display:flex;
+    gap:7px;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    margin:12px -2px 12px;
+    padding:2px 2px 8px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .week-pill{
+    flex:0 0 34px;
+    width:34px;
+    height:34px;
+  }
+  .calendar{
+    display:grid;
+    grid-template-columns:1fr;
+    border-radius:16px;
+    overflow:visible;
+    border:0;
+    gap:10px;
+    background:transparent;
+  }
+  .day{
+    border:1px solid var(--line);
+    border-radius:16px;
+    min-height:auto;
+    padding:10px;
+    background:#fbfcff;
+  }
+  .day-name{
+    text-align:left;
+    margin-bottom:8px;
+    font-size:12px;
+    color:#667085;
+  }
+  .empty-slot{
+    display:none;
+  }
+  .session-card{
+    min-height:auto;
+    padding:12px;
+    gap:8px;
+    border-radius:14px;
+  }
+  .sport-line{
+    font-size:13px;
+  }
+  .sport-line span:last-child{
+    white-space:normal;
+    font-size:13px;
+  }
+  .sport-icon{
+    width:34px;
+    height:34px;
+    flex-basis:34px;
+  }
+  .session-name{
+    font-size:15px;
+    -webkit-line-clamp:3;
+  }
+  .session-card .eyebrow{
+    font-size:11px !important;
+  }
+  .session-meta{
+    font-size:12px;
+  }
+  .status-chip{
+    max-width:none;
+    font-size:11px;
+    padding:5px 8px;
+  }
+  .tip{
+    font-size:13px;
+    margin-top:10px;
+  }
+  .metrics,
+  .adapt-grid,
+  .garmin-layout,
+  .actions-grid{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .metric-grid{
+    grid-template-columns:1fr 1fr;
+  }
+  .metric{
+    border-right:0;
+    border-bottom:1px solid var(--line);
+    padding-bottom:10px;
+  }
+  .week-row{
+    grid-template-columns:1fr;
+    gap:6px;
+  }
+  .library-grid{
+    grid-template-columns:1fr;
+  }
+
+  .ppg-item{
+    grid-template-columns:1fr;
+  }
+  .ppg-art svg{
+    width:100%;
+    max-width:210px;
+  }
+  .modal-box{
+    padding:20px;
+    border-radius:18px;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 52 52" width="34" height="34" fill="none">
+          <path d="M9 17c5-5 9-5 14 0s9 5 14 0 9-5 14 0" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+          <path d="M8 27c5-4 9-4 14 0s9 4 14 0 9-4 14 0" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+          <path d="M9 38c5-3 9-3 14 0s9 3 14 0 9-3 14 0" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div><strong>Triathlon</strong><span>Coaching 2026</span></div>
+    </div>
+    <div class="nav" id="nav">
+      <button class="active" data-view="overview"><span class="ico">▦</span>Vue d’ensemble</button>
+      <button data-view="calendar"><span class="ico">▣</span>Calendrier</button>
+      <button data-view="sessions"><span class="ico">◴</span>Séances</button>
+      <button data-view="progress" class="mobile-hide"><span class="ico">▥</span>Progression</button>
+      <button data-view="adapt"><span class="ico">⚙</span>Adaptation</button>
+      <button data-view="ppg" class="mobile-hide"><span class="ico">⌁</span>PPG visuelle</button>
+      <button data-view="settings"><span class="ico">◇</span>Réglages</button>
+      <button data-view="garmin" class="mobile-hide"><span class="ico">↗</span>Garmin / export</button>
+    </div>
+    <div class="garmin-card">
+      <div class="sync-row"><span class="sync-dot"></span><div><strong>Garmin Connect</strong><br><span style="color:#cbd5e1;font-size:13px">Mode manuel intelligent</span></div></div>
+      <button class="side-btn" onclick="showView('garmin')">Préparer export</button>
+      <p style="font-size:12px;color:#aeb9ca;margin:12px 0 0">Le push direct n’est pas activé dans cette web app statique.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>Programme coaching tri 2026</h1>
+        <div class="eyebrow">Plan long terme en 4 blocs • 30 semaines • navigation par bloc, semaine et séance</div>
+      </div>
+      <div class="toolbar">
+        <button class="btn primary" onclick="showView('adapt')">Ajuster le plan</button>
+      </div>
+    </div>
+
+    <section class="cards" id="blockCards"></section>
+
+    <div id="countdownBanner"></div>
+
+    <div class="rule-banner">
+      <p><strong>Règle du programme :</strong> si fatigue &gt; 2 jours, supprimer la séance qualité et garder Z2. Jamais deux jours durs de suite.</p>
+      <button class="btn small" onclick="showView('adapt')">En savoir plus</button>
+    </div>
+
+    <section class="section active" id="view-overview">
+      <div class="panel calendar-panel">
+        <div class="section-head">
+          <div>
+            <h2 id="overviewTitle">Bloc 1 — Rebuild aérobie</h2>
+            <p id="overviewSubtitle">Semaines 1 à 8 • Reconstruire sans fatigue • 80–90% Z2</p>
+          </div>
+          <button class="btn" onclick="showView('calendar')">Voir la semaine</button>
+        </div>
+        <div class="week-pills" id="overviewWeekPills"></div>
+        <div class="calendar" id="overviewCalendar"></div>
+        <div class="tip"><strong>Conseil :</strong> privilégie la qualité technique et la régularité. L’intensité doit rester utile, pas héroïque.</div>
+      </div>
+
+      <div class="metrics">
+        <div class="panel metric-panel">
+          <h3>Charge de la semaine</h3>
+          <div class="metric-grid">
+            <div class="metric"><div class="label">Durée totale</div><strong id="weekDuration">0h00</strong></div>
+            <div class="metric"><div class="label">Charge estimée</div><strong id="weekLoad">0</strong></div>
+            <div class="metric"><div class="label">Séances</div><strong id="weekSessions">5</strong></div>
+            <div class="metric"><div class="label">Qualité</div><strong id="weekQuality">0</strong></div>
+          </div>
+          <div class="intensity-bar" id="intensityBar"></div>
+          <div class="eyebrow" id="intensityText" style="margin-top:8px"></div>
+        </div>
+        <div class="panel metric-panel">
+          <h3 id="blockProgressTitle">Progression du bloc 1</h3>
+          <div class="progress-ring" id="blockRing"><div class="progress-ring-inner" id="blockRingText">0%</div></div>
+          <div class="checklist">
+            <div><span class="check">✓</span>Base aérobie solide</div>
+            <div><span class="check">✓</span>Technique propre</div>
+            <div><span class="check">✓</span>Aucune fatigue excessive</div>
+            <div><span class="check">✓</span>Continuité respectée</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel metric-panel" style="margin-top:16px">
+        <h3>Ajuster mon programme</h3>
+        <div class="actions-grid">
+          <div class="action-card" onclick="quickAdapt('missed')"><div><strong>J’ai raté une séance</strong><br><span class="eyebrow">On réorganise la suite</span></div><span>›</span></div>
+          <div class="action-card" onclick="quickAdapt('fatigue')"><div><strong>Je suis fatigué</strong><br><span class="eyebrow">Adapter l’intensité</span></div><span>›</span></div>
+          <div class="action-card" onclick="quickAdapt('off')"><div><strong>Besoin d’un jour off</strong><br><span class="eyebrow">Ajouter un jour de repos</span></div><span>›</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="view-calendar">
+      <div class="panel calendar-panel">
+        <div class="section-head">
+          <div>
+            <h2 id="calendarTitle">Calendrier</h2>
+            <p id="calendarSubtitle"></p>
+          </div>
+          <select id="blockSelect" onchange="selectBlock(this.value)" style="max-width:230px"></select>
+        </div>
+        <div class="week-pills" id="calendarWeekPills"></div>
+        <div class="calendar" id="calendarGrid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="view-sessions">
+      <div class="panel metric-panel">
+        <div class="section-head">
+          <div><h2>Toutes les semaines</h2><p>Vue condensée du programme complet. Clique une semaine pour l’afficher dans le calendrier.</p></div>
+          <button class="btn" onclick="resetStatuses()">Réinitialiser le suivi</button>
+        </div>
+        <div class="week-list" id="weekList"></div>
+      </div>
+    </section>
+
+    <section class="section" id="view-progress">
+      <div class="panel metric-panel">
+        <h2>Suivi de progression</h2>
+        <p>La progression comptabilise les séances faites et les séances adaptées Z2. Une séance ratée ne devient pas une dette : elle oriente l’ajustement de la charge.</p>
+        <div class="metrics" style="grid-template-columns:repeat(4,1fr);margin-top:10px">
+          <div class="panel metric-panel"><div class="label">Programme</div><strong id="globalPct">0%</strong><div class="intensity-bar"><span id="globalBar" class="zone2" style="width:0%"></span></div></div>
+          <div class="panel metric-panel"><div class="label">Séances faites</div><strong id="doneCount">0</strong></div>
+          <div class="panel metric-panel"><div class="label">Adaptées Z2</div><strong id="z2Count">0</strong></div>
+          <div class="panel metric-panel"><div class="label">Ratées</div><strong id="missedCount">0</strong></div>
+        </div>
+        <div id="blockProgressBars" style="display:grid;gap:12px;margin-top:16px"></div>
+      </div>
+    </section>
+
+    <section class="section" id="view-adapt">
+      <div class="adapt-grid">
+        <div class="panel form-card">
+          <h2>Adapter quand tu rates ou inverses une séance</h2>
+          <p><strong>Correction importante :</strong> ne rattrape pas coûte que coûte. Une séance ratée n’est pas une dette. C’est une donnée de charge.</p>
+          <label>Situation</label>
+          <select id="adaptSituation">
+            <option value="missed-quality">J’ai raté une séance qualité CAP/vélo</option>
+            <option value="missed-easy">J’ai raté une séance facile ou natation technique</option>
+            <option value="missed-ppg">J’ai raté la PPG</option>
+            <option value="missed-long">J’ai raté la sortie longue vélo / brick</option>
+            <option value="out-of-order">J’ai fait les séances dans le désordre</option>
+          </select>
+          <label>Fatigue</label>
+          <select id="adaptFatigue">
+            <option value="low">0–1 jour, motivation correcte</option>
+            <option value="medium">Fatigue présente mais contrôlée</option>
+            <option value="high">Fatigue &gt; 2 jours ou sommeil mauvais</option>
+          </select>
+          <label>Prochaine disponibilité</label>
+          <select id="adaptAvailability">
+            <option value="24">Dans les 24 h</option>
+            <option value="48">Dans les 48 h</option>
+            <option value="72">Dans 72 h ou plus</option>
+          </select>
+          <button class="btn primary block" onclick="buildAdaptation()">Proposer l’ajustement</button>
+          <div class="result-box" id="adaptResult">Sélectionne ta situation puis génère l’ajustement.</div>
+        </div>
+        <div class="panel form-card">
+          <h2>Règles de décision</h2>
+          <div class="detail-list">
+            <div class="detail-item"><strong>1. Jamais deux jours durs de suite</strong><p>Intensité CAP + intensité vélo doivent être séparées par 24–48h.</p></div>
+            <div class="detail-item"><strong>2. Réduire plutôt qu’arrêter</strong><p>En fatigue : 30–45 min Z2 ou natation technique. Éviter les semaines à zéro.</p></div>
+            <div class="detail-item"><strong>3. Récupération toutes les 4 semaines</strong><p>Semaine allégée à 55–65% du volume, fréquence conservée.</p></div>
+            <div class="detail-item"><strong>4. Continuité prioritaire</strong><p>Le gain principal vient de la stabilité annuelle, pas de séances plus dures.</p></div>
+          </div>
+        </div>
+        <div class="panel form-card">
+          <h2>Réinitialiser le programme</h2>
+          <p>Remet à zéro tous les statuts de séances (Fait, Raté, Adapté Z2) et tous les déplacements. Utile en début de saison ou pour repartir sur une base propre.</p>
+          <button class="btn block" onclick="resetProgram()" style="margin-top:8px;border-color:#ef4d5d;color:#ef4d5d">↺ Remettre à zéro</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="view-ppg">
+      <div class="panel metric-panel">
+        <div class="section-head">
+          <div><h2>PPG visuelle</h2><p>Graphisme flat inspiré de ton exemple : silhouettes de profil, couleurs simples, consignes très courtes.</p></div>
+          <button class="btn" onclick="selectPPGSession()">Voir une séance PPG</button>
+        </div>
+        <div class="library-grid" id="ppgLibrary"></div>
+      </div>
+    </section>
+
+    <section class="section" id="view-settings">
+      <div class="adapt-grid">
+        <div class="panel form-card">
+          <div class="section-head" style="margin-bottom:6px">
+            <div><h2>Zones d'entraînement</h2><p>Optionnel. Renseigne tes repères pour afficher tes vraies plages d'intensité sur chaque séance.</p></div>
+            <span class="settings-status" id="zonesStatus"></span>
+          </div>
+
+          <label>Fréquence cardiaque max (bpm)</label>
+          <input type="number" id="inputFcMax" placeholder="ex. 175" min="120" max="220">
+          <p class="field-hint">Repère terrain à 52 ans : autour de 168 bpm (220 − âge donne une estimation grossière, ta vraie FCmax peut différer de ±10).</p>
+
+          <label>Allure seuil CAP (min/km)</label>
+          <input type="text" id="inputPaceThreshold" placeholder="ex. 5:10">
+          <p class="field-hint">Allure que tu peux tenir ~40–60 min à fond. Sert à calculer tes allures Z2 → Z4.</p>
+
+          <label>FTP vélo (watts) — facultatif</label>
+          <input type="number" id="inputFtp" placeholder="ex. 220" min="80" max="500">
+          <p class="field-hint">Puissance estimée sur 1h. Laisse vide si tu n'utilises pas de capteur de puissance.</p>
+
+          <div style="display:flex;gap:10px;margin-top:16px">
+            <button class="btn primary" onclick="saveZones()">Enregistrer mes zones</button>
+            <button class="btn" onclick="clearZones()" id="clearZonesBtn" style="display:none">Effacer</button>
+          </div>
+
+          <div id="zonesPreview"></div>
+        </div>
+
+        <div class="panel form-card">
+          <div class="section-head" style="margin-bottom:6px">
+            <div><h2>Date de course cible</h2><p>Optionnel. Affiche un compte à rebours sur la vue d'ensemble.</p></div>
+            <span class="settings-status" id="raceStatus"></span>
+          </div>
+
+          <label>Nom de l'épreuve</label>
+          <input type="text" id="inputRaceName" placeholder="ex. Triathlon M de …">
+
+          <label>Date de la course</label>
+          <input type="date" id="inputRaceDate">
+
+          <div style="display:flex;gap:10px;margin-top:16px">
+            <button class="btn primary" onclick="saveRace()">Enregistrer la course</button>
+            <button class="btn" onclick="clearRace()" id="clearRaceBtn" style="display:none">Effacer</button>
+          </div>
+
+          <div id="racePreview"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="view-garmin">
+      <div class="garmin-layout">
+        <div class="panel export-card">
+          <h2>Garmin Connect</h2>
+          <p>Un push direct vers Garmin Connect n’est pas réaliste depuis un fichier HTML local sans API, authentification et format workout compatible. L’usage efficace : garder cette web app comme cockpit, puis créer dans Garmin les séances structurées récurrentes.</p>
+          <div class="detail-list">
+            <div class="detail-item"><strong>À créer dans Garmin</strong><p>CAP seuil, CAP Z4, vélo sweet spot, vélo VO2, FTP/tempo, bricks spécifiques.</p></div>
+            <div class="detail-item"><strong>À laisser libre</strong><p>Z2, natation technique et PPG : l’exécution propre compte plus que le micro-détail.</p></div>
+          </div>
+        </div>
+        <div class="panel export-card">
+          <h2>Exports</h2>
+          <label>Date du lundi de la semaine 1</label>
+          <input type="date" id="startDate">
+          <button class="btn primary block" onclick="exportICS()" style="margin-top:12px">Exporter calendrier .ics</button>
+          <button class="btn block" onclick="exportCSV()" style="margin-top:10px">Exporter planning CSV</button>
+          <button class="btn block" onclick="exportJSON()" style="margin-top:10px">Exporter sauvegarde JSON</button>
+          <p class="note">Le .ics ajoute les séances dans ton calendrier. Le CSV sert de base pour copier/coller ou retravailler les séances structurées.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal session detail -->
+  <div class="modal-overlay" id="sessionModal" onclick="closeSessionModal(event)">
+    <div class="modal-box" id="sessionModalBox">
+      <button class="modal-close" onclick="closeSessionModal(null)">✕</button>
+      <div class="detail-card" id="detailCard"></div>
+    </div>
+  </div>
+
+  <!-- Modal adaptation result -->
+  <div class="modal-overlay" id="adaptModal" onclick="closeAdaptModal(event)">
+    <div class="modal-box modal-adapt" id="adaptModalBox">
+      <button class="modal-close" onclick="closeAdaptModal(null)">✕</button>
+      <h2 style="margin-bottom:6px">Proposition d'ajustement</h2>
+      <p class="eyebrow" style="margin-bottom:16px">Basée sur ta situation</p>
+      <div class="adapt-proposal" id="adaptProposalContent"></div>
+      <div style="display:flex;gap:10px;margin-top:18px">
+        <button class="btn primary" onclick="applyAdaptation()">✓ Valider et appliquer</button>
+        <button class="btn" onclick="closeAdaptModal(null)">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drag ghost -->
+  <div id="dragGhost" style="position:fixed;pointer-events:none;display:none;background:var(--purple);color:white;padding:8px 12px;border-radius:10px;font-size:13px;z-index:999;opacity:.85;box-shadow:0 8px 24px rgba(111,85,242,.4)"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {"weeks": [{"n": 1, "block": "Bloc 1", "title": "reprise Z2", "sessions": [{"id": "w1s0", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 0}, {"id": "w1s1", "sport": "cap", "name": "40' Z2 + 6 lignes droites", "type": "endurance", "minutes": 40, "defaultDay": 1}, {"id": "w1s2", "sport": "ppg", "name": "mobilité hanches + gainage 25’", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w1s3", "sport": "natation", "name": "Endurance souple", "type": "endurance", "minutes": 70, "defaultDay": 3}, {"id": "w1s4", "sport": "vélo", "name": "1h30 Z2 cadence 90", "type": "endurance", "minutes": 90, "defaultDay": 5}]}, {"n": 2, "block": "Bloc 1", "title": "volume doux", "sessions": [{"id": "w2s0", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 0}, {"id": "w2s1", "sport": "cap", "name": "45' Z2", "type": "endurance", "minutes": 45, "defaultDay": 1}, {"id": "w2s2", "sport": "ppg", "name": "gainage + fessiers 30’", "type": "core", "minutes": 30, "defaultDay": 2}, {"id": "w2s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w2s4", "sport": "vélo", "name": "1h45 Z2", "type": "endurance", "minutes": 105, "defaultDay": 5}]}, {"n": 3, "block": "Bloc 1", "title": "endurance", "sessions": [{"id": "w3s0", "sport": "natation", "name": "Endurance", "type": "endurance", "minutes": 70, "defaultDay": 0}, {"id": "w3s1", "sport": "cap", "name": "50' Z2 + 8x20’’ souple", "type": "endurance", "minutes": 50, "defaultDay": 1}, {"id": "w3s2", "sport": "ppg", "name": "force légère 30’", "type": "strength", "minutes": 30, "defaultDay": 2}, {"id": "w3s3", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 3}, {"id": "w3s4", "sport": "vélo", "name": "2h00 Z2", "type": "endurance", "minutes": 120, "defaultDay": 5}]}, {"n": 4, "block": "Bloc 1", "title": "récup", "sessions": [{"id": "w4s0", "sport": "natation", "name": "Alignement allégé", "type": "technique", "minutes": 55, "defaultDay": 0}, {"id": "w4s1", "sport": "cap", "name": "35' facile", "type": "endurance", "minutes": 35, "defaultDay": 1}, {"id": "w4s2", "sport": "ppg", "name": "mobilité / respiration", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w4s3", "sport": "natation", "name": "récupération 1.8 km", "type": "technique", "minutes": 45, "defaultDay": 3}, {"id": "w4s4", "sport": "vélo", "name": "1h15 Z2", "type": "endurance", "minutes": 75, "defaultDay": 5}]}, {"n": 5, "block": "Bloc 1", "title": "consolidation", "sessions": [{"id": "w5s0", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 0}, {"id": "w5s1", "sport": "cap", "name": "55' Z2", "type": "endurance", "minutes": 55, "defaultDay": 1}, {"id": "w5s2", "sport": "ppg", "name": "force endurance 35’", "type": "strength", "minutes": 35, "defaultDay": 2}, {"id": "w5s3", "sport": "natation", "name": "Endurance", "type": "endurance", "minutes": 70, "defaultDay": 3}, {"id": "w5s4", "sport": "vélo", "name": "2h15 Z2", "type": "endurance", "minutes": 135, "defaultDay": 5}]}, {"n": 6, "block": "Bloc 1", "title": "tempo bas", "sessions": [{"id": "w6s0", "sport": "natation", "name": "Seuil éducatif", "type": "quality", "minutes": 55, "defaultDay": 0}, {"id": "w6s1", "sport": "cap", "name": "2x8' Z3 basse R3’", "type": "endurance", "minutes": 8, "defaultDay": 1}, {"id": "w6s2", "sport": "ppg", "name": "gainage + mollets", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w6s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w6s4", "sport": "vélo", "name": "2h00 dont 3x10' tempo", "type": "quality", "minutes": 120, "defaultDay": 5}]}, {"n": 7, "block": "Bloc 1", "title": "volume max", "sessions": [{"id": "w7s0", "sport": "natation", "name": "Endurance", "type": "endurance", "minutes": 70, "defaultDay": 0}, {"id": "w7s1", "sport": "cap", "name": "60' Z2", "type": "endurance", "minutes": 60, "defaultDay": 1}, {"id": "w7s2", "sport": "ppg", "name": "force légère 35’", "type": "strength", "minutes": 35, "defaultDay": 2}, {"id": "w7s3", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 3}, {"id": "w7s4", "sport": "vélo", "name": "2h30 Z2", "type": "endurance", "minutes": 150, "defaultDay": 5}]}, {"n": 8, "block": "Bloc 1", "title": "récup", "sessions": [{"id": "w8s0", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 0}, {"id": "w8s1", "sport": "cap", "name": "40' facile", "type": "endurance", "minutes": 40, "defaultDay": 1}, {"id": "w8s2", "sport": "ppg", "name": "mobilité 25’", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w8s3", "sport": "natation", "name": "récupération", "type": "technique", "minutes": 45, "defaultDay": 3}, {"id": "w8s4", "sport": "vélo", "name": "1h30 Z2", "type": "endurance", "minutes": 90, "defaultDay": 5}]}, {"n": 9, "block": "Bloc 2", "title": "seuil intro", "sessions": [{"id": "w9s0", "sport": "natation", "name": "Seuil", "type": "quality", "minutes": 55, "defaultDay": 0}, {"id": "w9s1", "sport": "cap", "name": "3x8' seuil R2’", "type": "quality", "minutes": 8, "defaultDay": 1}, {"id": "w9s2", "sport": "ppg", "name": "force 30’", "type": "strength", "minutes": 30, "defaultDay": 2}, {"id": "w9s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w9s4", "sport": "vélo", "name": "2x15' sweet spot", "type": "quality", "minutes": 15, "defaultDay": 5}]}, {"n": 10, "block": "Bloc 2", "title": "FTP", "sessions": [{"id": "w10s0", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 0}, {"id": "w10s1", "sport": "cap", "name": "50' Z2 + 8 côtes 20’’", "type": "quality", "minutes": 50, "defaultDay": 1}, {"id": "w10s2", "sport": "ppg", "name": "gainage + stabilité", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w10s3", "sport": "natation", "name": "Seuil", "type": "quality", "minutes": 55, "defaultDay": 3}, {"id": "w10s4", "sport": "vélo", "name": "3x10' à 90% FTP", "type": "quality", "minutes": 10, "defaultDay": 5}]}, {"n": 11, "block": "Bloc 2", "title": "VO2", "sessions": [{"id": "w11s0", "sport": "natation", "name": "Lactate", "type": "hard", "minutes": 70, "defaultDay": 0}, {"id": "w11s1", "sport": "cap", "name": "4x5' seuil R2’", "type": "quality", "minutes": 5, "defaultDay": 1}, {"id": "w11s2", "sport": "ppg", "name": "mobilité active", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w11s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w11s4", "sport": "vélo", "name": "5x3' VO2 R3’", "type": "quality", "minutes": 3, "defaultDay": 5}]}, {"n": 12, "block": "Bloc 2", "title": "récup", "sessions": [{"id": "w12s0", "sport": "natation", "name": "Endurance allégée", "type": "endurance", "minutes": 70, "defaultDay": 0}, {"id": "w12s1", "sport": "cap", "name": "40' facile", "type": "endurance", "minutes": 40, "defaultDay": 1}, {"id": "w12s2", "sport": "ppg", "name": "mobilité / dos", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w12s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w12s4", "sport": "vélo", "name": "1h30 Z2", "type": "endurance", "minutes": 90, "defaultDay": 5}]}, {"n": 13, "block": "Bloc 2", "title": "seuil long", "sessions": [{"id": "w13s0", "sport": "natation", "name": "Seuil", "type": "quality", "minutes": 55, "defaultDay": 0}, {"id": "w13s1", "sport": "cap", "name": "3x10' seuil R2’", "type": "quality", "minutes": 10, "defaultDay": 1}, {"id": "w13s2", "sport": "ppg", "name": "force 35’", "type": "strength", "minutes": 35, "defaultDay": 2}, {"id": "w13s3", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 3}, {"id": "w13s4", "sport": "vélo", "name": "2x20' sweet spot", "type": "quality", "minutes": 20, "defaultDay": 5}]}, {"n": 14, "block": "Bloc 2", "title": "force vélo", "sessions": [{"id": "w14s0", "sport": "natation", "name": "Endurance", "type": "endurance", "minutes": 70, "defaultDay": 0}, {"id": "w14s1", "sport": "cap", "name": "55' Z2", "type": "endurance", "minutes": 55, "defaultDay": 1}, {"id": "w14s2", "sport": "ppg", "name": "bas du corps contrôlé", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w14s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w14s4", "sport": "vélo", "name": "4x8' force 60 rpm", "type": "endurance", "minutes": 8, "defaultDay": 5}]}, {"n": 15, "block": "Bloc 2", "title": "VO2 + tempo", "sessions": [{"id": "w15s0", "sport": "natation", "name": "Lactate", "type": "hard", "minutes": 70, "defaultDay": 0}, {"id": "w15s1", "sport": "cap", "name": "6x3' Z4 R2’", "type": "quality", "minutes": 3, "defaultDay": 1}, {"id": "w15s2", "sport": "ppg", "name": "gainage court", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w15s3", "sport": "natation", "name": "Seuil", "type": "quality", "minutes": 55, "defaultDay": 3}, {"id": "w15s4", "sport": "vélo", "name": "6x3' VO2 + Z2", "type": "quality", "minutes": 3, "defaultDay": 5}]}, {"n": 16, "block": "Bloc 2", "title": "récup test", "sessions": [{"id": "w16s0", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 0}, {"id": "w16s1", "sport": "cap", "name": "40' + 6 lignes droites", "type": "endurance", "minutes": 40, "defaultDay": 1}, {"id": "w16s2", "sport": "ppg", "name": "mobilité", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w16s3", "sport": "natation", "name": "récupération", "type": "technique", "minutes": 45, "defaultDay": 3}, {"id": "w16s4", "sport": "vélo", "name": "1h45 Z2 + test 20' si frais", "type": "quality", "minutes": 105, "defaultDay": 5}]}, {"n": 17, "block": "Bloc 3", "title": "spécifique tri", "sessions": [{"id": "w17s0", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 0}, {"id": "w17s1", "sport": "cap", "name": "2x12' allure tri", "type": "quality", "minutes": 12, "defaultDay": 1}, {"id": "w17s2", "sport": "ppg", "name": "maintien 25’", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w17s3", "sport": "natation", "name": "Endurance", "type": "endurance", "minutes": 70, "defaultDay": 3}, {"id": "w17s4", "sport": "vélo", "name": "2h30 dont 2x20' tri + 10' cap", "type": "endurance", "minutes": 160, "defaultDay": 5}]}, {"n": 18, "block": "Bloc 3", "title": "brick long", "sessions": [{"id": "w18s0", "sport": "natation", "name": "Seuil", "type": "quality", "minutes": 55, "defaultDay": 0}, {"id": "w18s1", "sport": "cap", "name": "50' Z2", "type": "endurance", "minutes": 50, "defaultDay": 1}, {"id": "w18s2", "sport": "ppg", "name": "gainage", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w18s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w18s4", "sport": "vélo", "name": "3h Z2 + 20' cap Z2", "type": "endurance", "minutes": 200, "defaultDay": 5}]}, {"n": 19, "block": "Bloc 3", "title": "intensité", "sessions": [{"id": "w19s0", "sport": "natation", "name": "Lactate", "type": "hard", "minutes": 70, "defaultDay": 0}, {"id": "w19s1", "sport": "cap", "name": "3x8' seuil", "type": "quality", "minutes": 8, "defaultDay": 1}, {"id": "w19s2", "sport": "ppg", "name": "mobilité", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w19s3", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 3}, {"id": "w19s4", "sport": "vélo", "name": "4x10' tempo tri", "type": "quality", "minutes": 10, "defaultDay": 5}]}, {"n": 20, "block": "Bloc 3", "title": "récup", "sessions": [{"id": "w20s0", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 0}, {"id": "w20s1", "sport": "cap", "name": "35' facile", "type": "endurance", "minutes": 35, "defaultDay": 1}, {"id": "w20s2", "sport": "ppg", "name": "mobilité / respiration", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w20s3", "sport": "natation", "name": "récupération", "type": "technique", "minutes": 45, "defaultDay": 3}, {"id": "w20s4", "sport": "vélo", "name": "1h30 Z2", "type": "endurance", "minutes": 90, "defaultDay": 5}]}, {"n": 21, "block": "Bloc 3", "title": "simulation 1", "sessions": [{"id": "w21s0", "sport": "natation", "name": "Endurance", "type": "endurance", "minutes": 70, "defaultDay": 0}, {"id": "w21s1", "sport": "cap", "name": "60' dont 20' allure tri", "type": "quality", "minutes": 60, "defaultDay": 1}, {"id": "w21s2", "sport": "ppg", "name": "maintien", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w21s3", "sport": "natation", "name": "Seuil", "type": "quality", "minutes": 55, "defaultDay": 3}, {"id": "w21s4", "sport": "vélo", "name": "3h15 + brick 25'", "type": "brick", "minutes": 220, "defaultDay": 5}]}, {"n": 22, "block": "Bloc 3", "title": "spécifique nat/vélo", "sessions": [{"id": "w22s0", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 0}, {"id": "w22s1", "sport": "cap", "name": "45' Z2 + 8x30’’ vite", "type": "endurance", "minutes": 45, "defaultDay": 1}, {"id": "w22s2", "sport": "ppg", "name": "gainage court", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w22s3", "sport": "natation", "name": "Lactate", "type": "hard", "minutes": 70, "defaultDay": 3}, {"id": "w22s4", "sport": "vélo", "name": "2x30' allure tri", "type": "quality", "minutes": 30, "defaultDay": 5}]}, {"n": 23, "block": "Bloc 3", "title": "simulation 2", "sessions": [{"id": "w23s0", "sport": "natation", "name": "Seuil", "type": "quality", "minutes": 55, "defaultDay": 0}, {"id": "w23s1", "sport": "cap", "name": "3x10' allure course", "type": "quality", "minutes": 10, "defaultDay": 1}, {"id": "w23s2", "sport": "ppg", "name": "léger", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w23s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w23s4", "sport": "vélo", "name": "3h30 Z2/tri + 30' cap", "type": "endurance", "minutes": 240, "defaultDay": 5}]}, {"n": 24, "block": "Bloc 3", "title": "affûtage", "sessions": [{"id": "w24s0", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 0}, {"id": "w24s1", "sport": "cap", "name": "40' facile", "type": "endurance", "minutes": 40, "defaultDay": 1}, {"id": "w24s2", "sport": "ppg", "name": "mobilité", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w24s3", "sport": "natation", "name": "Endurance allégée", "type": "endurance", "minutes": 70, "defaultDay": 3}, {"id": "w24s4", "sport": "vélo", "name": "1h45 avec 3x6' tri", "type": "endurance", "minutes": 105, "defaultDay": 5}]}, {"n": 25, "block": "Bloc 4", "title": "consolidation", "sessions": [{"id": "w25s0", "sport": "natation", "name": "Endurance", "type": "endurance", "minutes": 70, "defaultDay": 0}, {"id": "w25s1", "sport": "cap", "name": "45' Z2", "type": "endurance", "minutes": 45, "defaultDay": 1}, {"id": "w25s2", "sport": "ppg", "name": "mobilité", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w25s3", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 3}, {"id": "w25s4", "sport": "vélo", "name": "2h gravel plaisir", "type": "endurance", "minutes": 120, "defaultDay": 5}]}, {"n": 26, "block": "Bloc 4", "title": "entretien seuil", "sessions": [{"id": "w26s0", "sport": "natation", "name": "Seuil", "type": "quality", "minutes": 55, "defaultDay": 0}, {"id": "w26s1", "sport": "cap", "name": "2x8' seuil doux", "type": "quality", "minutes": 8, "defaultDay": 1}, {"id": "w26s2", "sport": "ppg", "name": "gainage", "type": "core", "minutes": 25, "defaultDay": 2}, {"id": "w26s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w26s4", "sport": "vélo", "name": "2x15' tempo", "type": "quality", "minutes": 15, "defaultDay": 5}]}, {"n": 27, "block": "Bloc 4", "title": "outdoor", "sessions": [{"id": "w27s0", "sport": "natation", "name": "Propulsion", "type": "endurance", "minutes": 55, "defaultDay": 0}, {"id": "w27s1", "sport": "cap", "name": "50' trail facile", "type": "endurance", "minutes": 50, "defaultDay": 1}, {"id": "w27s2", "sport": "ppg", "name": "mobilité", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w27s3", "sport": "natation", "name": "Endurance", "type": "endurance", "minutes": 70, "defaultDay": 3}, {"id": "w27s4", "sport": "vélo", "name": "3h outdoor Z2", "type": "endurance", "minutes": 180, "defaultDay": 5}]}, {"n": 28, "block": "Bloc 4", "title": "récup", "sessions": [{"id": "w28s0", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 0}, {"id": "w28s1", "sport": "cap", "name": "35' facile", "type": "endurance", "minutes": 35, "defaultDay": 1}, {"id": "w28s2", "sport": "ppg", "name": "mobilité / respiration", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w28s3", "sport": "natation", "name": "récupération", "type": "technique", "minutes": 45, "defaultDay": 3}, {"id": "w28s4", "sport": "vélo", "name": "1h15 souple", "type": "endurance", "minutes": 75, "defaultDay": 5}]}, {"n": 29, "block": "Bloc 4", "title": "maintien FTP", "sessions": [{"id": "w29s0", "sport": "natation", "name": "Lactate allégé", "type": "hard", "minutes": 70, "defaultDay": 0}, {"id": "w29s1", "sport": "cap", "name": "45' Z2 + lignes droites", "type": "endurance", "minutes": 45, "defaultDay": 1}, {"id": "w29s2", "sport": "ppg", "name": "force légère", "type": "strength", "minutes": 25, "defaultDay": 2}, {"id": "w29s3", "sport": "natation", "name": "Seuil", "type": "quality", "minutes": 55, "defaultDay": 3}, {"id": "w29s4", "sport": "vélo", "name": "4x6' à 95% FTP", "type": "quality", "minutes": 6, "defaultDay": 5}]}, {"n": 30, "block": "Bloc 4", "title": "transition", "sessions": [{"id": "w30s0", "sport": "natation", "name": "Endurance souple", "type": "endurance", "minutes": 70, "defaultDay": 0}, {"id": "w30s1", "sport": "cap", "name": "40' plaisir", "type": "endurance", "minutes": 40, "defaultDay": 1}, {"id": "w30s2", "sport": "ppg", "name": "mobilité", "type": "mobility", "minutes": 25, "defaultDay": 2}, {"id": "w30s3", "sport": "natation", "name": "Alignement", "type": "technique", "minutes": 55, "defaultDay": 3}, {"id": "w30s4", "sport": "vélo", "name": "2h Z2", "type": "endurance", "minutes": 120, "defaultDay": 5}]}], "blocks": {"Bloc 1": {"title": "Rebuild aérobie", "weeks": "Semaines 1 à 8", "goal": "Reconstruire sans fatigue • 80–90% Z2", "theme": "blue", "rule": "Si fatigue > 2 jours, supprimer la séance qualité et garder Z2.", "range": [1, 8]}, "Bloc 2": {"title": "Seuil / FTP", "weeks": "Semaines 9 à 16", "goal": "Sweet spot • VO2 contrôlée • 2 séances qualité max", "theme": "purple", "rule": "Si fatigue > 2 jours, supprimer la séance qualité et garder Z2.", "range": [9, 16]}, "Bloc 3": {"title": "Spécifique tri", "weeks": "Semaines 17 à 24", "goal": "Allure tri • enchaînements • simulations contrôlées", "theme": "green", "rule": "Si fatigue > 2 jours, supprimer la séance qualité et garder Z2.", "range": [17, 24]}, "Bloc 4": {"title": "Consolidation", "weeks": "Semaines 25 à 30", "goal": "Garder la forme • plaisir • éviter le detraining", "theme": "orange", "rule": "Garder la fréquence, limiter l’intensité si la fatigue monte.", "range": [25, 30]}}, "swim": {"Propulsion": {"goal": "Prise d’appui, propulsion, vitesse courte.", "use": "Semaines de volume doux ou spécifique tri.", "steps": ["100m respi 2 temps + 50 dos + 50 brasse", "100m respi 4 temps + 50 dos + 50 brasse", "100m respi 6 temps + 50 dos + 50 brasse", "Plaquettes + pull buoy : 4 × 500m progressifs avec 100m water-polo intégré", "Vitesse : 50m grand chien, 100m crawl en accélération, 50m water-polo, 100m rapide", "Récupération : 200m crawl / brasse / dos"]}, "Seuil": {"goal": "Allure soutenue sans casser la récupération.", "use": "Bloc 2 et bloc 3.", "steps": ["Échauffement : 400m crawl / brasse / dos", "4 × éducatif : 100m dont 50 grand chien + 50 crawl, puis 100m dont 50 water-polo + 50 crawl", "Transition : 200m crawl / brasse / dos", "15 × 100m au seuil", "Récupération : 200m crawl / brasse / dos"]}, "Alignement": {"goal": "Technique de référence, posture et efficacité.", "use": "Reprise, récupération ou semaine chargée.", "steps": ["Échauffement : 400m crawl / brasse / dos", "200m focus placement tête", "3 × 100m : 50 water-polo + 50 roulis", "2 × 100m rattrapé", "300m tuba avec arrêt tous les 3 temps", "6 × 100m : 50 fréquence + 50 force", "50m : 15 water-polo + 35 récupération", "Récupération : 200m"]}, "Lactate": {"goal": "Séance dure, à utiliser ponctuellement.", "use": "Bloc 2/3, jamais proche d’un gros brick.", "steps": ["Échauffement : 400m crawl / brasse / dos", "8 × 50m : 25 grand chien ou water-polo + 25 crawl", "4 × 50m progressifs", "200m 3 nages", "4 blocs : 200m avec 25 max + 150 tempo + 25 max, 200m avec 100 max + 50 récupération + 50 max, 200m tempo", "Récupération : 200m"]}, "Endurance": {"goal": "Construire le volume en douceur.", "use": "Séance longue aérobie.", "steps": ["Échauffement : 400m crawl / brasse / dos", "10 × 300m alternant tuba, crawl, tuba + pull buoy et plaquettes", "Récupération : 200m crawl / brasse / dos"]}}, "ppg": [{"id": "plank", "title": "Planche", "time": "45 sec", "tag": "gainage", "muscles": "Transverse, épaules, fessiers", "cue": "Corps gainé, coudes sous les épaules, dos droit."}, {"id": "sideplank", "title": "Planche latérale", "time": "30 sec/côté", "tag": "gainage", "muscles": "Obliques, moyen fessier", "cue": "Bassin haut, corps aligné, appui avant-bras et pied."}, {"id": "glutebridge", "title": "Pont fessier", "time": "15 reps", "tag": "fessiers", "muscles": "Grand fessier, ischios", "cue": "Pieds à plat, monter les hanches en contractant les fessiers."}, {"id": "birddog", "title": "Bird dog", "time": "12 reps/côté", "tag": "stabilité", "muscles": "Lombaires, fessiers, épaules", "cue": "Gainage neutre, étirer bras et jambe opposés sans vriller."}, {"id": "lunge", "title": "Fente arrière", "time": "8 reps/côté", "tag": "force", "muscles": "Quadriceps, fessiers, mollets", "cue": "Buste haut, genou avant stable, descendre contrôlé."}, {"id": "calf", "title": "Mollets debout", "time": "20 reps", "tag": "mollets", "muscles": "Soléaire, gastrocnémiens", "cue": "Monter fort, redescendre lentement, garder l’appui du gros orteil."}, {"id": "deadbug", "title": "Dead bug", "time": "10 reps/côté", "tag": "gainage", "muscles": "Transverse, fléchisseurs hanche", "cue": "Lombaires stables, mouvement lent bras/jambe opposés."}, {"id": "hip90", "title": "Mobilité 90/90", "time": "8 reps/côté", "tag": "mobilité", "muscles": "Hanches, rotateurs externes", "cue": "Amplitude propre, respiration calme, pas de douleur."}]};
+const DAY_NAMES = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+const SPORT_ICONS = {natation:"≋", cap:"⌁", vélo:"○", ppg:"▥"};
+const SPORT_SLUG = {natation:"natation", cap:"cap", vélo:"velo", ppg:"ppg"};
+let state = JSON.parse(localStorage.getItem("tri2026-state-v2") || '{"status":{},"moves":{},"notes":{}}');
+if(!state.settings) state.settings = {};
+let currentBlock = "Bloc 1";
+let currentWeek = 1;
+let selectedSessionId = "w1s2";
+let detailTab = "exercice";
+
+function isMobileView(){return window.matchMedia("(max-width:760px)").matches;}
+function openMobileDetail(){} // no-op, now handled by modal
+function closeMobileDetail(){} // no-op
+
+function save(){
+  localStorage.setItem("tri2026-state-v2", JSON.stringify(state));
+  renderAll();
+}
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
+function weekByN(n){return DATA.weeks.find(w=>w.n===Number(n));}
+function sessionById(id){
+  for(const w of DATA.weeks){const s = w.sessions.find(x=>x.id===id); if(s) return {week:w, session:s, index:w.sessions.indexOf(s)};}
+  return null;
+}
+function statusOf(id){return state.status[id] || "";}
+function setStatus(id, status){
+  if(status) state.status[id] = status; else delete state.status[id];
+  selectedSessionId = id;
+  save();
+  toast(status ? "Statut mis à jour" : "Statut réinitialisé");
+}
+function moveSession(id){
+  const found = sessionById(id); if(!found) return;
+  const current = state.moves[id] ?? found.session.defaultDay;
+  let next = (Number(current)+1) % 7;
+  state.moves[id] = next;
+  selectedSessionId = id;
+  save();
+  toast("Séance déplacée dans la semaine");
+}
+function resetMove(id){
+  delete state.moves[id];
+  save();
+}
+function resetStatuses(){
+  if(confirm("Réinitialiser tous les statuts et déplacements ?")){
+    state = {status:{},moves:{},notes:{},settings:state.settings||{}};
+    save();
+  }
+}
+function blockWeeks(block){return DATA.weeks.filter(w=>w.block===block);}
+function blockFromWeek(n){return weekByN(n).block;}
+function isQuality(s){return ["quality","hard","brick"].includes(s.type);}
+function isRecoveryWeek(w){return [4,8,12,16,20,24,28].includes(w.n);}
+function formatMinutes(m){
+  const h = Math.floor(m/60), mm = m%60;
+  return h ? `${h}h${String(mm).padStart(2,"0")}` : `${mm}min`;
+}
+function weekDuration(w){return w.sessions.reduce((a,s)=>a+s.minutes,0);}
+function weekLoad(w){
+  return w.sessions.reduce((a,s)=>{
+    const coef = isQuality(s) ? 1.6 : s.type==="strength" ? 1.25 : s.type==="mobility" ? .65 : 1;
+    return a + Math.round(s.minutes*coef);
+  },0);
+}
+function blockProgress(block){
+  const sessions = blockWeeks(block).flatMap(w=>w.sessions);
+  const done = sessions.filter(s=>["done","z2"].includes(statusOf(s.id))).length;
+  return {done,total:sessions.length,pct:sessions.length?Math.round(done/sessions.length*100):0};
+}
+function globalStats(){
+  const all = DATA.weeks.flatMap(w=>w.sessions);
+  const done = all.filter(s=>statusOf(s.id)==="done").length;
+  const z2 = all.filter(s=>statusOf(s.id)==="z2").length;
+  const missed = all.filter(s=>statusOf(s.id)==="missed").length;
+  const pct = Math.round((done+z2)/all.length*100);
+  return {done,z2,missed,total:all.length,pct};
+}
+function renderBlockCards(){
+  const el = document.getElementById("blockCards");
+  el.innerHTML = Object.entries(DATA.blocks).map(([key,b])=>{
+    const p = blockProgress(key);
+    return `<div class="block-card ${b.theme}" onclick="selectBlock('${key}')">
+      <div class="title">${key}</div>
+      <div class="desc"><strong>${b.title}</strong><br>${b.weeks}</div>
+      <div class="mini-progress"><span style="width:${p.pct}%"></span></div>
+      <div class="block-foot"><span>${p.done}/${p.total}</span><span>${p.pct}%</span></div>
+    </div>`;
+  }).join("");
+}
+function renderWeekPills(containerId, block){
+  const el = document.getElementById(containerId);
+  el.innerHTML = blockWeeks(block).map(w=>`<button class="week-pill ${w.n===currentWeek?'active':''}" onclick="selectWeek(${w.n})">${w.n}</button>`).join("");
+}
+function sessionsByDay(w){
+  const days = DAY_NAMES.map(()=>[]);
+  w.sessions.forEach((s,i)=>{
+    const d = Number(state.moves[s.id] ?? s.defaultDay);
+    days[d].push({...s, index:i});
+  });
+  return days;
+}
+function smallIllustration(session){
+  if(session.sport === "ppg") return svgExercise("plank");
+  if(session.sport === "natation") return svgSwim();
+  if(session.sport === "cap") return svgRun();
+  if(session.sport === "vélo") return svgBike();
+  return "";
+}
+function renderCalendar(containerId, weekN){
+  const w = weekByN(weekN);
+  const days = sessionsByDay(w);
+  const el = document.getElementById(containerId);
+  el.innerHTML = days.map((list,di)=>`<div class="day" data-day="${di}" data-week="${weekN}">
+    <div class="day-name">${DAY_NAMES[di]}</div>
+    ${list.length ? list.map(s=>sessionCard(s,w)).join("") : `<div class="empty-slot">＋</div>`}
+  </div>`).join("");
+
+  // Wire up drag & drop
+  el.querySelectorAll(".session-card[draggable]").forEach(card=>{
+    card.addEventListener("dragstart", e=>{
+      e.dataTransfer.setData("text/plain", card.dataset.sessionId);
+      card.classList.add("dragging");
+      const ghost = document.getElementById("dragGhost");
+      ghost.textContent = card.querySelector(".session-name").textContent.slice(0,28);
+      ghost.style.display = "block";
+    });
+    card.addEventListener("dragend", ()=>{
+      card.classList.remove("dragging");
+      document.getElementById("dragGhost").style.display = "none";
+      el.querySelectorAll(".day").forEach(d=>d.classList.remove("drag-over"));
+    });
+  });
+  el.querySelectorAll(".day").forEach(dayEl=>{
+    dayEl.addEventListener("dragover", e=>{
+      e.preventDefault();
+      el.querySelectorAll(".day").forEach(d=>d.classList.remove("drag-over"));
+      dayEl.classList.add("drag-over");
+    });
+    dayEl.addEventListener("dragleave", ()=>dayEl.classList.remove("drag-over"));
+    dayEl.addEventListener("drop", e=>{
+      e.preventDefault();
+      dayEl.classList.remove("drag-over");
+      const id = e.dataTransfer.getData("text/plain");
+      const newDay = Number(dayEl.dataset.day);
+      state.moves[id] = newDay;
+      selectedSessionId = id;
+      save();
+      toast(`Séance déplacée → ${DAY_NAMES[newDay]}`);
+    });
+  });
+}
+// Ghost follow mouse — attaché une seule fois
+document.addEventListener("dragover", e=>{
+  const ghost = document.getElementById("dragGhost");
+  if(ghost && ghost.style.display==="block"){
+    ghost.style.left = (e.clientX+16)+"px";
+    ghost.style.top = (e.clientY+16)+"px";
+  }
+}, {passive:true});
+function sessionCard(s,w){
+  const st = statusOf(s.id);
+  const statusLabel = st==="done" ? "Fait" : st==="missed" ? "Raté" : st==="z2" ? "Z2" : "À faire";
+  const slug = SPORT_SLUG[s.sport];
+  return `<button class="session-card sport-${slug} ${selectedSessionId===s.id?'selected':''} ${st}" draggable="true" data-session-id="${s.id}" onclick="selectSession('${s.id}')">
+    <div class="sport-line"><span class="sport-icon">${SPORT_ICONS[s.sport]}</span><span>${capitalize(s.sport)}</span></div>
+    <div class="session-name">${s.name}</div>
+    <div class="eyebrow" style="font-size:11px;margin-top:2px">${typeLabel(s)}</div>
+    <div class="session-meta"><span>${formatMinutes(s.minutes)}</span><span class="status-chip ${st}">${statusLabel}</span></div>
+  </button>`;
+}
+function capitalize(x){return x.charAt(0).toUpperCase()+x.slice(1);}
+
+function typeLabel(s){
+  const labels = {
+    endurance:"Endurance",
+    technique:"Technique",
+    quality:"Qualité",
+    hard:"Intensité",
+    brick:"Brick",
+    core:"Gainage",
+    strength:"Force",
+    mobility:"Mobilité",
+    easy:"Facile"
+  };
+  return labels[s.type] || "Séance";
+}
+
+function selectBlock(block){
+  currentBlock = block;
+  const range = DATA.blocks[block].range;
+  if(currentWeek < range[0] || currentWeek > range[1]) currentWeek = range[0];
+  selectedSessionId = weekByN(currentWeek).sessions[0].id;
+  renderAll();
+  showView("overview");
+}
+function selectWeek(n){
+  currentWeek = n;
+  currentBlock = blockFromWeek(n);
+  selectedSessionId = weekByN(n).sessions[0].id;
+  renderAll();
+}
+function selectSession(id){
+  selectedSessionId = id;
+  detailTab = "exercice";
+  renderDetail();
+  document.getElementById("sessionModal").classList.add("open");
+}
+function closeSessionModal(e){
+  if(e && e.target !== document.getElementById("sessionModal")) return;
+  document.getElementById("sessionModal").classList.remove("open");
+}
+function closeAdaptModal(e){
+  if(e && e.target !== document.getElementById("adaptModal")) return;
+  document.getElementById("adaptModal").classList.remove("open");
+}
+function showCurrentWeek(){showView("calendar");}
+function showView(view){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById("view-"+view).classList.add("active");
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active", b.dataset.view===view));
+  if(view === "calendar") renderCalendarTitles();
+}
+document.getElementById("nav").addEventListener("click", e=>{
+  const btn = e.target.closest("button[data-view]");
+  if(btn) showView(btn.dataset.view);
+});
+function renderCalendarTitles(){
+  const w = weekByN(currentWeek), b = DATA.blocks[w.block];
+  document.getElementById("calendarTitle").textContent = `Semaine ${w.n} — ${w.title}`;
+  document.getElementById("calendarSubtitle").textContent = `${w.block} • ${b.goal}`;
+}
+function renderOverview(){
+  const w = weekByN(currentWeek), b = DATA.blocks[w.block];
+  document.getElementById("overviewTitle").textContent = `${w.block} — ${b.title}`;
+  document.getElementById("overviewSubtitle").textContent = `${b.weeks} • ${b.goal}`;
+  renderWeekPills("overviewWeekPills", w.block);
+  renderCalendar("overviewCalendar", currentWeek);
+  renderWeekMetrics(w);
+}
+function renderWeekMetrics(w){
+  const dur = weekDuration(w);
+  const quality = w.sessions.filter(isQuality).length;
+  const z2mins = w.sessions.filter(s=>!isQuality(s) && s.sport!=="ppg").reduce((a,s)=>a+s.minutes,0);
+  const qualmins = w.sessions.filter(isQuality).reduce((a,s)=>a+s.minutes,0);
+  const ppgmins = w.sessions.filter(s=>s.sport==="ppg").reduce((a,s)=>a+s.minutes,0);
+  const z2Pct = Math.round(z2mins/dur*100), qPct = Math.round(qualmins/dur*100), ppgPct=Math.round(ppgmins/dur*100);
+  document.getElementById("weekDuration").textContent = formatMinutes(dur);
+  document.getElementById("weekLoad").textContent = weekLoad(w);
+  document.getElementById("weekSessions").textContent = w.sessions.length;
+  document.getElementById("weekQuality").textContent = quality;
+  document.getElementById("intensityBar").innerHTML = `<span class="zone1" style="width:10%"></span><span class="zone2" style="width:${z2Pct}%"></span><span class="zone3" style="width:${ppgPct}%"></span><span class="zone4" style="width:${qPct}%"></span>`;
+  document.getElementById("intensityText").textContent = `Z1 10% • Z2 ${z2Pct}% • PPG ${ppgPct}% • qualité ${qPct}%`;
+  const bp = blockProgress(w.block);
+  document.getElementById("blockProgressTitle").textContent = `Progression du ${w.block.toLowerCase()}`;
+  document.getElementById("blockRing").style.background = `conic-gradient(var(--blue) ${bp.pct*3.6}deg, #edf1f7 0deg)`;
+  document.getElementById("blockRingText").textContent = `${bp.pct}%`;
+}
+function renderCalendarView(){
+  renderCalendarTitles();
+  const select = document.getElementById("blockSelect");
+  select.innerHTML = Object.keys(DATA.blocks).map(b=>`<option ${b===currentBlock?'selected':''}>${b}</option>`).join("");
+  renderWeekPills("calendarWeekPills", currentBlock);
+  renderCalendar("calendarGrid", currentWeek);
+}
+function renderWeekList(){
+  const el = document.getElementById("weekList");
+  el.innerHTML = DATA.weeks.map(w=>{
+    const p = w.sessions.filter(s=>["done","z2"].includes(statusOf(s.id))).length;
+    return `<div class="week-row" onclick="selectWeek(${w.n});showView('calendar')">
+      <div><strong>Sem. ${w.n}</strong><br><span class="eyebrow">${w.block}</span></div>
+      <div><strong>${w.title}</strong><div class="row-sessions">${w.sessions.map(s=>`<span class="session-dot dot-${SPORT_SLUG[s.sport]}" title="${s.sport}"></span>`).join("")}</div></div>
+      <div>${p}/${w.sessions.length}</div>
+    </div>`;
+  }).join("");
+}
+function renderProgress(){
+  const st = globalStats();
+  document.getElementById("globalPct").textContent = `${st.pct}%`;
+  document.getElementById("globalBar").style.width = `${st.pct}%`;
+  document.getElementById("doneCount").textContent = st.done;
+  document.getElementById("z2Count").textContent = st.z2;
+  document.getElementById("missedCount").textContent = st.missed;
+  document.getElementById("blockProgressBars").innerHTML = Object.keys(DATA.blocks).map(b=>{
+    const p = blockProgress(b);
+    return `<div class="detail-item">
+      <div style="display:flex;justify-content:space-between;gap:12px"><strong>${b} — ${DATA.blocks[b].title}</strong><span>${p.done}/${p.total} • ${p.pct}%</span></div>
+      <div class="intensity-bar"><span class="zone2" style="width:${p.pct}%"></span></div>
+    </div>`;
+  }).join("");
+}
+function renderPPGLibrary(){
+  document.getElementById("ppgLibrary").innerHTML = DATA.ppg.map(e=>`<div class="panel library-card">
+    <div class="ppg-art">${svgExercise(e.id)}</div>
+    <div class="exercise-head" style="margin-top:10px"><strong>${e.title}</strong><span class="tag">${e.time}</span></div>
+    <p>${e.cue}</p>
+  </div>`).join("");
+}
+function renderDetail(){
+  const found = sessionById(selectedSessionId) || sessionById("w1s0");
+  const {week, session} = found;
+  const st = statusOf(session.id);
+  const statusLabel = st==="done" ? "Fait" : st==="missed" ? "Raté" : st==="z2" ? "Adapté Z2" : "À faire";
+  const content = detailContent(session, week);
+  document.getElementById("detailCard").innerHTML = `
+    <div class="detail-title">
+      <div><div class="eyebrow">Semaine ${week.n} • ${capitalize(session.sport)} • ${statusLabel}</div><h2>${session.name}</h2></div>
+      <span class="duration-chip">${formatMinutes(session.minutes)}</span>
+    </div>
+    <div class="tabs">
+      <button class="tab ${detailTab==='exercice'?'active':''}" onclick="detailTab='exercice';renderDetail()">Exercice</button>
+      <button class="tab ${detailTab==='muscles'?'active':''}" onclick="detailTab='muscles';renderDetail()">Muscles</button>
+      <button class="tab ${detailTab==='conseils'?'active':''}" onclick="detailTab='conseils';renderDetail()">Conseils</button>
+    </div>
+    ${content}
+    <div class="status-actions">
+      <button class="btn" onclick="setStatus('${session.id}','done')">✓ Fait</button>
+      <button class="btn" onclick="setStatus('${session.id}','z2')">↘ Adapté Z2</button>
+      <button class="btn" onclick="setStatus('${session.id}','missed')">× Raté</button>
+      <button class="btn" onclick="setStatus('${session.id}','')">Réinit.</button>
+    </div>
+    <div class="day-mover">
+      <label style="margin:0">Déplacer vers</label>
+      <select onchange="moveSessionTo('${session.id}', this.value)">
+        ${DAY_NAMES.map((d,i)=>`<option value="${i}" ${Number(state.moves[session.id] ?? session.defaultDay)===i?'selected':''}>${d}</option>`).join("")}
+      </select>
+    </div>
+    <p class="note" style="margin-top:12px">💡 Sur ordinateur, tu peux aussi glisser la séance directement vers un autre jour dans le calendrier.</p>`;
+}
+function moveSessionTo(id, day){
+  state.moves[id] = Number(day);
+  selectedSessionId = id;
+  save();
+  toast(`Séance déplacée → ${DAY_NAMES[Number(day)]}`);
+}
+function detailContent(s,w){
+  if(detailTab==="muscles"){
+    if(s.sport==="ppg"){
+      const ex = ppgForSession(s.name);
+      return `<div class="detail-list">${ex.map(e=>`<div class="detail-item"><strong>${e.title}</strong><p>${e.muscles}</p></div>`).join("")}</div>`;
+    }
+    if(s.sport==="cap") return `<div class="objective"><span>ⓘ</span><div><strong>Zones sollicitées</strong><br>Mollets, ischios, quadriceps, fessiers, gainage. Sur les intensités : surveiller tendon d’Achille et fatigue neuromusculaire.</div></div>`;
+    if(s.sport==="vélo") return `<div class="objective"><span>ⓘ</span><div><strong>Zones sollicitées</strong><br>Quadriceps, fessiers, lombaires, gainage. En force à 60 rpm : contrôle genou et bassin, pas de tirage lombaire.</div></div>`;
+    return `<div class="objective"><span>ⓘ</span><div><strong>Zones sollicitées</strong><br>Épaules, dorsaux, tronc, mobilité thoracique. Objectif : économie gestuelle.</div></div>`;
+  }
+  if(detailTab==="conseils"){
+    return adviceContent(s,w);
+  }
+  if(s.sport==="ppg") return ppgContent(s);
+  if(s.sport==="natation") return swimContent(s);
+  if(s.sport==="cap") return runContent(s);
+  return bikeContent(s);
+}
+function adviceContent(s,w){
+  const isQ = isQuality(s);
+  return `<div class="detail-list">
+    <div class="detail-item"><strong>Décision avant séance</strong><p>${isQ ? "Si fatigue > 2 jours, transforme en 30–45 min Z2. La séance qualité n’est utile que si tu es frais." : "Garde l’intention facile. Le but est de construire sans coût caché."}</p></div>
+    <div class="detail-item"><strong>Placement</strong><p>Évite de placer cette séance juste après une autre séance dure. Si tu inverses, garde 24–48h entre deux intensités.</p></div>
+    <div class="detail-item"><strong>Critère de réussite</strong><p>Finir avec une sensation de contrôle. Tu dois pouvoir reprendre l’entraînement normal le lendemain ou le surlendemain.</p></div>
+  </div>`;
+}
+function swimContent(s){
+  const key = Object.keys(DATA.swim).find(k=>s.name.toLowerCase().includes(k.toLowerCase())) || (s.name.toLowerCase().includes("récup") ? "Alignement" : "Endurance");
+  const d = DATA.swim[key];
+  return `<div class="objective"><span>ⓘ</span><div><strong>Objectif</strong><br>${d.goal}<br><span class="eyebrow">${d.use}</span></div></div>
+  <div class="detail-list">${d.steps.map((x,i)=>`<div class="detail-item"><strong>${i+1}. ${i===0?'Échauffement':i===d.steps.length-1?'Retour au calme':'Bloc'}</strong><p>${x}</p></div>`).join("")}</div>`;
+}
+function targetZoneBox(s){
+  if(!hasZones()) return "";
+  const z = computeZones();
+  const rows = [];
+  // Déterminer la zone cible selon le type de séance
+  const isEnd = s.type==="endurance" || s.type==="technique" || s.type==="mobility";
+  const isQ = isQuality(s);
+  if(s.sport==="cap"){
+    if(z.hr){
+      const target = isQ ? z.hr.find(r=>r.name==="Z4") : z.hr.find(r=>r.name==="Z2");
+      if(target) rows.push({k:"FC cible", v:`${target.lo}–${target.hi} bpm (${target.name})`, c:target.color});
+    }
+    if(z.pace){
+      const target = isQ ? z.pace.find(r=>r.name==="Z4") : z.pace.find(r=>r.name==="Z2");
+      if(target) rows.push({k:"Allure cible", v:`${fmtPace(target.lo)}–${fmtPace(target.hi)} /km (${target.name})`, c:target.color});
+    }
+  } else if(s.sport==="vélo"){
+    if(z.power){
+      const nm = s.name.toLowerCase();
+      let target;
+      if(nm.includes("vo2")) target = z.power.find(r=>r.name==="Z5");
+      else if(nm.includes("sweet")||nm.includes("ftp")||nm.includes("seuil")) target = z.power.find(r=>r.name==="SST")||z.power.find(r=>r.name==="Z4");
+      else if(nm.includes("tempo")) target = z.power.find(r=>r.name==="Z3");
+      else target = z.power.find(r=>r.name==="Z2");
+      if(target) rows.push({k:"Puissance cible", v:`${target.lo}–${target.hi} W (${target.name} ${target.label})`, c:target.color});
+    }
+    if(z.hr){
+      const target = isQ ? z.hr.find(r=>r.name==="Z4") : z.hr.find(r=>r.name==="Z2");
+      if(target) rows.push({k:"FC cible", v:`${target.lo}–${target.hi} bpm (${target.name})`, c:target.color});
+    }
+  } else if(s.sport==="natation"){
+    if(z.hr){
+      const target = isQ ? z.hr.find(r=>r.name==="Z4") : z.hr.find(r=>r.name==="Z2");
+      if(target) rows.push({k:"FC indicative", v:`${target.lo}–${target.hi} bpm (${target.name})`, c:target.color});
+    }
+  }
+  if(!rows.length) return "";
+  return `<div class="zone-zones-box"><div class="zz-title">🎯 Tes zones cibles</div>${rows.map(r=>`<div class="zone-row" style="grid-template-columns:1fr auto"><div class="zr-name" style="color:${r.c}">${r.k}</div><div class="zr-val">${r.v}</div></div>`).join("")}</div>`;
+}
+function runContent(s){
+  return `<div class="objective"><span>ⓘ</span><div><strong>Objectif CAP</strong><br>Exécuter ${s.name} sans dérive excessive. Priorité à la foulée propre et à la fraîcheur.</div></div>
+  ${targetZoneBox(s)}
+  <div class="detail-list">
+    <div class="detail-item"><strong>Échauffement</strong><p>10–15 min Z1/Z2 + mobilisation chevilles/hanches. Ajouter 3 accélérations très progressives si séance qualité.</p></div>
+    <div class="detail-item"><strong>Corps de séance</strong><p>${s.name}</p></div>
+    <div class="detail-item"><strong>Retour au calme</strong><p>8–10 min très facile. Si jambes lourdes : finir plus court, pas plus vite.</p></div>
+  </div>`;
+}
+function bikeContent(s){
+  const brick = s.name.toLowerCase().includes("brick") || s.name.toLowerCase().includes("cap");
+  return `<div class="objective"><span>ⓘ</span><div><strong>Objectif vélo</strong><br>${brick ? "Travailler l’enchaînement vélo → CAP sans exploser la charge." : "Construire puissance durable et endurance spécifique."}</div></div>
+  ${targetZoneBox(s)}
+  <div class="detail-list">
+    <div class="detail-item"><strong>Échauffement</strong><p>15 min progressives, cadence souple. Sur home trainer : 3 rampes de 30 sec.</p></div>
+    <div class="detail-item"><strong>Corps de séance</strong><p>${s.name}</p></div>
+    <div class="detail-item"><strong>Retour au calme</strong><p>10 min Z1/Z2. Nutrition : boire régulièrement, surtout sur les sorties de plus de 2h.</p></div>
+    ${brick ? `<div class="detail-item"><strong>Transition</strong><p>CAP facile à allure contrôlée. L’objectif est la stabilité, pas le chrono.</p></div>` : ""}
+  </div>`;
+}
+function ppgForSession(name){
+  const low = name.toLowerCase();
+  if(low.includes("mobilité") && low.includes("gainage")) return idsToExercises(["hip90","plank","sideplank","deadbug"]);
+  if(low.includes("fessiers")) return idsToExercises(["glutebridge","lunge","plank","hip90"]);
+  if(low.includes("mollets")) return idsToExercises(["calf","plank","deadbug","hip90"]);
+  if(low.includes("force")) return idsToExercises(["lunge","glutebridge","calf","plank"]);
+  if(low.includes("stabilité")) return idsToExercises(["sideplank","birddog","glutebridge","deadbug"]);
+  if(low.includes("mobilité")) return idsToExercises(["hip90","deadbug","glutebridge"]);
+  return idsToExercises(["plank","sideplank","glutebridge","birddog"]);
+}
+function idsToExercises(ids){return ids.map(id=>DATA.ppg.find(e=>e.id===id)).filter(Boolean);}
+function ppgContent(s){
+  const ex = ppgForSession(s.name);
+  return `<div class="objective"><span>ⓘ</span><div><strong>Objectif</strong><br>Renforcer ce qui protège la course et le vélo : hanches, gainage, fessiers et mollets. Exécution lente, jamais à l’échec.</div></div>
+  <div class="detail-list">${ex.map(e=>`<div class="detail-item ppg-item">
+    <div class="ppg-art">${svgExercise(e.id)}</div>
+    <div><div class="exercise-head"><strong>${e.title}</strong><span class="tag">${e.time}</span></div><p>${e.cue}</p></div>
+  </div>`).join("")}</div>`;
+}
+function quickAdapt(kind){
+  showView("adapt");
+  const sit = document.getElementById("adaptSituation");
+  if(kind==="missed") sit.value = "missed-quality";
+  if(kind==="fatigue") document.getElementById("adaptFatigue").value = "high";
+  if(kind==="off") document.getElementById("adaptAvailability").value = "72";
+  buildAdaptation();
+}
+let lastAdaptMsg = "";
+function buildAdaptation(){
+  const sit = document.getElementById("adaptSituation").value;
+  const fatigue = document.getElementById("adaptFatigue").value;
+  const avail = document.getElementById("adaptAvailability").value;
+  let msg = "";
+  if(fatigue==="high"){
+    msg = "Fatigue > 2 jours : supprime la séance qualité. Fais 30–45 min Z2 ou natation Alignement, puis reprends le plan normal. Ne compense pas par une double séance.";
+  } else if(sit==="missed-quality"){
+    msg = avail==="24" ? "Tu peux replacer la qualité demain seulement si la veille et le lendemain ne sont pas durs. Sinon transforme en Z2." : "Au-delà de 48h, ne rattrape pas la qualité. Garde la sortie longue ou la séance Z2 prioritaire.";
+  } else if(sit==="missed-easy"){
+    msg = "Ne rattrape pas. Reprends simplement la prochaine séance prévue. Si tu veux garder la fréquence, ajoute 20–30 min très facile.";
+  } else if(sit==="missed-ppg"){
+    msg = "Ne crée pas une séance complète en dette. Fais 12–15 min de gainage/mobilité après une séance facile.";
+  } else if(sit==="missed-long"){
+    msg = "Remplace par 60–75% du volume prévu si tu as un créneau proche. Si tu es à plus de 72h, passe à la semaine suivante sans empiler.";
+  } else {
+    msg = "Désordre acceptable si les intensités restent séparées. Vérifie : pas de CAP seuil le lendemain d'un vélo VO2/FTP, pas de lactate natation proche d'un gros brick.";
+  }
+  lastAdaptMsg = msg;
+  document.getElementById("adaptProposalContent").textContent = msg;
+  document.getElementById("adaptModal").classList.add("open");
+}
+function applyAdaptation(){
+  document.getElementById("adaptModal").classList.remove("open");
+  document.getElementById("adaptResult").textContent = lastAdaptMsg;
+  toast("Ajustement validé ✓");
+}
+function resetProgram(){
+  if(confirm("Remettre à zéro tous les statuts, déplacements et notes ? (Tes zones et ta date de course sont conservées.) Cette action est irréversible.")){
+    state = {status:{},moves:{},notes:{},settings:state.settings||{}};
+    save();
+    toast("Programme réinitialisé");
+  }
+}
+function selectPPGSession(){
+  const ppg = DATA.weeks.flatMap(w=>w.sessions).find(s=>s.sport==="ppg");
+  selectedSessionId = ppg.id;
+  detailTab = "exercice";
+  renderAll();
+}
+function download(filename, text, type="text/plain"){
+  const blob = new Blob([text], {type});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function exportCSV(){
+  const rows = [["semaine","bloc","titre_semaine","jour_propose","sport","seance","duree_min","type","statut"]];
+  DATA.weeks.forEach(w=>w.sessions.forEach(s=>{
+    const day = DAY_NAMES[Number(state.moves[s.id] ?? s.defaultDay)];
+    rows.push([w.n,w.block,w.title,day,s.sport,s.name,s.minutes,s.type,statusOf(s.id)||"a_faire"]);
+  }));
+  const csv = rows.map(r=>r.map(x=>`"${String(x).replaceAll('"','""')}"`).join(",")).join("\n");
+  download("programme_tri_2026.csv", csv, "text/csv;charset=utf-8");
+}
+function exportJSON(){
+  download("programme_tri_2026_sauvegarde.json", JSON.stringify({data:DATA,state}, null, 2), "application/json;charset=utf-8");
+}
+function exportICS(){
+  const start = document.getElementById("startDate").value;
+  if(!start){toast("Choisis la date du lundi de la semaine 1"); return;}
+  const startDate = new Date(start+"T00:00:00");
+  function ymd(d){return d.toISOString().slice(0,10).replaceAll("-","");}
+  let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Tri2026//Coaching//FR\nCALSCALE:GREGORIAN\n";
+  DATA.weeks.forEach(w=>w.sessions.forEach(s=>{
+    const day = Number(state.moves[s.id] ?? s.defaultDay);
+    const d = new Date(startDate);
+    d.setDate(startDate.getDate() + (w.n-1)*7 + day);
+    const end = new Date(d); end.setDate(d.getDate()+1);
+    const summary = `Tri2026 ${capitalize(s.sport)} - ${s.name}`;
+    const desc = `${w.block} semaine ${w.n} - ${w.title}. Règle: si fatigue > 2 jours, supprimer la qualité et garder Z2.`;
+    ics += "BEGIN:VEVENT\n";
+    ics += `UID:${s.id}@tri2026\n`;
+    ics += `DTSTAMP:${ymd(new Date())}T080000Z\n`;
+    ics += `DTSTART;VALUE=DATE:${ymd(d)}\n`;
+    ics += `DTEND;VALUE=DATE:${ymd(end)}\n`;
+    ics += `SUMMARY:${escapeICS(summary)}\n`;
+    ics += `DESCRIPTION:${escapeICS(desc)}\n`;
+    ics += "END:VEVENT\n";
+  }));
+  ics += "END:VCALENDAR";
+  download("programme_tri_2026_calendrier.ics", ics, "text/calendar;charset=utf-8");
+}
+function escapeICS(s){return String(s).replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
+
+function svgSwim(){
+return `<svg viewBox="0 0 170 90" aria-hidden="true">
+  <path d="M13 66 C32 55 46 75 65 64 S97 54 116 64 S145 74 160 62" stroke="#74b7ff" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M20 75 C39 65 52 82 71 72 S106 63 126 72 S149 79 162 72" stroke="#d7ecff" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <circle cx="78" cy="40" r="9" fill="#e7b98f"/>
+  <path d="M87 45 C102 48 111 57 124 56" stroke="#58708c" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M75 48 C61 57 51 60 39 60" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
+</svg>`;
+}
+function svgRun(){
+return `<svg viewBox="0 0 170 90" aria-hidden="true">
+  <path class="svg-ground" d="M18 76 H150"/>
+  <circle class="svg-skin" cx="88" cy="22" r="9"/>
+  <path class="svg-hair" d="M80 19c5-9 17-8 22 0-7 0-10 4-15 7-4 2-7 1-7-7z"/>
+  <path class="svg-shirt" d="M78 34 L103 34 L109 53 L88 57 Z"/>
+  <path class="svg-skin" d="M81 38 C69 47 59 52 49 55" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path class="svg-skin" d="M103 38 C111 48 116 56 126 62" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path class="svg-short" d="M90 55 L108 57 L103 67 L86 66 Z"/>
+  <path class="svg-skin" d="M91 65 C80 70 73 73 62 77" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path class="svg-skin" d="M105 65 C112 72 119 76 131 78" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path class="svg-shoe" d="M52 77c8-3 15-1 19 2-4 4-14 5-23 2z"/>
+  <path class="svg-shoe" d="M124 78c8-1 15 2 18 6-8 3-18 2-24-2z"/>
+</svg>`;
+}
+function svgBike(){
+return `<svg viewBox="0 0 170 90" aria-hidden="true">
+  <circle cx="47" cy="67" r="20" fill="none" stroke="#111827" stroke-width="4"/>
+  <circle cx="124" cy="67" r="20" fill="none" stroke="#111827" stroke-width="4"/>
+  <path d="M47 67 L75 39 L96 67 L63 67 L75 39 L112 39 L124 67" fill="none" stroke="#2e3d51" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle class="svg-skin" cx="87" cy="17" r="8"/>
+  <path class="svg-hair" d="M80 15c5-8 16-7 20 1-6 0-9 4-14 6-4 1-6 0-6-7z"/>
+  <path class="svg-shirt" d="M77 28 C86 24 98 27 108 37 L99 47 C88 39 80 38 69 39 Z"/>
+  <path class="svg-skin" d="M101 38 C111 39 119 40 126 43" stroke="#e7b98f" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path class="svg-short" d="M70 39 L88 43 L82 58 L61 52 Z"/>
+  <path class="svg-skin" d="M82 55 C91 62 97 66 104 67" stroke="#e7b98f" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path class="svg-skin" d="M64 52 C58 58 54 63 49 67" stroke="#e7b98f" stroke-width="7" fill="none" stroke-linecap="round"/>
+</svg>`;
+}
+function svgExercise(id){
+  const map = {plank:svgPlank, sideplank:svgSidePlank, glutebridge:svgGluteBridge, birddog:svgBirdDog, lunge:svgLunge, calf:svgCalf, deadbug:svgDeadBug, hip90:svgHip90};
+  return (map[id] || svgPlank)();
+}
+function svgPlank(){
+/* Planche : vue de côté, corps horizontal sur avant-bras, ligne droite épaules-chevilles */
+return `<svg viewBox="0 0 240 120" aria-hidden="true">
+  <defs><style>.pp{fill:#3d5a80}.ps{fill:#e07b54}.ph{fill:#1a1a2e}.pg{stroke:#c8d8e8;stroke-width:2.5;stroke-linecap:round;fill:none}</style></defs>
+  <line class="pg" x1="18" y1="100" x2="222" y2="100"/>
+  <!-- Sol contact coudes -->
+  <ellipse cx="48" cy="99" rx="12" ry="4" fill="#c8d8e8" opacity=".5"/>
+  <!-- Pieds / chaussures -->
+  <ellipse cx="32" cy="96" rx="14" ry="6" fill="#2b3a55" rx="14"/>
+  <rect x="24" y="90" width="18" height="8" rx="4" fill="#2b3a55"/>
+  <!-- Jambes -->
+  <rect x="30" y="74" width="100" height="20" rx="10" fill="#3d5a80"/>
+  <!-- Shorts -->
+  <rect x="100" y="72" width="32" height="22" rx="8" fill="#2b3a55"/>
+  <!-- Torse -->
+  <rect x="128" y="66" width="68" height="24" rx="11" fill="#3d5a80"/>
+  <!-- Bras avant / coude appui -->
+  <rect x="44" y="82" width="52" height="14" rx="7" fill="#e07b54"/>
+  <!-- Avant-bras au sol -->
+  <rect x="44" y="92" width="16" height="10" rx="5" fill="#e07b54"/>
+  <!-- Tête -->
+  <circle class="ps" cx="208" cy="64" r="14"/>
+  <path class="ph" d="M196 57 C202 46 220 47 224 60 C215 58 212 68 204 71 C199 71 196 66 196 57Z"/>
+  <!-- Ligne corps (gainage) -->
+  <line x1="38" y1="84" x2="206" y2="70" stroke="#6f55f2" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round"/>
+</svg>`;
+}
+function svgSidePlank(){
+/* Planche latérale : vue légèrement en angle, corps aligné, bras tendu vers le haut */
+return `<svg viewBox="0 0 240 120" aria-hidden="true">
+  <defs><style>.pp{fill:#3d5a80}.ps{fill:#e07b54}.ph{fill:#1a1a2e}.pg{stroke:#c8d8e8;stroke-width:2.5;stroke-linecap:round;fill:none}</style></defs>
+  <line x1="18" y1="104" x2="222" y2="104" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Pied au sol -->
+  <rect x="22" y="96" width="22" height="9" rx="5" fill="#2b3a55"/>
+  <!-- Corps latéral - jambes -->
+  <rect x="30" y="78" width="100" height="22" rx="11" fill="#3d5a80"/>
+  <!-- Hanche / shorts -->
+  <rect x="100" y="74" width="34" height="24" rx="10" fill="#2b3a55"/>
+  <!-- Torse -->
+  <rect x="130" y="60" width="64" height="30" rx="13" fill="#3d5a80"/>
+  <!-- Avant-bras appui au sol -->
+  <rect x="30" y="90" width="52" height="13" rx="6" fill="#e07b54"/>
+  <!-- Bras libre levé -->
+  <line x1="168" y1="68" x2="178" y2="28" stroke="#e07b54" stroke-width="13" stroke-linecap="round"/>
+  <!-- Tête -->
+  <circle cx="200" cy="56" r="14" fill="#e07b54"/>
+  <path fill="#1a1a2e" d="M188 49 C195 38 213 40 217 53 C208 51 205 62 197 65 C192 65 188 60 188 49Z"/>
+  <!-- Ligne corps -->
+  <line x1="34" y1="89" x2="198" y2="60" stroke="#6f55f2" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round"/>
+</svg>`;
+}
+function svgGluteBridge(){
+/* Pont fessier : allongé sur le dos, hanches levées, genoux fléchis, pieds à plat */
+return `<svg viewBox="0 0 240 120" aria-hidden="true">
+  <line x1="14" y1="106" x2="226" y2="106" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Pieds / chaussures -->
+  <rect x="28" y="95" width="22" height="10" rx="5" fill="#2b3a55"/>
+  <rect x="62" y="95" width="22" height="10" rx="5" fill="#2b3a55"/>
+  <!-- Mollets -->
+  <line x1="38" y1="95" x2="48" y2="72" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
+  <line x1="73" y1="95" x2="80" y2="72" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
+  <!-- Cuisses remontées -->
+  <line x1="47" y1="72" x2="92" y2="56" stroke="#3d5a80" stroke-width="17" stroke-linecap="round"/>
+  <line x1="80" y1="72" x2="100" y2="57" stroke="#3d5a80" stroke-width="17" stroke-linecap="round"/>
+  <!-- Bassin levé (arc) -->
+  <path d="M86 60 C96 40 138 38 148 62" fill="#2b3a55" stroke="none"/>
+  <!-- Dos au sol -->
+  <rect x="140" y="80" width="64" height="18" rx="9" fill="#3d5a80"/>
+  <!-- Bras au sol -->
+  <line x1="148" y1="92" x2="118" y2="102" stroke="#e07b54" stroke-width="12" stroke-linecap="round"/>
+  <line x1="190" y1="92" x2="218" y2="102" stroke="#e07b54" stroke-width="12" stroke-linecap="round"/>
+  <!-- Tête au sol -->
+  <circle cx="210" cy="88" r="13" fill="#e07b54"/>
+  <path fill="#1a1a2e" d="M199 80 C206 70 222 72 226 83 C218 81 215 90 208 93 C203 93 199 88 199 80Z"/>
+  <!-- Flèche hanches -->
+  <line x1="116" y1="49" x2="116" y2="30" stroke="#1d9a57" stroke-width="3" stroke-linecap="round" marker-end="url(#arrowU)"/>
+  <defs><marker id="arrowU" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 8 L4 0 L8 8" fill="#1d9a57"/></marker></defs>
+</svg>`;
+}
+function svgBirdDog(){
+/* Bird dog : à 4 pattes, bras droit tendu en avant, jambe gauche tendue en arrière */
+return `<svg viewBox="0 0 240 120" aria-hidden="true">
+  <line x1="14" y1="108" x2="226" y2="108" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Main gauche appui -->
+  <ellipse cx="38" cy="105" rx="10" ry="5" fill="#e07b54"/>
+  <!-- Bras gauche appui -->
+  <line x1="38" y1="100" x2="72" y2="72" stroke="#e07b54" stroke-width="13" stroke-linecap="round"/>
+  <!-- Genou droit appui -->
+  <ellipse cx="140" cy="106" rx="12" ry="5" fill="#2b3a55"/>
+  <!-- Jambe droite au sol -->
+  <line x1="140" y1="102" x2="118" y2="78" stroke="#3d5a80" stroke-width="15" stroke-linecap="round"/>
+  <!-- Torse -->
+  <rect x="68" y="58" width="72" height="26" rx="12" fill="#3d5a80"/>
+  <!-- Shorts -->
+  <rect x="108" y="56" width="34" height="28" rx="10" fill="#2b3a55"/>
+  <!-- Tête -->
+  <circle cx="74" cy="56" r="13" fill="#e07b54"/>
+  <path fill="#1a1a2e" d="M63 50 C69 39 86 41 90 52 C82 50 79 60 72 62 C67 62 63 58 63 50Z"/>
+  <!-- Bras droit tendu en avant -->
+  <line x1="72" y1="66" x2="30" y2="52" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
+  <!-- Jambe gauche tendue en arrière -->
+  <line x1="140" y1="70" x2="196" y2="52" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
+  <ellipse cx="198" cy="50" rx="10" ry="6" fill="#2b3a55"/>
+  <!-- Flèches extension -->
+  <line x1="22" y1="50" x2="10" y2="44" stroke="#6f55f2" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="204" y1="49" x2="216" y2="43" stroke="#6f55f2" stroke-width="2.5" stroke-linecap="round"/>
+</svg>`;
+}
+function svgLunge(){
+/* Fente arrière : jambe avant fléchie, jambe arrière au sol, buste droit */
+return `<svg viewBox="0 0 240 130" aria-hidden="true">
+  <line x1="16" y1="114" x2="224" y2="114" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Pied avant -->
+  <rect x="72" y="106" width="26" height="10" rx="5" fill="#2b3a55"/>
+  <!-- Genou arrière au sol -->
+  <ellipse cx="160" cy="112" rx="14" ry="6" fill="#2b3a55"/>
+  <!-- Mollet avant -->
+  <line x1="85" y1="108" x2="88" y2="80" stroke="#3d5a80" stroke-width="18" stroke-linecap="round"/>
+  <!-- Cuisse avant (fléchie) -->
+  <line x1="88" y1="80" x2="118" y2="60" stroke="#3d5a80" stroke-width="19" stroke-linecap="round"/>
+  <!-- Shorts -->
+  <ellipse cx="122" cy="58" rx="18" ry="14" fill="#2b3a55"/>
+  <!-- Cuisse arrière -->
+  <line x1="126" y1="64" x2="158" y2="90" stroke="#3d5a80" stroke-width="18" stroke-linecap="round"/>
+  <!-- Mollet arrière -->
+  <line x1="158" y1="90" x2="156" y2="112" stroke="#3d5a80" stroke-width="15" stroke-linecap="round"/>
+  <!-- Torse droit -->
+  <rect x="106" y="22" width="26" height="44" rx="12" fill="#3d5a80"/>
+  <!-- Bras gauche le long du corps -->
+  <line x1="108" y1="36" x2="90" y2="62" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
+  <!-- Bras droit le long du corps -->
+  <line x1="130" y1="36" x2="148" y2="62" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
+  <!-- Tête -->
+  <circle cx="119" cy="16" r="13" fill="#e07b54"/>
+  <path fill="#1a1a2e" d="M108 9 C115 -1 132 1 136 13 C127 11 124 21 116 24 C111 24 108 19 108 9Z"/>
+  <!-- Flèche descente -->
+  <line x1="152" y1="52" x2="152" y2="72" stroke="#d66b00" stroke-width="2.5" stroke-linecap="round"/>
+</svg>`;
+}
+function svgCalf(){
+/* Mollets debout : debout sur pointe de pieds, buste droit, flèche montée */
+return `<svg viewBox="0 0 240 130" aria-hidden="true">
+  <line x1="30" y1="116" x2="210" y2="116" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Chaussures - pointe de pied -->
+  <path d="M88 110 C96 106 108 107 116 112 C110 118 96 119 86 115Z" fill="#2b3a55"/>
+  <path d="M122 110 C130 106 142 107 150 112 C144 118 130 119 120 115Z" fill="#2b3a55"/>
+  <!-- Mollets (talon levé, pointé) -->
+  <line x1="96" y1="108" x2="96" y2="82" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
+  <line x1="136" y1="108" x2="136" y2="82" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
+  <!-- Cuisses -->
+  <line x1="96" y1="82" x2="100" y2="54" stroke="#3d5a80" stroke-width="19" stroke-linecap="round"/>
+  <line x1="136" y1="82" x2="132" y2="54" stroke="#3d5a80" stroke-width="19" stroke-linecap="round"/>
+  <!-- Shorts -->
+  <rect x="86" y="48" width="66" height="24" rx="11" fill="#2b3a55"/>
+  <!-- Torse -->
+  <rect x="95" y="18" width="48" height="36" rx="12" fill="#3d5a80"/>
+  <!-- Bras (main sur support mur) -->
+  <line x1="96" y1="32" x2="68" y2="42" stroke="#e07b54" stroke-width="10" stroke-linecap="round"/>
+  <line x1="142" y1="32" x2="170" y2="42" stroke="#e07b54" stroke-width="10" stroke-linecap="round"/>
+  <!-- Tête -->
+  <circle cx="119" cy="12" r="12" fill="#e07b54"/>
+  <path fill="#1a1a2e" d="M108 6 C115 -4 131 -2 135 10 C127 8 124 18 116 20 C111 20 108 15 108 6Z"/>
+  <!-- Flèche montée -->
+  <line x1="182" y1="88" x2="182" y2="52" stroke="#1d9a57" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="176,54 182,40 188,54" fill="#1d9a57"/>
+  <line x1="182" y1="108" x2="182" y2="94" stroke="#e07b54" stroke-width="3" stroke-dasharray="4 3" stroke-linecap="round"/>
+</svg>`;
+}
+function svgDeadBug(){
+/* Dead bug : allongé sur le dos, bras et jambe opposés tendus vers le haut / bas */
+return `<svg viewBox="0 0 240 120" aria-hidden="true">
+  <line x1="14" y1="110" x2="226" y2="110" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Dos au sol -->
+  <rect x="58" y="84" width="110" height="18" rx="9" fill="#3d5a80"/>
+  <!-- Shorts -->
+  <rect x="98" y="82" width="36" height="22" rx="9" fill="#2b3a55"/>
+  <!-- Tête au sol -->
+  <circle cx="60" cy="85" r="13" fill="#e07b54"/>
+  <path fill="#1a1a2e" d="M50 78 C56 67 72 69 76 80 C68 78 65 88 58 90 C53 90 50 86 50 78Z"/>
+  <!-- Bras droit tendu en haut (vers la tête) -->
+  <line x1="96" y1="86" x2="80" y2="52" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
+  <ellipse cx="78" cy="47" rx="8" ry="6" fill="#e07b54"/>
+  <!-- Bras gauche au sol -->
+  <line x1="140" y1="86" x2="172" y2="100" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
+  <!-- Jambe droite fléchie (genou relevé) -->
+  <line x1="116" y1="86" x2="116" y2="58" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
+  <line x1="116" y1="58" x2="98" y2="42" stroke="#3d5a80" stroke-width="13" stroke-linecap="round"/>
+  <ellipse cx="95" cy="39" rx="9" ry="6" fill="#2b3a55"/>
+  <!-- Jambe gauche tendue -->
+  <line x1="128" y1="88" x2="190" y2="72" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
+  <ellipse cx="193" cy="70" rx="12" ry="7" fill="#2b3a55"/>
+  <!-- Flèches opposés -->
+  <line x1="82" y1="42" x2="72" y2="30" stroke="#6f55f2" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="194" y1="68" x2="208" y2="58" stroke="#6f55f2" stroke-width="2.5" stroke-linecap="round"/>
+</svg>`;
+}
+function svgHip90(){
+/* Mobilité 90/90 : assis au sol, 2 jambes en angle 90°, rotation de la hanche */
+return `<svg viewBox="0 0 240 130" aria-hidden="true">
+  <line x1="16" y1="112" x2="224" y2="112" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Jambe avant (fléchie à 90° devant) -->
+  <line x1="100" y1="96" x2="60" y2="96" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
+  <line x1="60" y1="96" x2="42" y2="110" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
+  <ellipse cx="36" cy="110" rx="12" ry="6" fill="#2b3a55"/>
+  <!-- Jambe arrière (fléchie à 90° côté) -->
+  <line x1="110" y1="96" x2="152" y2="96" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
+  <line x1="152" y1="96" x2="172" y2="110" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
+  <ellipse cx="178" cy="110" rx="12" ry="6" fill="#2b3a55"/>
+  <!-- Bassin au sol -->
+  <ellipse cx="108" cy="98" rx="22" ry="12" fill="#2b3a55"/>
+  <!-- Torse incliné légèrement en avant (rotation) -->
+  <line x1="108" y1="92" x2="104" y2="52" stroke="#3d5a80" stroke-width="24" stroke-linecap="round"/>
+  <!-- Bras pour s'aider -->
+  <line x1="96" y1="68" x2="68" y2="82" stroke="#e07b54" stroke-width="10" stroke-linecap="round"/>
+  <line x1="114" y1="64" x2="140" y2="52" stroke="#e07b54" stroke-width="10" stroke-linecap="round"/>
+  <!-- Tête -->
+  <circle cx="104" cy="40" r="13" fill="#e07b54"/>
+  <path fill="#1a1a2e" d="M93 33 C100 22 117 24 120 36 C112 34 109 44 102 46 C97 46 93 41 93 33Z"/>
+  <!-- Arc rotation hanche -->
+  <path d="M80 88 C82 70 126 68 130 86" stroke="#6f55f2" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="7 4"/>
+</svg>`;
+}
+// Fermeture des modales avec la touche Échap
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){
+    document.getElementById("sessionModal").classList.remove("open");
+    document.getElementById("adaptModal").classList.remove("open");
+  }
+});
+/* ===== Zones d'entraînement personnalisées ===== */
+function parsePace(str){
+  // "5:10" -> 310 secondes/km. Renvoie null si invalide.
+  if(!str) return null;
+  const m = String(str).trim().match(/^(\d{1,2}):([0-5]?\d)$/);
+  if(!m) return null;
+  return Number(m[1])*60 + Number(m[2]);
+}
+function fmtPace(sec){
+  const m = Math.floor(sec/60), s = Math.round(sec%60);
+  return `${m}:${String(s).padStart(2,"0")}`;
+}
+function computeZones(){
+  const s = state.settings || {};
+  const z = {};
+  if(s.fcMax){
+    const f = Number(s.fcMax);
+    // Plages classiques en % FCmax
+    z.hr = [
+      {name:"Z1", label:"Récup", lo:Math.round(f*.50), hi:Math.round(f*.60), color:"#9ec5ff"},
+      {name:"Z2", label:"Endurance", lo:Math.round(f*.60), hi:Math.round(f*.75), color:"#1d9a57"},
+      {name:"Z3", label:"Tempo", lo:Math.round(f*.75), hi:Math.round(f*.85), color:"#ffb33c"},
+      {name:"Z4", label:"Seuil", lo:Math.round(f*.85), hi:Math.round(f*.92), color:"#ef4d5d"},
+      {name:"Z5", label:"VO2", lo:Math.round(f*.92), hi:f, color:"#c0392b"}
+    ];
+  }
+  const thr = parsePace(s.paceThreshold);
+  if(thr){
+    // Allures dérivées du seuil (sec/km). Plus le nombre est grand, plus c'est lent.
+    z.pace = [
+      {name:"Z2", label:"Endurance", lo:Math.round(thr*1.18), hi:Math.round(thr*1.28), color:"#1d9a57"},
+      {name:"Z3", label:"Tempo", lo:Math.round(thr*1.06), hi:Math.round(thr*1.12), color:"#ffb33c"},
+      {name:"Z4", label:"Seuil", lo:Math.round(thr*0.99), hi:Math.round(thr*1.03), color:"#ef4d5d"},
+      {name:"Z5", label:"VO2 / vite", lo:Math.round(thr*0.92), hi:Math.round(thr*0.97), color:"#c0392b"}
+    ];
+  }
+  if(s.ftp){
+    const p = Number(s.ftp);
+    z.power = [
+      {name:"Z1", label:"Récup", lo:Math.round(p*.40), hi:Math.round(p*.55), color:"#9ec5ff"},
+      {name:"Z2", label:"Endurance", lo:Math.round(p*.56), hi:Math.round(p*.75), color:"#1d9a57"},
+      {name:"Z3", label:"Tempo", lo:Math.round(p*.76), hi:Math.round(p*.90), color:"#ffb33c"},
+      {name:"SST", label:"Sweet spot", lo:Math.round(p*.88), hi:Math.round(p*.94), color:"#e08e0b"},
+      {name:"Z4", label:"Seuil", lo:Math.round(p*.95), hi:Math.round(p*1.05), color:"#ef4d5d"},
+      {name:"Z5", label:"VO2", lo:Math.round(p*1.06), hi:Math.round(p*1.20), color:"#c0392b"}
+    ];
+  }
+  return z;
+}
+function hasZones(){
+  const s = state.settings || {};
+  return !!(s.fcMax || parsePace(s.paceThreshold) || s.ftp);
+}
+function saveZones(){
+  const fc = document.getElementById("inputFcMax").value.trim();
+  const pace = document.getElementById("inputPaceThreshold").value.trim();
+  const ftp = document.getElementById("inputFtp").value.trim();
+  if(pace && parsePace(pace)===null){
+    toast("Format d'allure invalide (ex. 5:10)");
+    return;
+  }
+  if(!fc && !pace && !ftp){
+    toast("Renseigne au moins une valeur");
+    return;
+  }
+  state.settings.fcMax = fc || "";
+  state.settings.paceThreshold = pace || "";
+  state.settings.ftp = ftp || "";
+  save();
+  toast("Zones enregistrées ✓");
+}
+function clearZones(){
+  if(confirm("Effacer tes zones d'entraînement personnalisées ?")){
+    delete state.settings.fcMax;
+    delete state.settings.paceThreshold;
+    delete state.settings.ftp;
+    save();
+    toast("Zones effacées");
+  }
+}
+function zoneTableHTML(rows, unit, isPace){
+  return `<div class="zones-table">${rows.map(r=>{
+    const val = isPace ? `${fmtPace(r.lo)}–${fmtPace(r.hi)} ${unit}` : `${r.lo}–${r.hi} ${unit}`;
+    return `<div class="zone-row">
+      <div class="zr-name" style="color:${r.color}">${r.name}</div>
+      <div>${r.label}<div class="zone-chip" style="background:${r.color};opacity:.55;margin-top:4px"></div></div>
+      <div class="zr-val">${val}</div>
+    </div>`;
+  }).join("")}</div>`;
+}
+function renderZonesSettings(){
+  const s = state.settings || {};
+  // Pré-remplir les champs
+  const fcEl = document.getElementById("inputFcMax");
+  const paceEl = document.getElementById("inputPaceThreshold");
+  const ftpEl = document.getElementById("inputFtp");
+  if(fcEl && document.activeElement!==fcEl) fcEl.value = s.fcMax || "";
+  if(paceEl && document.activeElement!==paceEl) paceEl.value = s.paceThreshold || "";
+  if(ftpEl && document.activeElement!==ftpEl) ftpEl.value = s.ftp || "";
+
+  const on = hasZones();
+  const statusEl = document.getElementById("zonesStatus");
+  if(statusEl){
+    statusEl.textContent = on ? "Actif" : "Non configuré";
+    statusEl.classList.toggle("on", on);
+  }
+  const clearBtn = document.getElementById("clearZonesBtn");
+  if(clearBtn) clearBtn.style.display = on ? "inline-flex" : "none";
+
+  const preview = document.getElementById("zonesPreview");
+  if(!preview) return;
+  if(!on){ preview.innerHTML = ""; return; }
+  const z = computeZones();
+  let html = "";
+  if(z.hr) html += `<div style="margin-top:18px"><h3 style="font-size:14px">Fréquence cardiaque</h3>${zoneTableHTML(z.hr,"bpm",false)}</div>`;
+  if(z.pace) html += `<div style="margin-top:18px"><h3 style="font-size:14px">Allures CAP</h3>${zoneTableHTML(z.pace,"/km",true)}</div>`;
+  if(z.power) html += `<div style="margin-top:18px"><h3 style="font-size:14px">Puissance vélo</h3>${zoneTableHTML(z.power,"W",false)}</div>`;
+  preview.innerHTML = html;
+}
+
+/* ===== Date de course + compte à rebours ===== */
+function saveRace(){
+  const name = document.getElementById("inputRaceName").value.trim();
+  const date = document.getElementById("inputRaceDate").value;
+  if(!date){ toast("Choisis une date de course"); return; }
+  state.settings.raceName = name || "Course cible";
+  state.settings.raceDate = date;
+  save();
+  toast("Course enregistrée ✓");
+}
+function clearRace(){
+  if(confirm("Effacer la date de course et le compte à rebours ?")){
+    delete state.settings.raceName;
+    delete state.settings.raceDate;
+    save();
+    toast("Course effacée");
+  }
+}
+function daysUntilRace(){
+  const d = state.settings && state.settings.raceDate;
+  if(!d) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const race = new Date(d+"T00:00:00");
+  return Math.round((race - today)/86400000);
+}
+function renderRaceSettings(){
+  const s = state.settings || {};
+  const nameEl = document.getElementById("inputRaceName");
+  const dateEl = document.getElementById("inputRaceDate");
+  if(nameEl && document.activeElement!==nameEl) nameEl.value = s.raceName || "";
+  if(dateEl && document.activeElement!==dateEl) dateEl.value = s.raceDate || "";
+
+  const on = !!s.raceDate;
+  const statusEl = document.getElementById("raceStatus");
+  if(statusEl){
+    statusEl.textContent = on ? "Actif" : "Non configuré";
+    statusEl.classList.toggle("on", on);
+  }
+  const clearBtn = document.getElementById("clearRaceBtn");
+  if(clearBtn) clearBtn.style.display = on ? "inline-flex" : "none";
+
+  const preview = document.getElementById("racePreview");
+  if(preview){
+    if(!on){ preview.innerHTML = ""; }
+    else{
+      const dleft = daysUntilRace();
+      const dateFmt = new Date(s.raceDate+"T00:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+      let msg = dleft>0 ? `Dans ${dleft} jour${dleft>1?"s":""} (≈ ${Math.floor(dleft/7)} semaine${Math.floor(dleft/7)>1?"s":""})` : dleft===0 ? "C'est aujourd'hui — bonne course !" : `Course passée il y a ${Math.abs(dleft)} jour${Math.abs(dleft)>1?"s":""}`;
+      preview.innerHTML = `<div class="zone-zones-box" style="margin-top:18px"><div class="zz-title">${s.raceName||"Course cible"}</div><p style="margin:0;font-size:13px;color:#475467;text-transform:capitalize">${dateFmt}</p><p style="margin:6px 0 0;font-weight:700;color:#233d78">${msg}</p></div>`;
+    }
+  }
+}
+function renderCountdownBanner(){
+  const el = document.getElementById("countdownBanner");
+  if(!el) return;
+  const s = state.settings || {};
+  if(!s.raceDate){ el.innerHTML = ""; return; }
+  const dleft = daysUntilRace();
+  const dateFmt = new Date(s.raceDate+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+  let big, label;
+  if(dleft>0){ big = dleft; label = dleft>1?"jours restants":"jour restant"; }
+  else if(dleft===0){ big = "🏁"; label = "Jour J"; }
+  else { big = Math.abs(dleft); label = "jours depuis"; }
+  el.innerHTML = `<div class="countdown">
+    <div class="cd-info"><strong>${s.raceName||"Course cible"}</strong><span>${dateFmt}${dleft>0?` • ≈ ${Math.floor(dleft/7)} sem.`:""}</span></div>
+    <div class="cd-days"><span class="cd-num">${big}</span><span class="cd-label">${label}</span></div>
+  </div>`;
+}
+
+function renderAll(){
+  renderBlockCards();
+  renderOverview();
+  renderCalendarView();
+  renderWeekList();
+  renderProgress();
+  renderPPGLibrary();
+  renderDetail();
+  renderCountdownBanner();
+  renderZonesSettings();
+  renderRaceSettings();
+}
+renderAll();
+
+// Rafraîchit le compte à rebours toutes les heures (utile si l'app PWA reste ouverte longtemps)
+setInterval(()=>{ if(state.settings && state.settings.raceDate){ renderCountdownBanner(); renderRaceSettings(); } }, 3600000);
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
