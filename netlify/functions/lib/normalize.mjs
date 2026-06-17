@@ -27,14 +27,19 @@ function sum(arr) {
   return xs.reduce((a, b) => a + b, 0);
 }
 
-// extrait la durée de sommeil (heures) d'un point de données, tous schémas confondus
+// extrait la durée de sommeil (heures) d'un point de données, tous schémas confondus.
+// On prend la meilleure estimation disponible : certaines sources mettent `asleep` à 0
+// alors que la vraie durée est dans `totalSleep` ou la somme des phases. On retient donc
+// le maximum des candidats numériques plutôt que de faire aveuglément confiance à `asleep`.
 function sleepHours(pt) {
-  if (typeof pt.asleep === "number") return pt.asleep;
-  if (typeof pt.totalSleep === "number") return pt.totalSleep;
+  const candidates = [];
+  if (typeof pt.totalSleep === "number") candidates.push(pt.totalSleep);
+  if (typeof pt.asleep === "number") candidates.push(pt.asleep);
   const stages = ["core", "deep", "rem"].map((k) => pt[k]).filter((x) => typeof x === "number");
-  if (stages.length) return stages.reduce((a, b) => a + b, 0);
-  if (typeof pt.qty === "number") return pt.qty; // certains exports mettent les heures dans qty
-  return null;
+  if (stages.length) candidates.push(stages.reduce((a, b) => a + b, 0));
+  if (typeof pt.qty === "number") candidates.push(pt.qty); // sommeil non-agrégé : durée du segment
+  if (!candidates.length) return null;
+  return Math.max(...candidates);
 }
 
 // nom de métrique -> notre champ interne
