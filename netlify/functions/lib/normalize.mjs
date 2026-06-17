@@ -131,16 +131,37 @@ function baseline(history, field, days) {
   return round1(avg(vals));
 }
 
+// Valeur la plus récente non-nulle d'un champ, avec la date d'où elle vient.
+function latestNonNull(history, field) {
+  for (let i = history.length - 1; i >= 0; i--) {
+    const v = history[i][field];
+    if (typeof v === "number") return { value: v, date: history[i].date };
+  }
+  return { value: null, date: null };
+}
+
 // Construit l'objet exposé par /api/health/latest, lu par le briefing.
+// Pour chaque métrique, on renvoie la dernière valeur DISPONIBLE (pas seulement
+// celle du jour, souvent partielle : la FC repos se calcule en cours de journée,
+// le sommeil d'une nuit est rattaché à la veille). Les champs *_date disent de
+// quel jour vient chaque valeur, pour repérer une donnée périmée.
 export function buildLatest(history) {
   const list = Array.isArray(history) ? history : [];
   const last = list.length ? list[list.length - 1] : {};
+  const sleep = latestNonNull(list, "sleep_h");
+  const rhr = latestNonNull(list, "resting_hr");
+  const hrv = latestNonNull(list, "hrv_ms");
+  const steps = latestNonNull(list, "steps");
   return {
     date: last.date ?? null,
-    sleep_h: last.sleep_h ?? null,
-    resting_hr: last.resting_hr ?? null,
-    hrv_ms: last.hrv_ms ?? null,
-    steps: last.steps ?? null,
+    sleep_h: sleep.value,
+    sleep_h_date: sleep.date,
+    resting_hr: rhr.value,
+    resting_hr_date: rhr.date,
+    hrv_ms: hrv.value,
+    hrv_ms_date: hrv.date,
+    steps: steps.value,
+    steps_date: steps.date,
     resting_hr_baseline_7d: baseline(list, "resting_hr", 7),
     hrv_baseline_30d: baseline(list, "hrv_ms", 30),
     days_in_history: list.length,
