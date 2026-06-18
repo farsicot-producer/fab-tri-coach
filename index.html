@@ -1029,6 +1029,16 @@ textarea{min-height:92px;resize:vertical}
   }
 }
 
+/* ===== État du jour (données santé live) ===== */
+.health-today{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:14px 16px;border-radius:16px;
+  background:linear-gradient(90deg,#eef2ff,#f7f9ff);
+  border:1px solid #dfe6fb;margin-bottom:16px;
+}
+.health-today .ht-dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:0 0 auto}
+.health-today strong{color:#1f2a44}
+.health-today p{margin:4px 0 0;font-size:13px;color:#475467}
 </style>
 </head>
 <body>
@@ -1055,9 +1065,9 @@ textarea{min-height:92px;resize:vertical}
       <button data-view="garmin" class="mobile-hide"><span class="ico">↗</span>Garmin / export</button>
     </div>
     <div class="garmin-card">
-      <div class="sync-row"><span class="sync-dot"></span><div><strong>Garmin Connect</strong><br><span style="color:#cbd5e1;font-size:13px">Mode manuel intelligent</span></div></div>
+      <div class="sync-row"><span class="sync-dot" id="healthDot"></span><div><strong>Garmin Connect</strong><br><span id="healthSyncStatus" style="color:#cbd5e1;font-size:13px">Connexion…</span></div></div>
+      <div id="healthSidebar" style="font-size:13px;color:#cbd5e1;line-height:1.6;margin:0 0 12px"></div>
       <button class="side-btn" onclick="showView('garmin')">Préparer export</button>
-      <p style="font-size:12px;color:#aeb9ca;margin:12px 0 0">Le push direct n’est pas activé dans cette web app statique.</p>
     </div>
   </aside>
 
@@ -1168,6 +1178,7 @@ textarea{min-height:92px;resize:vertical}
     </section>
 
     <section class="section" id="view-adapt">
+      <div id="healthToday" class="health-today" style="display:none"></div>
       <div class="adapt-grid">
         <div class="panel form-card">
           <h2>Adapter quand tu rates ou inverses une séance</h2>
@@ -2354,6 +2365,123 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./sw.js").catch(() => {});
   });
 }
+</script>
+
+<script>
+/* ===== Synchro données santé (backend Netlify) ===== */
+(function(){
+  "use strict";
+
+  // ⚠️ Mets ici ton READ_TOKEN (le même que dans Netlify). Il sera visible dans
+  //    le code du site : ce sont tes données de bien-être, pas un secret critique.
+  const READ_TOKEN = '0q}"9Mux460l';
+  const ENDPOINT = "/api/health/latest";
+
+  function daysAgo(dateStr){
+    if(!dateStr) return null;
+    const d = new Date(dateStr+"T00:00:00");
+    const today = new Date(); today.setHours(0,0,0,0);
+    return Math.round((today - d)/86400000);
+  }
+
+  // Verdict prudent à partir des signaux objectifs : le pire signal gagne.
+  function readiness(d){
+    let level = "go";
+    const order = {go:0, moderate:1, caution:2};
+    const bump = (l)=>{ if(order[l] > order[level]) level = l; };
+    const notes = [];
+    if(typeof d.sleep_h === "number"){
+      if(d.sleep_h < 6){ bump("caution"); notes.push(`sommeil court (${d.sleep_h} h)`); }
+      else if(d.sleep_h < 6.5){ bump("moderate"); notes.push(`sommeil un peu juste (${d.sleep_h} h)`); }
+    }
+    if(typeof d.resting_hr === "number" && typeof d.resting_hr_baseline_7d === "number"){
+      const delta = Math.round((d.resting_hr - d.resting_hr_baseline_7d)*10)/10;
+      if(delta >= 5){ bump("caution"); notes.push(`FC repos +${delta} vs base`); }
+      else if(delta >= 3){ bump("moderate"); notes.push(`FC repos +${delta} vs base`); }
+    }
+    return {level, notes};
+  }
+
+  const VERDICT = {
+    go:       {fatigue:"low",    dot:"#26d27e", label:"Signaux OK", text:"Feu vert sur les signaux objectifs"},
+    moderate: {fatigue:"medium", dot:"#ffc93d", label:"Vigilance",  text:"Signaux corrects mais à surveiller"},
+    caution:  {fatigue:"high",   dot:"#ef4d5d", label:"Prudence",   text:"Signaux dégradés — privilégie Z2 / récup"}
+  };
+  const FATIGUE_FR = {low:"0–1 jour", medium:"présente mais contrôlée", high:"> 2 jours / sommeil mauvais"};
+
+  function render(d){
+    const age = daysAgo(d.date || d.resting_hr_date || d.sleep_h_date);
+    const dot = document.getElementById("healthDot");
+    const status = document.getElementById("healthSyncStatus");
+    const side = document.getElementById("healthSidebar");
+
+    if(dot) dot.style.background = (age==null||age>=3) ? "#ef4d5d" : (age>=2 ? "#ffc93d" : "#26d27e");
+    if(status){
+      if(age==null) status.textContent = "Aucune donnée";
+      else if(age===0) status.textContent = "À jour — aujourd'hui";
+      else if(age===1) status.textContent = "À jour — hier";
+      else status.textContent = `Dernière donnée il y a ${age} j`;
+    }
+    if(side){
+      const parts = [];
+      if(typeof d.sleep_h === "number") parts.push(`Sommeil <strong>${d.sleep_h} h</strong>`);
+      if(typeof d.resting_hr === "number"){
+        let s = `FC repos <strong>${d.resting_hr}</strong>`;
+        if(typeof d.resting_hr_baseline_7d === "number"){
+          const delta = Math.round((d.resting_hr - d.resting_hr_baseline_7d)*10)/10;
+          s += ` <span style="opacity:.8">(base ${d.resting_hr_baseline_7d}${delta>=0?` +${delta}`:` ${delta}`})</span>`;
+        }
+        parts.push(s);
+      }
+      side.innerHTML = parts.length ? parts.join("<br>") : "Pas de FC/sommeil récents.";
+    }
+    renderAdapt(d, age);
+  }
+
+  function renderAdapt(d, age){
+    const box = document.getElementById("healthToday");
+    if(!box) return;
+    if(age == null){
+      box.style.display = "flex";
+      box.innerHTML = `<div class="ht-dot" style="background:#ef4d5d"></div><div><strong>Aucune donnée Garmin</strong><p>Lance une synchro/export pour alimenter l'état du jour.</p></div>`;
+      return;
+    }
+    const r = readiness(d);
+    const v = VERDICT[r.level];
+    const sel = document.getElementById("adaptFatigue");
+    if(sel && !sel.dataset.userSet) sel.value = v.fatigue; // pré-remplit sans écraser un choix manuel
+    const freshTxt = age <= 1 ? "" : ` · données il y a ${age} j`;
+    const notes = r.notes.length ? " — " + r.notes.join(", ") : "";
+    box.style.display = "flex";
+    box.innerHTML = `<div class="ht-dot" style="background:${v.dot}"></div>
+      <div>
+        <strong>État du jour : ${v.label}</strong>${freshTxt}
+        <p>${v.text}${notes}. Fatigue pré-réglée sur « ${FATIGUE_FR[v.fatigue]} » — ajuste si besoin.</p>
+      </div>`;
+  }
+
+  function refreshHealth(manual){
+    const status = document.getElementById("healthSyncStatus");
+    if(READ_TOKEN === "REMPLACE_PAR_TON_READ_TOKEN"){
+      if(status) status.textContent = "READ_TOKEN à configurer";
+      return;
+    }
+    fetch(ENDPOINT + "?token=" + encodeURIComponent(READ_TOKEN), {cache:"no-store"})
+      .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+      .then(d=>{ render(d); if(manual && typeof toast==="function") toast("Données santé à jour ✓"); })
+      .catch(e=>{ if(status) status.textContent = "Lecture impossible"; console.warn("[health]", e.message); });
+  }
+  window.refreshHealth = refreshHealth;
+
+  // si l'utilisateur touche au sélecteur de fatigue, on ne l'écrase plus
+  document.addEventListener("change", e=>{
+    if(e.target && e.target.id === "adaptFatigue") e.target.dataset.userSet = "1";
+  });
+
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", ()=>refreshHealth(false));
+  else refreshHealth(false);
+  setInterval(()=>refreshHealth(false), 30*60*1000); // rafraîchissement léger toutes les 30 min
+})();
 </script>
 
 </body>
