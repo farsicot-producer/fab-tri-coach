@@ -1066,8 +1066,7 @@ textarea{min-height:92px;resize:vertical}
     </div>
     <div class="garmin-card">
       <div class="sync-row"><span class="sync-dot" id="healthDot"></span><div><strong>Garmin Connect</strong><br><span id="healthSyncStatus" style="color:#cbd5e1;font-size:13px">Connexion…</span></div></div>
-      <div id="healthSidebar" style="font-size:13px;color:#cbd5e1;line-height:1.6;margin:0 0 12px"></div>
-      <button class="side-btn" onclick="showView('garmin')">Préparer export</button>
+      <div id="healthSidebar" style="font-size:13px;color:#cbd5e1;line-height:1.6;margin:2px 0 0"></div>
     </div>
   </aside>
 
@@ -1881,269 +1880,169 @@ function exportICS(){
 }
 function escapeICS(s){return String(s).replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
 
-function svgSwim(){
-return `<svg viewBox="0 0 170 90" aria-hidden="true">
-  <path d="M13 66 C32 55 46 75 65 64 S97 54 116 64 S145 74 160 62" stroke="#74b7ff" stroke-width="7" fill="none" stroke-linecap="round"/>
-  <path d="M20 75 C39 65 52 82 71 72 S106 63 126 72 S149 79 162 72" stroke="#d7ecff" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <circle cx="78" cy="40" r="9" fill="#e7b98f"/>
-  <path d="M87 45 C102 48 111 57 124 56" stroke="#58708c" stroke-width="12" fill="none" stroke-linecap="round"/>
-  <path d="M75 48 C61 57 51 60 39 60" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
-</svg>`;
+/* ====================================================================
+   Système de figures unifié (PPG + sports)
+   Une seule fonction de dessin, des poses = jeux de coordonnées.
+   Trait = var(--ink), accent = var(--purple), sol = var(--line).
+   Chaque sport garde sa couleur. ViewBox commun 240x150.
+   ==================================================================== */
+const FIG = "var(--ink)";
+const ACC = "var(--purple)";
+const GND = "var(--line)";
+
+function fgSeg(pts, w, c){
+  return `<polyline points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="${c||FIG}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
-function svgRun(){
-return `<svg viewBox="0 0 170 90" aria-hidden="true">
-  <path class="svg-ground" d="M18 76 H150"/>
-  <circle class="svg-skin" cx="88" cy="22" r="9"/>
-  <path class="svg-hair" d="M80 19c5-9 17-8 22 0-7 0-10 4-15 7-4 2-7 1-7-7z"/>
-  <path class="svg-shirt" d="M78 34 L103 34 L109 53 L88 57 Z"/>
-  <path class="svg-skin" d="M81 38 C69 47 59 52 49 55" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
-  <path class="svg-skin" d="M103 38 C111 48 116 56 126 62" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
-  <path class="svg-short" d="M90 55 L108 57 L103 67 L86 66 Z"/>
-  <path class="svg-skin" d="M91 65 C80 70 73 73 62 77" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
-  <path class="svg-skin" d="M105 65 C112 72 119 76 131 78" stroke="#e7b98f" stroke-width="8" fill="none" stroke-linecap="round"/>
-  <path class="svg-shoe" d="M52 77c8-3 15-1 19 2-4 4-14 5-23 2z"/>
-  <path class="svg-shoe" d="M124 78c8-1 15 2 18 6-8 3-18 2-24-2z"/>
-</svg>`;
+function fgHead(x, y, r, c){
+  return `<circle cx="${x}" cy="${y}" r="${r}" fill="${c||FIG}"/>`;
+}
+function fgRing(x, y, r, w, c){
+  return `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${c||FIG}" stroke-width="${w}"/>`;
+}
+function fgGround(y){
+  return `<line x1="14" y1="${y}" x2="226" y2="${y}" stroke="${GND}" stroke-width="2.5" stroke-linecap="round"/>`;
+}
+function fgWall(x){
+  return `<line x1="${x}" y1="18" x2="${x}" y2="124" stroke="${GND}" stroke-width="2.5" stroke-linecap="round"/>`;
+}
+function fgCue(pts){
+  return `<polyline points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="${ACC}" stroke-width="2.5" stroke-dasharray="6 5" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+function fgArc(d){
+  return `<path d="${d}" fill="none" stroke="${ACC}" stroke-width="2.5" stroke-dasharray="6 5" stroke-linecap="round"/>`;
+}
+function fgArrow(x1, y1, x2, y2){
+  const a = Math.atan2(y2-y1, x2-x1), L = 6;
+  const hx1 = x2 - L*Math.cos(a - 0.5), hy1 = y2 - L*Math.sin(a - 0.5);
+  const hx2 = x2 - L*Math.cos(a + 0.5), hy2 = y2 - L*Math.sin(a + 0.5);
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${ACC}" stroke-width="2.5" stroke-linecap="round"/>`
+       + `<polyline points="${hx1},${hy1} ${x2},${y2} ${hx2},${hy2}" fill="none" stroke="${ACC}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+function fgSvg(inner){
+  return `<svg viewBox="0 0 240 150" aria-hidden="true">${inner}</svg>`;
+}
+
+/* ---- Les 8 poses PPG ---- */
+const POSES = {
+  plank(){ return fgSvg(
+    fgGround(122) +
+    fgSeg([[96,84],[58,90],[30,96],[20,106]], 12) +
+    fgSeg([[150,82],[150,106],[180,110]], 12) +
+    fgSeg([[150,80],[96,84]], 18) +
+    fgHead(172,72,14) +
+    fgCue([[150,80],[96,84],[30,96]])
+  ); },
+  sideplank(){ return fgSvg(
+    fgGround(124) +
+    fgSeg([[112,86],[74,98],[40,110],[30,116]], 12) +
+    fgSeg([[150,68],[146,98],[146,116]], 12) +
+    fgSeg([[150,66],[160,42],[166,20]], 12) +
+    fgSeg([[150,66],[112,86]], 18) +
+    fgHead(176,54,14) +
+    fgCue([[36,112],[112,86],[170,56]])
+  ); },
+  glutebridge(){ return fgSvg(
+    fgGround(124) +
+    fgSeg([[120,84],[86,92],[84,118],[62,120]], 14) +
+    fgSeg([[120,84],[180,112]], 18) +
+    fgSeg([[170,110],[150,120]], 11) +
+    fgHead(198,114,13) +
+    fgArrow(120,108,120,80)
+  ); },
+  birddog(){ return fgSvg(
+    fgGround(120) +
+    fgSeg([[150,80],[150,118]], 12) +
+    fgSeg([[96,82],[96,118]], 13) +
+    fgSeg([[150,76],[190,68]], 11) +
+    fgSeg([[96,78],[48,70]], 13) +
+    fgSeg([[150,78],[96,80]], 18) +
+    fgHead(168,72,13) +
+    fgCue([[190,68],[150,78],[96,80],[48,70]])
+  ); },
+  lunge(){ return fgSvg(
+    fgGround(128) +
+    fgSeg([[120,72],[96,100],[92,124],[110,124]], 13) +
+    fgSeg([[120,72],[150,98],[168,120],[182,120]], 12) +
+    fgSeg([[120,38],[102,62],[96,78]], 11) +
+    fgSeg([[120,38],[138,62],[144,78]], 11) +
+    fgSeg([[120,72],[120,38]], 18) +
+    fgHead(120,18,13) +
+    fgCue([[120,32],[120,72]])
+  ); },
+  calf(){ return fgSvg(
+    fgGround(126) +
+    fgWall(172) +
+    fgSeg([[112,124],[110,114],[108,86],[110,60]], 15) +
+    fgSeg([[110,60],[110,26]], 18) +
+    fgSeg([[110,30],[158,42]], 11) +
+    fgSeg([[110,34],[96,58]], 10) +
+    fgHead(110,14,13) +
+    fgArrow(88,114,88,88)
+  ); },
+  deadbug(){ return fgSvg(
+    fgGround(120) +
+    fgSeg([[150,104],[100,106]], 18) +
+    fgSeg([[150,102],[150,60]], 11) +
+    fgSeg([[150,104],[182,98]], 11) +
+    fgSeg([[100,106],[100,66],[72,60]], 14) +
+    fgSeg([[100,108],[40,98]], 14) +
+    fgHead(170,100,13) +
+    fgArrow(150,58,150,42) +
+    fgArrow(40,98,24,92)
+  ); },
+  hip90(){ return fgSvg(
+    fgGround(126) +
+    fgSeg([[108,104],[64,104],[48,118]], 13) +
+    fgSeg([[112,104],[154,104],[172,118]], 13) +
+    fgSeg([[106,68],[74,90]], 11) +
+    fgSeg([[106,66],[140,82]], 11) +
+    fgSeg([[106,66],[110,104]], 18) +
+    fgHead(104,48,13) +
+    fgArc("M80 98 Q110 88 140 96")
+  ); }
+};
+
+function svgExercise(id){
+  return (POSES[id] || POSES.plank)();
+}
+
+/* ---- Icônes de sport (même système, couleur par sport) ---- */
+function svgSwim(){
+  const c = "var(--blue)";
+  return fgSvg(
+    fgSeg([[20,118],[55,110],[90,118],[125,110],[160,118],[195,110],[220,116]], 3, GND) +
+    fgSeg([[28,132],[63,124],[98,132],[133,124],[168,132],[203,124]], 2.5, GND) +
+    fgSeg([[70,62],[110,78]], 14, c) +
+    fgSeg([[110,78],[150,86],[182,80]], 13, c) +
+    fgSeg([[78,66],[52,46]], 11, c) +
+    fgSeg([[100,74],[128,52]], 11, c) +
+    fgHead(64,58,12, c)
+  );
 }
 function svgBike(){
-return `<svg viewBox="0 0 170 90" aria-hidden="true">
-  <circle cx="47" cy="67" r="20" fill="none" stroke="#111827" stroke-width="4"/>
-  <circle cx="124" cy="67" r="20" fill="none" stroke="#111827" stroke-width="4"/>
-  <path d="M47 67 L75 39 L96 67 L63 67 L75 39 L112 39 L124 67" fill="none" stroke="#2e3d51" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle class="svg-skin" cx="87" cy="17" r="8"/>
-  <path class="svg-hair" d="M80 15c5-8 16-7 20 1-6 0-9 4-14 6-4 1-6 0-6-7z"/>
-  <path class="svg-shirt" d="M77 28 C86 24 98 27 108 37 L99 47 C88 39 80 38 69 39 Z"/>
-  <path class="svg-skin" d="M101 38 C111 39 119 40 126 43" stroke="#e7b98f" stroke-width="7" fill="none" stroke-linecap="round"/>
-  <path class="svg-short" d="M70 39 L88 43 L82 58 L61 52 Z"/>
-  <path class="svg-skin" d="M82 55 C91 62 97 66 104 67" stroke="#e7b98f" stroke-width="7" fill="none" stroke-linecap="round"/>
-  <path class="svg-skin" d="M64 52 C58 58 54 63 49 67" stroke="#e7b98f" stroke-width="7" fill="none" stroke-linecap="round"/>
-</svg>`;
+  const c = "var(--green)";
+  return fgSvg(
+    fgRing(62,108,24,4, c) + fgRing(168,108,24,4, c) +
+    fgSeg([[62,108],[100,108],[120,70],[150,108]], 3.5, c) +
+    fgSeg([[120,70],[150,72],[168,108]], 3.5, c) +
+    fgSeg([[120,70],[100,108]], 3.5, c) +
+    fgSeg([[150,56],[120,72]], 13, c) +
+    fgSeg([[140,60],[170,66]], 10, c) +
+    fgSeg([[122,74],[112,104]], 11, c) +
+    fgHead(155,46,11, c)
+  );
 }
-function svgExercise(id){
-  const map = {plank:svgPlank, sideplank:svgSidePlank, glutebridge:svgGluteBridge, birddog:svgBirdDog, lunge:svgLunge, calf:svgCalf, deadbug:svgDeadBug, hip90:svgHip90};
-  return (map[id] || svgPlank)();
-}
-function svgPlank(){
-/* Planche : vue de côté, corps horizontal sur avant-bras, ligne droite épaules-chevilles */
-return `<svg viewBox="0 0 240 120" aria-hidden="true">
-  <defs><style>.pp{fill:#3d5a80}.ps{fill:#e07b54}.ph{fill:#1a1a2e}.pg{stroke:#c8d8e8;stroke-width:2.5;stroke-linecap:round;fill:none}</style></defs>
-  <line class="pg" x1="18" y1="100" x2="222" y2="100"/>
-  <!-- Sol contact coudes -->
-  <ellipse cx="48" cy="99" rx="12" ry="4" fill="#c8d8e8" opacity=".5"/>
-  <!-- Pieds / chaussures -->
-  <ellipse cx="32" cy="96" rx="14" ry="6" fill="#2b3a55" rx="14"/>
-  <rect x="24" y="90" width="18" height="8" rx="4" fill="#2b3a55"/>
-  <!-- Jambes -->
-  <rect x="30" y="74" width="100" height="20" rx="10" fill="#3d5a80"/>
-  <!-- Shorts -->
-  <rect x="100" y="72" width="32" height="22" rx="8" fill="#2b3a55"/>
-  <!-- Torse -->
-  <rect x="128" y="66" width="68" height="24" rx="11" fill="#3d5a80"/>
-  <!-- Bras avant / coude appui -->
-  <rect x="44" y="82" width="52" height="14" rx="7" fill="#e07b54"/>
-  <!-- Avant-bras au sol -->
-  <rect x="44" y="92" width="16" height="10" rx="5" fill="#e07b54"/>
-  <!-- Tête -->
-  <circle class="ps" cx="208" cy="64" r="14"/>
-  <path class="ph" d="M196 57 C202 46 220 47 224 60 C215 58 212 68 204 71 C199 71 196 66 196 57Z"/>
-  <!-- Ligne corps (gainage) -->
-  <line x1="38" y1="84" x2="206" y2="70" stroke="#6f55f2" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round"/>
-</svg>`;
-}
-function svgSidePlank(){
-/* Planche latérale : vue légèrement en angle, corps aligné, bras tendu vers le haut */
-return `<svg viewBox="0 0 240 120" aria-hidden="true">
-  <defs><style>.pp{fill:#3d5a80}.ps{fill:#e07b54}.ph{fill:#1a1a2e}.pg{stroke:#c8d8e8;stroke-width:2.5;stroke-linecap:round;fill:none}</style></defs>
-  <line x1="18" y1="104" x2="222" y2="104" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Pied au sol -->
-  <rect x="22" y="96" width="22" height="9" rx="5" fill="#2b3a55"/>
-  <!-- Corps latéral - jambes -->
-  <rect x="30" y="78" width="100" height="22" rx="11" fill="#3d5a80"/>
-  <!-- Hanche / shorts -->
-  <rect x="100" y="74" width="34" height="24" rx="10" fill="#2b3a55"/>
-  <!-- Torse -->
-  <rect x="130" y="60" width="64" height="30" rx="13" fill="#3d5a80"/>
-  <!-- Avant-bras appui au sol -->
-  <rect x="30" y="90" width="52" height="13" rx="6" fill="#e07b54"/>
-  <!-- Bras libre levé -->
-  <line x1="168" y1="68" x2="178" y2="28" stroke="#e07b54" stroke-width="13" stroke-linecap="round"/>
-  <!-- Tête -->
-  <circle cx="200" cy="56" r="14" fill="#e07b54"/>
-  <path fill="#1a1a2e" d="M188 49 C195 38 213 40 217 53 C208 51 205 62 197 65 C192 65 188 60 188 49Z"/>
-  <!-- Ligne corps -->
-  <line x1="34" y1="89" x2="198" y2="60" stroke="#6f55f2" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round"/>
-</svg>`;
-}
-function svgGluteBridge(){
-/* Pont fessier : allongé sur le dos, hanches levées, genoux fléchis, pieds à plat */
-return `<svg viewBox="0 0 240 120" aria-hidden="true">
-  <line x1="14" y1="106" x2="226" y2="106" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Pieds / chaussures -->
-  <rect x="28" y="95" width="22" height="10" rx="5" fill="#2b3a55"/>
-  <rect x="62" y="95" width="22" height="10" rx="5" fill="#2b3a55"/>
-  <!-- Mollets -->
-  <line x1="38" y1="95" x2="48" y2="72" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
-  <line x1="73" y1="95" x2="80" y2="72" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
-  <!-- Cuisses remontées -->
-  <line x1="47" y1="72" x2="92" y2="56" stroke="#3d5a80" stroke-width="17" stroke-linecap="round"/>
-  <line x1="80" y1="72" x2="100" y2="57" stroke="#3d5a80" stroke-width="17" stroke-linecap="round"/>
-  <!-- Bassin levé (arc) -->
-  <path d="M86 60 C96 40 138 38 148 62" fill="#2b3a55" stroke="none"/>
-  <!-- Dos au sol -->
-  <rect x="140" y="80" width="64" height="18" rx="9" fill="#3d5a80"/>
-  <!-- Bras au sol -->
-  <line x1="148" y1="92" x2="118" y2="102" stroke="#e07b54" stroke-width="12" stroke-linecap="round"/>
-  <line x1="190" y1="92" x2="218" y2="102" stroke="#e07b54" stroke-width="12" stroke-linecap="round"/>
-  <!-- Tête au sol -->
-  <circle cx="210" cy="88" r="13" fill="#e07b54"/>
-  <path fill="#1a1a2e" d="M199 80 C206 70 222 72 226 83 C218 81 215 90 208 93 C203 93 199 88 199 80Z"/>
-  <!-- Flèche hanches -->
-  <line x1="116" y1="49" x2="116" y2="30" stroke="#1d9a57" stroke-width="3" stroke-linecap="round" marker-end="url(#arrowU)"/>
-  <defs><marker id="arrowU" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 8 L4 0 L8 8" fill="#1d9a57"/></marker></defs>
-</svg>`;
-}
-function svgBirdDog(){
-/* Bird dog : à 4 pattes, bras droit tendu en avant, jambe gauche tendue en arrière */
-return `<svg viewBox="0 0 240 120" aria-hidden="true">
-  <line x1="14" y1="108" x2="226" y2="108" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Main gauche appui -->
-  <ellipse cx="38" cy="105" rx="10" ry="5" fill="#e07b54"/>
-  <!-- Bras gauche appui -->
-  <line x1="38" y1="100" x2="72" y2="72" stroke="#e07b54" stroke-width="13" stroke-linecap="round"/>
-  <!-- Genou droit appui -->
-  <ellipse cx="140" cy="106" rx="12" ry="5" fill="#2b3a55"/>
-  <!-- Jambe droite au sol -->
-  <line x1="140" y1="102" x2="118" y2="78" stroke="#3d5a80" stroke-width="15" stroke-linecap="round"/>
-  <!-- Torse -->
-  <rect x="68" y="58" width="72" height="26" rx="12" fill="#3d5a80"/>
-  <!-- Shorts -->
-  <rect x="108" y="56" width="34" height="28" rx="10" fill="#2b3a55"/>
-  <!-- Tête -->
-  <circle cx="74" cy="56" r="13" fill="#e07b54"/>
-  <path fill="#1a1a2e" d="M63 50 C69 39 86 41 90 52 C82 50 79 60 72 62 C67 62 63 58 63 50Z"/>
-  <!-- Bras droit tendu en avant -->
-  <line x1="72" y1="66" x2="30" y2="52" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
-  <!-- Jambe gauche tendue en arrière -->
-  <line x1="140" y1="70" x2="196" y2="52" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
-  <ellipse cx="198" cy="50" rx="10" ry="6" fill="#2b3a55"/>
-  <!-- Flèches extension -->
-  <line x1="22" y1="50" x2="10" y2="44" stroke="#6f55f2" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="204" y1="49" x2="216" y2="43" stroke="#6f55f2" stroke-width="2.5" stroke-linecap="round"/>
-</svg>`;
-}
-function svgLunge(){
-/* Fente arrière : jambe avant fléchie, jambe arrière au sol, buste droit */
-return `<svg viewBox="0 0 240 130" aria-hidden="true">
-  <line x1="16" y1="114" x2="224" y2="114" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Pied avant -->
-  <rect x="72" y="106" width="26" height="10" rx="5" fill="#2b3a55"/>
-  <!-- Genou arrière au sol -->
-  <ellipse cx="160" cy="112" rx="14" ry="6" fill="#2b3a55"/>
-  <!-- Mollet avant -->
-  <line x1="85" y1="108" x2="88" y2="80" stroke="#3d5a80" stroke-width="18" stroke-linecap="round"/>
-  <!-- Cuisse avant (fléchie) -->
-  <line x1="88" y1="80" x2="118" y2="60" stroke="#3d5a80" stroke-width="19" stroke-linecap="round"/>
-  <!-- Shorts -->
-  <ellipse cx="122" cy="58" rx="18" ry="14" fill="#2b3a55"/>
-  <!-- Cuisse arrière -->
-  <line x1="126" y1="64" x2="158" y2="90" stroke="#3d5a80" stroke-width="18" stroke-linecap="round"/>
-  <!-- Mollet arrière -->
-  <line x1="158" y1="90" x2="156" y2="112" stroke="#3d5a80" stroke-width="15" stroke-linecap="round"/>
-  <!-- Torse droit -->
-  <rect x="106" y="22" width="26" height="44" rx="12" fill="#3d5a80"/>
-  <!-- Bras gauche le long du corps -->
-  <line x1="108" y1="36" x2="90" y2="62" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
-  <!-- Bras droit le long du corps -->
-  <line x1="130" y1="36" x2="148" y2="62" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
-  <!-- Tête -->
-  <circle cx="119" cy="16" r="13" fill="#e07b54"/>
-  <path fill="#1a1a2e" d="M108 9 C115 -1 132 1 136 13 C127 11 124 21 116 24 C111 24 108 19 108 9Z"/>
-  <!-- Flèche descente -->
-  <line x1="152" y1="52" x2="152" y2="72" stroke="#d66b00" stroke-width="2.5" stroke-linecap="round"/>
-</svg>`;
-}
-function svgCalf(){
-/* Mollets debout : debout sur pointe de pieds, buste droit, flèche montée */
-return `<svg viewBox="0 0 240 130" aria-hidden="true">
-  <line x1="30" y1="116" x2="210" y2="116" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Chaussures - pointe de pied -->
-  <path d="M88 110 C96 106 108 107 116 112 C110 118 96 119 86 115Z" fill="#2b3a55"/>
-  <path d="M122 110 C130 106 142 107 150 112 C144 118 130 119 120 115Z" fill="#2b3a55"/>
-  <!-- Mollets (talon levé, pointé) -->
-  <line x1="96" y1="108" x2="96" y2="82" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
-  <line x1="136" y1="108" x2="136" y2="82" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
-  <!-- Cuisses -->
-  <line x1="96" y1="82" x2="100" y2="54" stroke="#3d5a80" stroke-width="19" stroke-linecap="round"/>
-  <line x1="136" y1="82" x2="132" y2="54" stroke="#3d5a80" stroke-width="19" stroke-linecap="round"/>
-  <!-- Shorts -->
-  <rect x="86" y="48" width="66" height="24" rx="11" fill="#2b3a55"/>
-  <!-- Torse -->
-  <rect x="95" y="18" width="48" height="36" rx="12" fill="#3d5a80"/>
-  <!-- Bras (main sur support mur) -->
-  <line x1="96" y1="32" x2="68" y2="42" stroke="#e07b54" stroke-width="10" stroke-linecap="round"/>
-  <line x1="142" y1="32" x2="170" y2="42" stroke="#e07b54" stroke-width="10" stroke-linecap="round"/>
-  <!-- Tête -->
-  <circle cx="119" cy="12" r="12" fill="#e07b54"/>
-  <path fill="#1a1a2e" d="M108 6 C115 -4 131 -2 135 10 C127 8 124 18 116 20 C111 20 108 15 108 6Z"/>
-  <!-- Flèche montée -->
-  <line x1="182" y1="88" x2="182" y2="52" stroke="#1d9a57" stroke-width="3" stroke-linecap="round"/>
-  <polygon points="176,54 182,40 188,54" fill="#1d9a57"/>
-  <line x1="182" y1="108" x2="182" y2="94" stroke="#e07b54" stroke-width="3" stroke-dasharray="4 3" stroke-linecap="round"/>
-</svg>`;
-}
-function svgDeadBug(){
-/* Dead bug : allongé sur le dos, bras et jambe opposés tendus vers le haut / bas */
-return `<svg viewBox="0 0 240 120" aria-hidden="true">
-  <line x1="14" y1="110" x2="226" y2="110" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Dos au sol -->
-  <rect x="58" y="84" width="110" height="18" rx="9" fill="#3d5a80"/>
-  <!-- Shorts -->
-  <rect x="98" y="82" width="36" height="22" rx="9" fill="#2b3a55"/>
-  <!-- Tête au sol -->
-  <circle cx="60" cy="85" r="13" fill="#e07b54"/>
-  <path fill="#1a1a2e" d="M50 78 C56 67 72 69 76 80 C68 78 65 88 58 90 C53 90 50 86 50 78Z"/>
-  <!-- Bras droit tendu en haut (vers la tête) -->
-  <line x1="96" y1="86" x2="80" y2="52" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
-  <ellipse cx="78" cy="47" rx="8" ry="6" fill="#e07b54"/>
-  <!-- Bras gauche au sol -->
-  <line x1="140" y1="86" x2="172" y2="100" stroke="#e07b54" stroke-width="11" stroke-linecap="round"/>
-  <!-- Jambe droite fléchie (genou relevé) -->
-  <line x1="116" y1="86" x2="116" y2="58" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
-  <line x1="116" y1="58" x2="98" y2="42" stroke="#3d5a80" stroke-width="13" stroke-linecap="round"/>
-  <ellipse cx="95" cy="39" rx="9" ry="6" fill="#2b3a55"/>
-  <!-- Jambe gauche tendue -->
-  <line x1="128" y1="88" x2="190" y2="72" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
-  <ellipse cx="193" cy="70" rx="12" ry="7" fill="#2b3a55"/>
-  <!-- Flèches opposés -->
-  <line x1="82" y1="42" x2="72" y2="30" stroke="#6f55f2" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="194" y1="68" x2="208" y2="58" stroke="#6f55f2" stroke-width="2.5" stroke-linecap="round"/>
-</svg>`;
-}
-function svgHip90(){
-/* Mobilité 90/90 : assis au sol, 2 jambes en angle 90°, rotation de la hanche */
-return `<svg viewBox="0 0 240 130" aria-hidden="true">
-  <line x1="16" y1="112" x2="224" y2="112" stroke="#c8d8e8" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Jambe avant (fléchie à 90° devant) -->
-  <line x1="100" y1="96" x2="60" y2="96" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
-  <line x1="60" y1="96" x2="42" y2="110" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
-  <ellipse cx="36" cy="110" rx="12" ry="6" fill="#2b3a55"/>
-  <!-- Jambe arrière (fléchie à 90° côté) -->
-  <line x1="110" y1="96" x2="152" y2="96" stroke="#3d5a80" stroke-width="16" stroke-linecap="round"/>
-  <line x1="152" y1="96" x2="172" y2="110" stroke="#3d5a80" stroke-width="14" stroke-linecap="round"/>
-  <ellipse cx="178" cy="110" rx="12" ry="6" fill="#2b3a55"/>
-  <!-- Bassin au sol -->
-  <ellipse cx="108" cy="98" rx="22" ry="12" fill="#2b3a55"/>
-  <!-- Torse incliné légèrement en avant (rotation) -->
-  <line x1="108" y1="92" x2="104" y2="52" stroke="#3d5a80" stroke-width="24" stroke-linecap="round"/>
-  <!-- Bras pour s'aider -->
-  <line x1="96" y1="68" x2="68" y2="82" stroke="#e07b54" stroke-width="10" stroke-linecap="round"/>
-  <line x1="114" y1="64" x2="140" y2="52" stroke="#e07b54" stroke-width="10" stroke-linecap="round"/>
-  <!-- Tête -->
-  <circle cx="104" cy="40" r="13" fill="#e07b54"/>
-  <path fill="#1a1a2e" d="M93 33 C100 22 117 24 120 36 C112 34 109 44 102 46 C97 46 93 41 93 33Z"/>
-  <!-- Arc rotation hanche -->
-  <path d="M80 88 C82 70 126 68 130 86" stroke="#6f55f2" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="7 4"/>
-</svg>`;
+function svgRun(){
+  const c = "var(--orange)";
+  return fgSvg(
+    fgGround(128) +
+    fgSeg([[120,44],[116,74]], 15, c) +
+    fgSeg([[116,74],[92,98],[80,120]], 12, c) +
+    fgSeg([[116,74],[146,92],[150,116]], 12, c) +
+    fgSeg([[120,52],[96,66]], 10, c) +
+    fgSeg([[118,54],[148,44]], 10, c) +
+    fgHead(124,32,13, c)
+  );
 }
 // Fermeture des modales avec la touche Échap
 document.addEventListener("keydown", e=>{
@@ -2423,17 +2322,25 @@ if ("serviceWorker" in navigator) {
       else status.textContent = `Dernière donnée il y a ${age} j`;
     }
     if(side){
-      const parts = [];
-      if(typeof d.sleep_h === "number") parts.push(`Sommeil <strong>${d.sleep_h} h</strong>`);
+      const row = (label, value) =>
+        `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:3px 0;border-top:1px solid rgba(148,163,184,.14)">`
+        + `<span style="color:#94a3b8">${label}</span><span style="color:#e7eef7;text-align:right">${value}</span></div>`;
+      const rows = [];
+      if(typeof d.sleep_h === "number") rows.push(row("Sommeil", `<strong>${d.sleep_h}</strong> h`));
       if(typeof d.resting_hr === "number"){
-        let s = `FC repos <strong>${d.resting_hr}</strong>`;
+        let v = `<strong>${d.resting_hr}</strong> <span style="color:#94a3b8;font-size:12px">bpm</span>`;
         if(typeof d.resting_hr_baseline_7d === "number"){
           const delta = Math.round((d.resting_hr - d.resting_hr_baseline_7d)*10)/10;
-          s += ` <span style="opacity:.8">(base ${d.resting_hr_baseline_7d}${delta>=0?` +${delta}`:` ${delta}`})</span>`;
+          const col = delta > 0 ? "#ef8d8d" : (delta < 0 ? "#7fd6a8" : "#94a3b8");
+          v += ` <span style="color:${col};font-size:12px">base ${d.resting_hr_baseline_7d} ${delta>=0?`+${delta}`:delta}</span>`;
         }
-        parts.push(s);
+        rows.push(row("FC repos", v));
       }
-      side.innerHTML = parts.length ? parts.join("<br>") : "Pas de FC/sommeil récents.";
+      if(typeof d.hrv === "number") rows.push(row("VFC", `<strong>${d.hrv}</strong> <span style="color:#94a3b8;font-size:12px">ms</span>`));
+      if(typeof d.steps === "number") rows.push(row("Pas", `<strong>${d.steps.toLocaleString("fr-FR")}</strong>`));
+      side.innerHTML = rows.length
+        ? rows.join("")
+        : `<span style="color:#94a3b8">Pas de données récentes.</span>`;
     }
     renderAdapt(d, age);
   }
