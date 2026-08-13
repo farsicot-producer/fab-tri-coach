@@ -1087,22 +1087,6 @@ textarea{min-height:92px;resize:vertical}
 .sd-med label{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink);cursor:pointer}
 .sd-med input{accent-color:var(--sd-rouge);width:16px;height:16px;flex-shrink:0}
 .sd-med .cap-note{font-size:11px;color:var(--muted);margin:7px 0 0;line-height:1.4}
-.sd-weekly{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
-.sd-weekly>summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--muted);list-style:none;display:flex;align-items:center;gap:6px;user-select:none}
-.sd-weekly>summary::-webkit-details-marker{display:none}
-.sd-weekly>summary::before{content:"\25B8";transition:transform .15s;color:var(--sd-faint)}
-.sd-weekly[open]>summary::before{transform:rotate(90deg)}
-.sd-voyant{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
-.sd-voyant:first-of-type{border-top:0;margin-top:8px}
-.sd-voyant .vy-lbl{font-size:12.5px;color:var(--ink)}
-.sd-voyant .vy-lbl small{display:block;color:var(--sd-faint);font-size:10.5px;margin-top:1px}
-.sd-seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.sd-seg button{border:0;background:var(--white);color:var(--sd-neutre);width:26px;height:24px;cursor:pointer;font-size:13px;line-height:1}
-.sd-seg button[aria-pressed="true"][data-v="vert"]{background:var(--sd-vert);color:#fff}
-.sd-seg button[aria-pressed="true"][data-v="orange"]{background:var(--sd-orange);color:#fff}
-.sd-seg button[aria-pressed="true"][data-v="rouge"]{background:var(--sd-rouge);color:#fff}
-.sd-weekly-out{margin-top:10px;font-size:12.5px;line-height:1.4;padding:9px 11px;border-radius:10px;background:var(--sd-inset);border:1px solid var(--line)}
-.sd-weekly-out b{color:var(--ink)}
 .sd-foot{margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .sd-ref{font-size:11.5px;color:var(--muted)}
 .sd-ref summary{cursor:pointer;list-style:none} .sd-ref summary::-webkit-details-marker{display:none}
@@ -1134,7 +1118,7 @@ textarea{min-height:92px;resize:vertical}
       <button data-view="sessions"><span class="ico">◴</span>Séances</button>
       <button data-view="progress" class="mobile-hide"><span class="ico">▥</span>Progression</button>
       <button data-view="adapt"><span class="ico">⚙</span>Adaptation</button>
-      <button data-view="ppg" class="mobile-hide"><span class="ico">⌁</span>PPG visuelle</button>
+      <button data-view="ppg" class="mobile-hide"><span class="ico">⌁</span>PPG</button>
       <button data-view="settings"><span class="ico">◇</span>Réglages</button>
     </div>
     <div class="garmin-card">
@@ -1149,9 +1133,6 @@ textarea{min-height:92px;resize:vertical}
         <h1>Programme coaching tri 2026</h1>
         <div class="eyebrow">Plan long terme en 4 blocs • 30 semaines • navigation par bloc, semaine et séance</div>
       </div>
-      <div class="toolbar">
-        <button class="btn primary" onclick="showView('adapt')">Ajuster le plan</button>
-      </div>
     </div>
 
     <section class="cards" id="blockCards"></section>
@@ -1160,38 +1141,6 @@ textarea{min-height:92px;resize:vertical}
 
 
     <section class="section active" id="view-overview">
-      <section class="sd" id="suivi-data" aria-label="Suivi data">
-        <div class="sd-top">
-          <h2 class="sd-title">Suivi data<small id="sd-datestamp">&mdash;</small></h2>
-          <div class="sd-sources">
-            <span class="sd-badge" id="sd-src-recup" data-state="down"><span class="dot"></span><span class="txt">R&eacute;cup &mdash;</span></span>
-            <span class="sd-badge" id="sd-src-charge" data-state="down"><span class="dot"></span><span class="txt">Charge &mdash;</span></span>
-          </div>
-        </div>
-        <div class="sd-verdict" id="sd-verdict" data-lvl="na">
-          <span class="flag"></span>
-          <div class="v-body"><div class="v-head" id="sd-verdict-head">Lecture en cours&hellip;</div><div class="v-sub" id="sd-verdict-sub"></div></div>
-        </div>
-        <div class="sd-branches">
-          <div class="sd-branch" data-branch="readiness"><h3>R&eacute;cup&eacute;ration</h3><p class="b-why">Ce que ton corps a absorb&eacute; cette nuit.</p><div id="sd-readiness"></div></div>
-          <div class="sd-branch" data-branch="charge"><h3>Charge</h3><p class="b-why">Ce que tu as encaiss&eacute;, tendance 7&nbsp;j / 28&nbsp;j.</p><div id="sd-charge"></div></div>
-        </div>
-        <div class="sd-med" id="sd-med">
-          <label><input type="checkbox" id="sd-symptom"> Sympt&ocirc;mes neuro / mollet gauche pr&eacute;sents aujourd'hui</label>
-          <p class="cap-note" id="sd-med-note"></p>
-        </div>
-        <details class="sd-weekly" id="sd-weekly">
-          <summary>Revue hebdo &mdash; grille 4 voyants</summary>
-          <div id="sd-voyants"></div>
-          <div class="sd-weekly-out" id="sd-weekly-out">Renseigne les 4 voyants pour obtenir la d&eacute;cision de semaine.</div>
-        </details>
-        <div class="sd-foot">
-          <details class="sd-ref"><summary>Rep&egrave;res &amp; bonnes pratiques 50+</summary>
-            <div class="ref-body"><b>80/20</b> : ~75&nbsp;% du volume en Z2.<br><b>Progression</b> : +10&nbsp;% max/sem ; 3&nbsp;sem. charg&eacute;es + 1 d&eacute;charge.<br><b>Charge aiguë/chronique</b> : 0,8&ndash;1,3 vert &middot; 1,3&ndash;1,5 surveillance &middot; &gt;1,5 risque.<br><b>FC repos</b> : +&gt;10&nbsp;bpm/7&nbsp;j = signal fort.</div>
-          </details>
-          <a class="sd-ext" href="https://connect.garmin.com/modern/" target="_blank" rel="noopener">Body Battery &middot; VO&#8322;max &middot; Training Status &rarr;</a>
-        </div>
-      </section>
       <div class="panel calendar-panel">
         <div class="section-head">
           <div>
@@ -1228,6 +1177,8 @@ textarea{min-height:92px;resize:vertical}
           </div>
         </div>
       </div>
+
+      <div class="sd-mount"></div>
 
       <div class="panel metric-panel" style="margin-top:16px">
         <h3>Ajuster mon programme</h3>
@@ -1275,6 +1226,8 @@ textarea{min-height:92px;resize:vertical}
         </div>
         <div id="blockProgressBars" style="display:grid;gap:12px;margin-top:16px"></div>
       </div>
+
+      <div class="sd-mount" style="margin-top:16px"></div>
     </section>
 
     <section class="section" id="view-adapt">
@@ -1326,7 +1279,7 @@ textarea{min-height:92px;resize:vertical}
     <section class="section" id="view-ppg">
       <div class="panel metric-panel">
         <div class="section-head">
-          <div><h2>PPG visuelle</h2><p>Graphisme flat inspiré de ton exemple : silhouettes de profil, couleurs simples, consignes très courtes.</p></div>
+          <div><h2>PPG</h2><p>Graphisme flat inspiré de ton exemple : silhouettes de profil, couleurs simples, consignes très courtes.</p></div>
           <button class="btn" onclick="selectPPGSession()">Voir une séance PPG</button>
         </div>
         <div class="library-grid" id="ppgLibrary"></div>
@@ -2440,190 +2393,191 @@ if ("serviceWorker" in navigator) {
 </script>
 
 <script>
-/* ===== Module « Suivi data » — cockpit récupération + charge ===== */
+/* ===== Module « Suivi data » — cockpit récupération + charge =====
+   Monté sur chaque <div class="sd-mount"> (vue d'ensemble + progression).
+   Une seule logique, N instances : pas d'id dupliqué. */
 (function(){
   "use strict";
-  const $ = s => document.querySelector(s);
-  if(!$("#suivi-data")) return;
+  const mounts = document.querySelectorAll(".sd-mount");
+  if(!mounts.length) return;
 
-  // ── Gardes-fous terminaux (édite ces deux dates) ──
-  const CLEARANCE_CARDIAQUE = "2019-01-01"; // dernière clairance cardio
+  // ── Garde-fou terminal (édite cette date) ──
+  const CLEARANCE_CARDIAQUE = "2019-01-01";
   const MOIS_CLEARANCE_MAX = 12;
 
-  // Seuils (le corps de la « note » distillé) — tunables ici uniquement.
+  // Seuils — tunables ici uniquement.
   const SEUILS = {
-    sleep:    { vert:6.5, orange:6.0 },              // heures absolues
-    fcRepos:  { vert:3,   orange:5   },              // écart FC repos vs base 7 j
-    acwr:     { vert:[0.8,1.3], orange:[1.3,1.5] },
-    monotony: { vert:1.5, orange:2.0 },
-    hrv:      { vert:-8,  orange:-15 }               // écart HRV vs base 7 j (ms)
+    sleep:    { vert:6.5, orange:6.0 },   // heures absolues
+    sleepQ:   { vert:70,  orange:50  },   // score/qualité de sommeil (0-100)
+    fcRepos:  { vert:3,   orange:5   },   // écart FC repos vs base 7 j
+    hrv:      { vert:-8,  orange:-15 },   // écart VFC vs base 7 j (ms)
+    tsb:      { vert:-10, orange:-25 }    // forme - fatigue (CTL-ATL)
   };
-  const NIV = {vert:0, orange:1, rouge:2, na:-1};
-  const pire = (a,b)=> NIV[a] >= NIV[b] ? a : b;
-  const fmt  = (n,d=1)=> n==null ? "—" : (Math.round(n*10**d)/10**d).toLocaleString("fr-FR");
-  const daysSince = iso => Math.floor((Date.now()-new Date(iso))/864e5);
+  const NIV={vert:0,orange:1,rouge:2,na:-1};
+  const pire=(a,b)=> NIV[a]>=NIV[b]?a:b;
+  const fmt=(n,d=1)=> n==null?"—":(Math.round(n*10**d)/10**d).toLocaleString("fr-FR");
+  const daysSince=iso=>Math.floor((Date.now()-new Date(iso))/864e5);
 
-  const state = { rLevels:[], cLevels:[] };
+  const TPL = `
+    <div class="sd-top">
+      <h2 class="sd-title">Suivi data<small data-el="datestamp">&mdash;</small></h2>
+      <div class="sd-sources">
+        <span class="sd-badge" data-el="src-recup" data-state="down"><span class="dot"></span><span class="txt">R&eacute;cup &mdash;</span></span>
+        <span class="sd-badge" data-el="src-charge" data-state="down"><span class="dot"></span><span class="txt">Charge &mdash;</span></span>
+      </div>
+    </div>
+    <div class="sd-verdict" data-el="verdict" data-lvl="na">
+      <span class="flag"></span>
+      <div class="v-body"><div class="v-head" data-el="v-head">Lecture en cours&hellip;</div><div class="v-sub" data-el="v-sub"></div></div>
+    </div>
+    <div class="sd-branches">
+      <div class="sd-branch" data-branch="readiness"><h3>R&eacute;cup&eacute;ration</h3><p class="b-why">Ce que ton corps a absorb&eacute; cette nuit.</p><div data-el="readiness"></div></div>
+      <div class="sd-branch" data-branch="charge"><h3>Charge</h3><p class="b-why">Charge 7&nbsp;j, forme et fatigue (intervals.icu).</p><div data-el="charge"></div></div>
+    </div>
+    <div class="sd-med" data-el="med">
+      <label><input type="checkbox" data-el="symptom"> Sympt&ocirc;mes neuro / mollet gauche pr&eacute;sents aujourd'hui</label>
+      <p class="cap-note" data-el="med-note"></p>
+    </div>
+    <div class="sd-foot">
+      <details class="sd-ref"><summary>Rep&egrave;res &amp; bonnes pratiques 50+</summary>
+        <div class="ref-body"><b>80/20</b> : ~75&nbsp;% du volume en Z2.<br><b>Progression</b> : +10&nbsp;% max/sem ; 3&nbsp;sem. charg&eacute;es + 1 d&eacute;charge.<br><b>Forme &minus; fatigue</b> : &gt;&minus;10 frais &middot; &minus;10 &agrave; &minus;25 charg&eacute; &middot; &lt;&minus;25 tr&egrave;s fatigu&eacute;.<br><b>FC repos</b> : +&gt;10&nbsp;bpm/7&nbsp;j = signal fort.</div>
+      </details>
+      <a class="sd-ext" href="https://intervals.icu/" target="_blank" rel="noopener">Ouvrir intervals.icu &rarr;</a>
+    </div>`;
+
+  // Instancie le template sur chaque point de montage
+  const inst=[];
+  mounts.forEach(m=>{
+    const sec=document.createElement("section");
+    sec.className="sd"; sec.setAttribute("aria-label","Suivi data");
+    sec.innerHTML=TPL;
+    m.appendChild(sec);
+    const el=n=>sec.querySelector(`[data-el="${n}"]`);
+    const o={sec, el, rLevels:[], cLevels:[]};
+    el("symptom").addEventListener("change",()=>{ o.symptom=el("symptom").checked; verdict(o); syncSymptom(o); });
+    inst.push(o);
+  });
+  function syncSymptom(src){ inst.forEach(o=>{ if(o!==src){ o.symptom=src.symptom; o.el("symptom").checked=src.symptom; verdict(o);} }); }
 
   function row(lbl,val,unit,lvl,delta,title){
     return `<div class="sd-row" data-lvl="${lvl}" title="${title||''}">`
-      + `<span class="lbl">${lbl}</span>`
-      + `<span class="val">${val}${unit?`<span class="u">${unit}</span>`:''}</span>`
-      + `<span class="delta">${delta||''}</span></div>`;
+      +`<span class="lbl">${lbl}</span>`
+      +`<span class="val">${val}${unit?`<span class="u">${unit}</span>`:''}</span>`
+      +`<span class="delta">${delta||''}</span></div>`;
   }
 
-  // ── Branche RÉCUPÉRATION (schéma réel : sleep_h / resting_hr / resting_hr_baseline_7d / hrv) ──
-  function setReadiness(d){
-    const box = $("#sd-readiness"), badge = $("#sd-src-recup");
-    state.rLevels = [];
-    if(!d){
-      badge.dataset.state="down"; badge.querySelector(".txt").textContent="Récup hors ligne";
-      box.innerHTML = `<div class="sd-empty">Pipeline muet. Rouvre Garmin Connect puis ré-autorise la synchro dans Réglages iOS.</div>`;
-      computeVerdict(); return;
+  // ── Branche RÉCUPÉRATION ──
+  function paintReadiness(o,d){
+    const box=o.el("readiness"), badge=o.el("src-recup");
+    o.rLevels=[];
+    const vide = !d || d.empty || (d.sleep_h==null && d.resting_hr==null && d.hrv==null);
+    if(vide){
+      badge.dataset.state="down"; badge.querySelector(".txt").textContent="Récup — aucune donnée";
+      box.innerHTML=`<div class="sd-empty">Aucune donnée de bien-être. Lance <code>/api/intervals-sync</code> puis vérifie la connexion Garmin dans intervals.icu.</div>`;
+      return;
     }
     badge.dataset.state="ok"; badge.querySelector(".txt").textContent="Récup à jour";
-    const date = d.date || d.resting_hr_date || d.sleep_h_date;
-    if(date) $("#sd-datestamp").textContent = "à jour — "+new Date(date+"T00:00:00").toLocaleDateString("fr-FR");
+    if(d.date) o.el("datestamp").textContent="à jour — "+new Date(d.date+"T00:00:00").toLocaleDateString("fr-FR");
 
     let html="", lvl;
-    // Sommeil — seuils absolus
-    const sl = typeof d.sleep_h==="number" ? d.sleep_h : null;
-    lvl = sl==null ? "na" : sl>=SEUILS.sleep.vert ? "vert" : sl>=SEUILS.sleep.orange ? "orange" : "rouge";
-    if(lvl!=="na") state.rLevels.push(lvl);
-    html += row("Sommeil", fmt(sl,1), "h", lvl, "", "Sommeil — seuils absolus (≥6,5 vert · 6–6,5 orange · <6 rouge)");
-    // FC repos — écart vs base 7 j
-    const hr  = typeof d.resting_hr==="number" ? d.resting_hr : null;
-    const bhr = typeof d.resting_hr_baseline_7d==="number" ? d.resting_hr_baseline_7d : null;
-    if(hr!=null && bhr!=null){
-      const del = Math.round((hr-bhr)*10)/10;
-      lvl = del>SEUILS.fcRepos.orange ? "rouge" : del>SEUILS.fcRepos.vert ? "orange" : "vert";
-      state.rLevels.push(lvl);
-      html += row("FC repos", fmt(hr,0), "bpm", lvl, (del>=0?"+":"")+fmt(del,1), "FC repos vs base 7 j (+>10 bpm/7 j = alerte)");
-    } else {
-      html += row("FC repos", fmt(hr,0), "bpm", "na", "", "");
-    }
-    // HRV nocturne vs base 7 j (intervals.icu) — plus bas = moins bonne récup
-    const hrv  = typeof d.hrv==="number" ? d.hrv : null;
-    const bhrv = typeof d.hrv_baseline_7d==="number" ? d.hrv_baseline_7d : null;
-    if(hrv!=null && bhrv!=null){
-      const del = Math.round((hrv-bhrv)*10)/10;
-      lvl = del < SEUILS.hrv.orange ? "rouge" : del < SEUILS.hrv.vert ? "orange" : "vert";
-      state.rLevels.push(lvl);
-      html += row("HRV", fmt(hrv,0), "ms", lvl, (del>=0?"+":"")+fmt(del,1), "HRV nocturne vs base 7 j (intervals.icu)");
-    } else {
-      html += row("HRV", hrv==null?"—":fmt(hrv,0), hrv==null?"":"ms", "na", hrv==null?"non transmise":"", "HRV nocturne (intervals.icu)");
-    }
-    box.innerHTML = html;
-    computeVerdict();
+    // Sommeil (durée)
+    const sl=typeof d.sleep_h==="number"?d.sleep_h:null;
+    lvl = sl==null?"na": sl>=SEUILS.sleep.vert?"vert": sl>=SEUILS.sleep.orange?"orange":"rouge";
+    if(lvl!=="na") o.rLevels.push(lvl);
+    html+=row("Sommeil",fmt(sl,1),"h",lvl,"","Durée de sommeil (Garmin)");
+    // Qualité du sommeil (score 0-100)
+    const sq = (typeof d.sleep_quality==="number") ? d.sleep_quality
+             : (typeof d.sleep_score==="number" ? d.sleep_score : null);
+    lvl = sq==null?"na": sq>=SEUILS.sleepQ.vert?"vert": sq>=SEUILS.sleepQ.orange?"orange":"rouge";
+    if(lvl!=="na") o.rLevels.push(lvl);
+    html+=row("Qualité du sommeil", sq==null?"—":fmt(sq,0), sq==null?"":"/100", lvl,"","Score de qualité du sommeil (Garmin)");
+    // FC repos vs base 7 j
+    const hr=typeof d.resting_hr==="number"?d.resting_hr:null;
+    const bhr=typeof d.resting_hr_baseline_7d==="number"?d.resting_hr_baseline_7d:null;
+    if(hr!=null&&bhr!=null){
+      const del=Math.round((hr-bhr)*10)/10;
+      lvl = del>SEUILS.fcRepos.orange?"rouge": del>SEUILS.fcRepos.vert?"orange":"vert";
+      o.rLevels.push(lvl);
+      html+=row("FC repos",fmt(hr,0),"bpm",lvl,(del>=0?"+":"")+fmt(del,1),"FC repos vs base 7 j");
+    } else html+=row("FC repos",fmt(hr,0),"bpm","na","","");
+    // VFC (rMSSD) vs base 7 j
+    const hv=typeof d.hrv==="number"?d.hrv:null;
+    const bhv=typeof d.hrv_baseline_7d==="number"?d.hrv_baseline_7d:null;
+    if(hv!=null&&bhv!=null){
+      const del=Math.round((hv-bhv)*10)/10;
+      lvl = del<SEUILS.hrv.orange?"rouge": del<SEUILS.hrv.vert?"orange":"vert";
+      o.rLevels.push(lvl);
+      html+=row("Variabilité fréquence cardiaque",fmt(hv,0),"ms",lvl,(del>=0?"+":"")+fmt(del,1),"VFC rMSSD vs base 7 j (Garmin)");
+    } else html+=row("Variabilité fréquence cardiaque",hv==null?"—":fmt(hv,0),hv==null?"":"ms","na",hv==null?"non transmise":"","VFC rMSSD (Garmin)");
+    box.innerHTML=html;
   }
 
-  // ── Branche CHARGE (/api/load) ──
-  function setCharge(s){
-    const box = $("#sd-charge"), badge = $("#sd-src-charge");
-    state.cLevels = [];
-    if(!s){
-      badge.dataset.state="down"; badge.querySelector(".txt").textContent="Charge hors ligne";
-      box.innerHTML = `<div class="sd-empty">Branche charge indisponible. Vérifie le déploiement de <code>load.mjs</code> et l'automation <b>Workouts</b> (Health Auto Export).</div>`;
-      computeVerdict(); return;
+  // ── Branche CHARGE : Charge 7 j (Load/TSS) · Forme (CTL) · Fatigue (ATL) ──
+  function paintCharge(o,s){
+    const box=o.el("charge"), badge=o.el("src-charge");
+    o.cLevels=[];
+    if(!s||s.empty){
+      badge.dataset.state="down"; badge.querySelector(".txt").textContent="Charge — aucune donnée";
+      box.innerHTML=`<div class="sd-empty">Aucune activité reçue. Lance <code>/api/intervals-sync</code> puis vérifie que Garmin envoie bien tes séances vers intervals.icu.</div>`;
+      return;
     }
-    if(s.empty){
-      badge.dataset.state="stale"; badge.querySelector(".txt").textContent="Charge — aucune séance";
-      box.innerHTML = `<div class="sd-empty">Aucune séance reçue sur 28 j. Contrôle l'automation <b>Workouts</b> (HAE) : type Workouts, JSON, FC incluse.</div>`;
-      computeVerdict(); return;
-    }
-    const upd = s.updatedAt, last = s.lastActivity || {};
-    badge.dataset.state = upd && daysSince(upd)>3 ? "stale":"ok";
+    const last=s.lastActivity||{};
+    badge.dataset.state = s.updatedAt && daysSince(s.updatedAt)>3 ? "stale":"ok";
     badge.querySelector(".txt").textContent = last.date
-      ? "Charge · "+new Date(last.date+"T00:00:00").toLocaleDateString("fr-FR")
-      : "Charge à jour";
+      ? "Charge · "+new Date(last.date+"T00:00:00").toLocaleDateString("fr-FR") : "Charge à jour";
 
-    let html="", lvl;
-    // ACWR
-    if(s.acwr==null){ html += row("Charge aiguë/chronique","—","","na","",""); }
-    else{
-      const [gl,gh]=SEUILS.acwr.vert, oh=SEUILS.acwr.orange[1];
-      lvl = (s.acwr>=gl&&s.acwr<=gh)?"vert":(s.acwr>gh&&s.acwr<=oh)?"orange":s.acwr>oh?"rouge":"orange";
-      state.cLevels.push(lvl); html += row("Charge aiguë/chronique", fmt(s.acwr,2), "", lvl, "", "Ratio charge aiguë 7 j / chronique 28 j");
+    const pmc=s.pmc||{};
+    let html="";
+    // 1. Charge = Load/TSS cumulé 7 j
+    html+=row("Charge (7 j)", fmt(s.load7,0), "", "na", "", "Somme du Load/TSS calculé par intervals.icu sur 7 jours");
+    // 2. Forme = CTL
+    html+=row("Forme (CTL)", fmt(pmc.ctl,1), "", "na", "", "Fitness / charge chronique calculée par intervals.icu");
+    // 3. Fatigue = ATL
+    html+=row("Fatigue (ATL)", fmt(pmc.atl,1), "", "na", "", "Fatigue / charge aiguë calculée par intervals.icu");
+    // Fraîcheur = CTL - ATL : le seul des trois qui porte un verdict
+    if(typeof pmc.tsb==="number"){
+      const lvl = pmc.tsb<SEUILS.tsb.orange?"rouge": pmc.tsb<SEUILS.tsb.vert?"orange":"vert";
+      o.cLevels.push(lvl);
+      html+=row("Fraîcheur (forme − fatigue)", (pmc.tsb>=0?"+":"")+fmt(pmc.tsb,1), "", lvl, "", "TSB : >−10 frais · −10 à −25 chargé · <−25 très fatigué");
     }
-    // Monotonie (Foster)
-    if(s.monotony==null){ html += row("Monotonie","—","","na","",""); }
-    else{
-      lvl = s.monotony<SEUILS.monotony.vert?"vert":s.monotony<SEUILS.monotony.orange?"orange":"rouge";
-      state.cLevels.push(lvl); html += row("Monotonie", fmt(s.monotony,1), "", lvl, "", "Monotonie de Foster (7 j)");
-    }
-    // Chute cadence — informatif
-    const cd = s.longRun && s.longRun.cadenceDrop;
-    html += row("Chute cadence", cd==null?"—":"-"+fmt(cd,0), cd==null?"":"spm", "na", "", "Proxy fatigue chaîne postérieure — surveiller, pas noté");
-    box.innerHTML = html;
-    computeVerdict();
+    box.innerHTML=html;
   }
 
   // ── Verdict : le plus conservateur gagne, cap médical écrase ──
-  function computeVerdict(){
-    const v = $("#sd-verdict"), symptom = $("#sd-symptom").checked;
-    const clearanceOld = daysSince(CLEARANCE_CARDIAQUE) > MOIS_CLEARANCE_MAX*30;
-    let lvl = state.rLevels.concat(state.cLevels).reduce((a,c)=>pire(a,c), "na");
-    if(lvl==="na") lvl = "vert";
-    let head, sub;
+  function verdict(o){
+    const v=o.el("verdict"), symptom=!!o.symptom;
+    const clearanceOld=daysSince(CLEARANCE_CARDIAQUE)>MOIS_CLEARANCE_MAX*30;
+    let lvl=o.rLevels.concat(o.cLevels).reduce((a,c)=>pire(a,c),"na");
+    if(lvl==="na") lvl="vert";
+    let head,sub;
     if(symptom){
       lvl="rouge"; head="Stop — cap médical actif";
       sub="Symptômes neuro/mollet gauche signalés. Aucun travail reproduisant la douleur. Repos ou mobilité indolore uniquement.";
     } else {
-      const M = {
-        vert:  ["Feu vert — exécuter le plan","Signaux alignés. Séance prévue possible, intensité comprise si programmée."],
+      const M={
+        vert:["Feu vert — exécuter le plan","Signaux alignés. Séance prévue possible, intensité comprise si programmée."],
         orange:["Prudence — alléger 10–15 %","Un signal dévie. Garde le volume, coupe l'intensité ou raccourcis les plages rapides."],
-        rouge: ["Décharge — Z1–Z2 courte ou repos","Signal conservateur au rouge. Consultation si ça persiste 3–5 j."]
+        rouge:["Décharge — Z1–Z2 courte ou repos","Signal conservateur au rouge. Consultation si ça persiste 3–5 j."]
       };
-      [head,sub] = M[lvl];
-      if(lvl==="vert" && clearanceOld){
+      [head,sub]=M[lvl];
+      if(lvl==="vert"&&clearanceOld){
         head="Feu vert — mais plafond intensité";
         sub="Signaux verts, or clairance cardiaque > "+MOIS_CLEARANCE_MAX+" mois : reste en aérobie avant tout bloc dur.";
         lvl="orange";
       }
     }
-    v.dataset.lvl=lvl; $("#sd-verdict-head").textContent=head; $("#sd-verdict-sub").textContent=sub;
-    $("#sd-med").classList.toggle("on", symptom);
-    $("#sd-med-note").textContent = clearanceOld
+    v.dataset.lvl=lvl; o.el("v-head").textContent=head; o.el("v-sub").textContent=sub;
+    o.el("med").classList.toggle("on",symptom);
+    o.el("med-note").textContent = clearanceOld
       ? "Clairance cardiaque > "+MOIS_CLEARANCE_MAX+" mois : garde-fou non masquable avant tout bloc haute intensité."
       : "Clairance cardiaque à jour.";
   }
 
-  // ── Grille 4 voyants (revue hebdo) ──
-  const VOY = [
-    ["FC en endurance fond.","2 sorties EF vs moy. 4 sem."],
-    ["Dérive cardiaque","1 h EF, 30 prem. vs 30 dern. min"],
-    ["Sensation récup.","moyenne 7 j, 1–10"],
-    ["HRV status","nuits « équilibré » /7"]
-  ];
-  const w=[null,null,null,null];
-  function paintVoy(){
-    $("#sd-voyants").innerHTML = VOY.map((vv,i)=>`<div class="sd-voyant"><span class="vy-lbl">${vv[0]}<small>${vv[1]}</small></span>`
-      + `<span class="sd-seg" data-i="${i}">`
-      + `<button data-v="vert" aria-pressed="${w[i]==='vert'}">●</button>`
-      + `<button data-v="orange" aria-pressed="${w[i]==='orange'}">●</button>`
-      + `<button data-v="rouge" aria-pressed="${w[i]==='rouge'}">●</button></span></div>`).join("");
-    $("#sd-voyants").querySelectorAll(".sd-seg button").forEach(b=>b.addEventListener("click",()=>{
-      w[+b.parentElement.dataset.i]=b.dataset.v; paintVoy(); weeklyOut();
-    }));
-  }
-  function weeklyOut(){
-    const o=$("#sd-weekly-out"), f=w.filter(Boolean);
-    if(f.length<4){ o.innerHTML="Renseigne les 4 voyants pour obtenir la décision de semaine."; return; }
-    const nV=f.filter(x=>x==="vert").length, nO=f.filter(x=>x==="orange").length, nR=f.filter(x=>x==="rouge").length;
-    let m;
-    if(nR>=3)               m="<b>≥3 rouges → décharge complète.</b> Consultation si ça persiste.";
-    else if(nV===4)         m="<b>4 verts → exécuter le plan.</b>";
-    else if(nV===3&&nO===1) m="<b>3 verts, 1 orange → exécuter, surveiller.</b>";
-    else if(nV===2&&nO===2) m="<b>2 verts, 2 oranges → alléger 10–15 %.</b>";
-    else if(nO>=3||nV<=1)   m="<b>1 vert, 3 oranges → décharge active.</b>";
-    else                    m="<b>Signaux mitigés → alléger et surveiller la HRV.</b>";
-    o.innerHTML = m+" &nbsp;·&nbsp; <span style='color:var(--muted)'>R"+nR+" / O"+nO+" / V"+nV+"</span>";
-  }
-  paintVoy();
-  $("#sd-symptom").addEventListener("change", computeVerdict);
+  function setReadiness(d){ inst.forEach(o=>{ paintReadiness(o,d); verdict(o); }); }
+  function setCharge(s){   inst.forEach(o=>{ paintCharge(o,s);   verdict(o); }); }
+  inst.forEach(o=>verdict(o));
 
-  // Exposé pour la synchro santé existante
-  window.SUIVI = { setReadiness, setCharge };
+  window.SUIVI={ setReadiness, setCharge };
 })();
 </script>
 
