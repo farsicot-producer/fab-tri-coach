@@ -120,32 +120,61 @@ function buildCharge(activities) {
 }
 
 // ═══════════════════════ Branche RÉCUP (depuis wellness) ═════════════════════
+// Noms de champs intervals.icu (Garmin) : plusieurs variantes possibles selon la
+// version de l'API -> on teste une liste de candidats pour chaque métrique.
+const F = {
+  sleepSecs:  ["sleepSecs","sleep_secs","sleepTime","sleepDuration"],
+  sleepScore: ["sleepScore","sleep_score"],
+  sleepQual:  ["sleepQuality","sleep_quality"],
+  restingHR:  ["restingHR","resting_hr","restingHr"],
+  hrv:        ["hrv","hrvSDNN","rmssd","hrvRMSSD"],   // VFC (rMSSD) côté Garmin
+  ctl:        ["ctl","fitness"],
+  atl:        ["atl","fatigue"],
+  steps:      ["steps"],
+  weight:     ["weight"],
+  vo2max:     ["vo2max","vo2Max"],
+  spO2:       ["spO2","spo2"]
+};
+
 function buildWellness(wellness) {
   const desc = wellness.slice().sort((a, b) => (a.id < b.id ? 1 : -1)); // récent -> ancien
-  const latest = f => { for (const w of desc) if (w[f] != null) return w[f]; return null; };
-  const base7  = f => {
+  const val  = (w, keys) => { for (const k of keys) if (w[k] != null) return w[k]; return null; };
+  const latest = keys => { for (const w of desc) { const v = val(w, keys); if (v != null) return v; } return null; };
+  const base7  = keys => {
     const v = [];
-    for (const w of desc) { if (w[f] != null) { v.push(w[f]); if (v.length >= 7) break; } }
+    for (const w of desc) { const x = val(w, keys); if (x != null) { v.push(x); if (v.length >= 7) break; } }
     return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
   };
 
-  const sleepSecs = latest("sleepSecs");
-  const rhr  = latest("restingHR");
-  const hrv  = latest("hrv") != null ? latest("hrv") : latest("hrvSDNN");
-  const ctl  = latest("ctl");
-  const atl  = latest("atl");
+  let sleepSecs = latest(F.sleepSecs);
+  // certaines réponses donnent le sommeil en heures : on rattrape le cas
+  let sleep_h = null;
+  if (sleepSecs != null) sleep_h = sleepSecs > 100 ? sleepSecs / 3600 : sleepSecs;
+
+  const rhr = latest(F.restingHR);
+  const hrv = latest(F.hrv);
+  const ctl = latest(F.ctl);
+  const atl = latest(F.atl);
+  const b7rhr = base7(F.restingHR);
+  const b7hrv = base7(F.hrv);
 
   return {
     updatedAt: new Date().toISOString(),
     date: desc.length ? desc[0].id : null,
-    sleep_h: sleepSecs != null ? round(sleepSecs / 3600, 1) : null,
+    sleep_h: sleep_h != null ? round(sleep_h, 1) : null,
+    sleep_score: latest(F.sleepScore),
+    sleep_quality: latest(F.sleepQual),
     resting_hr: rhr != null ? Math.round(rhr) : null,
-    resting_hr_baseline_7d: base7("restingHR") != null ? Math.round(base7("restingHR")) : null,
+    resting_hr_baseline_7d: b7rhr != null ? Math.round(b7rhr) : null,
     hrv: hrv != null ? Math.round(hrv) : null,
-    hrv_baseline_7d: base7("hrv") != null ? Math.round(base7("hrv")) : null,
-    readiness: latest("readiness"),
-    steps: latest("steps"),
-    pmc: (ctl != null && atl != null) ? { ctl: round(ctl, 1), atl: round(atl, 1), tsb: round(ctl - atl, 1) } : null
+    hrv_baseline_7d: b7hrv != null ? Math.round(b7hrv) : null,
+    steps: latest(F.steps),
+    vo2max: latest(F.vo2max),
+    pmc: (ctl != null || atl != null) ? {
+      ctl: ctl != null ? round(ctl, 1) : null,
+      atl: atl != null ? round(atl, 1) : null,
+      tsb: (ctl != null && atl != null) ? round(ctl - atl, 1) : null
+    } : null
   };
 }
 
@@ -164,8 +193,28 @@ export default async (req) => {
       icu(`/wellness?oldest=${oldest}&newest=${newest}`)
     ]);
 
+    // ?debug=1 -> renvoie les champs bruts reçus (diagnostic des noms de colonnes)
+    const dbg = req && req.url && new URL(req.url).searchParams.get("debug");
+    if (dbg) {
+      const wKeys = new Set(), aKeys = new Set();
+      (wellness || []).forEach(w => Object.keys(w).forEach(k => { if (w[k] != null) wKeys.add(k); }));
+      (activities || []).forEach(a => Object.keys(a).forEach(k => { if (a[k] != null) aKeys.add(k); }));
+      return json({
+        ok: true, debug: true,
+        wellnessDays: (wellness || []).length,
+        wellnessFieldsPresent: [...wKeys].sort(),
+        lastWellness: (wellness || []).slice(-1)[0] || null,
+        activities: (activities || []).length,
+        activityFieldsPresent: [...aKeys].sort(),
+        lastActivity: (activities || []).slice(-1)[0] || null
+      });
+    }
+
     const charge   = buildCharge(Array.isArray(activities) ? activities : []);
     const wellObj  = buildWellness(Array.isArray(wellness) ? wellness : []);
+
+    // La branche Charge affiche Charge 7 j + Forme (CTL) + Fatigue (ATL)
+    charge.pmc = wellObj.pmc;
 
     const store = getStore({ name: STORE, consistency: "strong" });
     await store.setJSON(K_LOAD, charge);
@@ -175,8 +224,8 @@ export default async (req) => {
       ok: true,
       activities: Array.isArray(activities) ? activities.length : 0,
       wellnessDays: Array.isArray(wellness) ? wellness.length : 0,
-      load7: charge.load7, acwr: charge.acwr,
-      hrv: wellObj.hrv, sleep_h: wellObj.sleep_h
+      load7: charge.load7, ctl: wellObj.pmc && wellObj.pmc.ctl, atl: wellObj.pmc && wellObj.pmc.atl,
+      hrv: wellObj.hrv, sleep_h: wellObj.sleep_h, sleep_quality: wellObj.sleep_quality
     });
   } catch (e) {
     return json({ ok: false, error: String(e.message || e) }, 502);
