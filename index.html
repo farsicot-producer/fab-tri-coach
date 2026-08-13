@@ -1039,6 +1039,85 @@ textarea{min-height:92px;resize:vertical}
 .health-today .ht-dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:0 0 auto}
 .health-today strong{color:#1f2a44}
 .health-today p{margin:4px 0 0;font-size:13px;color:#475467}
+
+/* ===== Module « Suivi data » ===== */
+.sd{
+  --sd-inset:#f6f8fd; --sd-faint:#98a2b3; --sd-neutre:#cbd5e1;
+  --sd-vert:var(--green); --sd-orange:var(--orange); --sd-rouge:var(--red);
+  background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:20px 20px 16px; margin-bottom:20px; color:var(--ink);
+}
+.sd *{box-sizing:border-box}
+.sd-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.sd-title{font-size:20px;font-weight:800;letter-spacing:-.01em;margin:0;line-height:1.1;color:var(--ink)}
+.sd-title small{display:block;font-size:12.5px;font-weight:500;color:var(--muted);margin-top:3px}
+.sd-sources{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.sd-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+.sd-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--sd-neutre);flex-shrink:0}
+.sd-badge[data-state="ok"] .dot{background:var(--sd-vert);box-shadow:0 0 0 3px rgba(29,154,87,.14)}
+.sd-badge[data-state="stale"] .dot{background:var(--sd-orange)}
+.sd-badge[data-state="down"] .dot{background:var(--sd-rouge)}
+.sd-verdict{border-radius:14px;padding:12px 14px;margin-bottom:14px;background:var(--sd-inset);border:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+.sd-verdict[data-lvl="vert"]{background:var(--green-soft);border-color:rgba(29,154,87,.2)}
+.sd-verdict[data-lvl="orange"]{background:var(--orange-soft);border-color:rgba(214,107,0,.2)}
+.sd-verdict[data-lvl="rouge"]{background:var(--red-soft);border-color:rgba(239,77,93,.2)}
+.sd-verdict .flag{width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0;background:var(--sd-neutre)}
+.sd-verdict[data-lvl="vert"] .flag{background:var(--sd-vert)}
+.sd-verdict[data-lvl="orange"] .flag{background:var(--sd-orange)}
+.sd-verdict[data-lvl="rouge"] .flag{background:var(--sd-rouge)}
+.sd-verdict .v-head{font-size:14px;font-weight:700;line-height:1.25;color:var(--ink)}
+.sd-verdict .v-sub{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+.sd-branches{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sd-branch{background:var(--sd-inset);border:1px solid var(--line);border-radius:14px;padding:12px}
+.sd-branch h3{margin:0 0 2px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.sd-branch .b-why{font-size:11px;color:var(--sd-faint);margin:0 0 10px;line-height:1.3}
+.sd-branch[data-branch="readiness"] h3{color:#0f7a48}
+.sd-branch[data-branch="charge"] h3{color:#a8560a}
+.sd-row{display:grid;grid-template-columns:1fr auto auto;align-items:baseline;gap:8px;padding:7px 0;border-top:1px solid var(--line)}
+.sd-row:first-of-type{border-top:0}
+.sd-row .lbl{font-size:12.5px;color:var(--muted)}
+.sd-row .val{font-size:14px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+.sd-row .val .u{font-size:11px;font-weight:500;color:var(--muted);margin-left:2px}
+.sd-row .delta{font-size:11px;font-weight:600;justify-self:end;min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
+.sd-row[data-lvl="vert"] .delta{color:var(--sd-vert)}
+.sd-row[data-lvl="orange"] .delta{color:var(--sd-orange)}
+.sd-row[data-lvl="rouge"] .delta{color:var(--sd-rouge)}
+.sd-row[data-lvl="na"] .val,.sd-row[data-lvl="na"] .delta{color:var(--sd-faint);font-weight:500}
+.sd-empty{font-size:11.5px;color:var(--sd-faint);line-height:1.4;padding:6px 0 2px}
+.sd-empty b{color:var(--muted)} .sd-empty code{background:var(--sd-inset);padding:1px 4px;border-radius:4px}
+.sd-med{margin-top:12px;border-radius:12px;padding:10px 12px;background:var(--sd-inset);border:1px solid var(--line)}
+.sd-med.on{border-color:rgba(239,77,93,.4);background:var(--red-soft)}
+.sd-med label{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink);cursor:pointer}
+.sd-med input{accent-color:var(--sd-rouge);width:16px;height:16px;flex-shrink:0}
+.sd-med .cap-note{font-size:11px;color:var(--muted);margin:7px 0 0;line-height:1.4}
+.sd-nudge{margin-top:10px;border-radius:12px;padding:9px 12px;font-size:12px;line-height:1.4;background:var(--orange-soft);border:1px solid rgba(214,107,0,.25);color:#8a4a05;display:none}
+.sd-nudge.show{display:block}
+.sd-weekly{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.sd-weekly>summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--muted);list-style:none;display:flex;align-items:center;gap:6px;user-select:none}
+.sd-weekly>summary::-webkit-details-marker{display:none}
+.sd-weekly>summary::before{content:"\25B8";transition:transform .15s;color:var(--sd-faint)}
+.sd-weekly[open]>summary::before{transform:rotate(90deg)}
+.sd-voyant{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.sd-voyant:first-of-type{border-top:0;margin-top:8px}
+.sd-voyant .vy-lbl{font-size:12.5px;color:var(--ink)}
+.sd-voyant .vy-lbl small{display:block;color:var(--sd-faint);font-size:10.5px;margin-top:1px}
+.sd-seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.sd-seg button{border:0;background:var(--white);color:var(--sd-neutre);width:26px;height:24px;cursor:pointer;font-size:13px;line-height:1}
+.sd-seg button[aria-pressed="true"][data-v="vert"]{background:var(--sd-vert);color:#fff}
+.sd-seg button[aria-pressed="true"][data-v="orange"]{background:var(--sd-orange);color:#fff}
+.sd-seg button[aria-pressed="true"][data-v="rouge"]{background:var(--sd-rouge);color:#fff}
+.sd-weekly-out{margin-top:10px;font-size:12.5px;line-height:1.4;padding:9px 11px;border-radius:10px;background:var(--sd-inset);border:1px solid var(--line)}
+.sd-weekly-out b{color:var(--ink)}
+.sd-foot{margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.sd-ref{font-size:11.5px;color:var(--muted)}
+.sd-ref summary{cursor:pointer;list-style:none} .sd-ref summary::-webkit-details-marker{display:none}
+.sd-ref[open] summary{color:var(--ink)}
+.sd-ref .ref-body{margin-top:8px;font-size:11.5px;color:var(--muted);line-height:1.5;max-width:360px}
+.sd-ref .ref-body b{color:var(--ink);font-weight:600}
+.sd-ext{font-size:11.5px;color:#0f7a48;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.sd-ext:hover{text-decoration:underline}
+@media(max-width:640px){.sd-branches{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.sd *{transition:none!important}}
 </style>
 </head>
 <body>
@@ -1065,7 +1144,7 @@ textarea{min-height:92px;resize:vertical}
       <button data-view="garmin" class="mobile-hide"><span class="ico">↗</span>Garmin / export</button>
     </div>
     <div class="garmin-card">
-      <div class="sync-row"><span class="sync-dot" id="healthDot"></span><div><strong>Garmin Connect</strong><br><span id="healthSyncStatus" style="color:#cbd5e1;font-size:13px">Connexion…</span></div></div>
+      <div class="sync-row"><span class="sync-dot" id="healthDot"></span><div><strong>Suivi data</strong><br><span id="healthSyncStatus" style="color:#cbd5e1;font-size:13px">Connexion…</span></div></div>
       <div id="healthSidebar" style="font-size:13px;color:#cbd5e1;line-height:1.6;margin:2px 0 0"></div>
     </div>
   </aside>
@@ -1091,6 +1170,39 @@ textarea{min-height:92px;resize:vertical}
     </div>
 
     <section class="section active" id="view-overview">
+      <section class="sd" id="suivi-data" aria-label="Suivi data">
+        <div class="sd-top">
+          <h2 class="sd-title">Suivi data<small id="sd-datestamp">&mdash;</small></h2>
+          <div class="sd-sources">
+            <span class="sd-badge" id="sd-src-recup" data-state="down"><span class="dot"></span><span class="txt">R&eacute;cup &mdash;</span></span>
+            <span class="sd-badge" id="sd-src-charge" data-state="down"><span class="dot"></span><span class="txt">Charge &mdash;</span></span>
+          </div>
+        </div>
+        <div class="sd-verdict" id="sd-verdict" data-lvl="na">
+          <span class="flag"></span>
+          <div class="v-body"><div class="v-head" id="sd-verdict-head">Lecture en cours&hellip;</div><div class="v-sub" id="sd-verdict-sub"></div></div>
+        </div>
+        <div class="sd-branches">
+          <div class="sd-branch" data-branch="readiness"><h3>R&eacute;cup&eacute;ration</h3><p class="b-why">Ce que ton corps a absorb&eacute; cette nuit.</p><div id="sd-readiness"></div></div>
+          <div class="sd-branch" data-branch="charge"><h3>Charge</h3><p class="b-why">Ce que tu as encaiss&eacute;, tendance 7&nbsp;j / 28&nbsp;j.</p><div id="sd-charge"></div></div>
+        </div>
+        <div class="sd-med" id="sd-med">
+          <label><input type="checkbox" id="sd-symptom"> Sympt&ocirc;mes neuro / mollet gauche pr&eacute;sents aujourd'hui</label>
+          <p class="cap-note" id="sd-med-note"></p>
+        </div>
+        <div class="sd-nudge" id="sd-nudge"></div>
+        <details class="sd-weekly" id="sd-weekly">
+          <summary>Revue hebdo &mdash; grille 4 voyants</summary>
+          <div id="sd-voyants"></div>
+          <div class="sd-weekly-out" id="sd-weekly-out">Renseigne les 4 voyants pour obtenir la d&eacute;cision de semaine.</div>
+        </details>
+        <div class="sd-foot">
+          <details class="sd-ref"><summary>Rep&egrave;res &amp; bonnes pratiques 50+</summary>
+            <div class="ref-body"><b>80/20</b> : ~75&nbsp;% du volume en Z2.<br><b>Progression</b> : +10&nbsp;% max/sem ; 3&nbsp;sem. charg&eacute;es + 1 d&eacute;charge.<br><b>ACWR</b> : 0,8&ndash;1,3 vert &middot; 1,3&ndash;1,5 surveillance &middot; &gt;1,5 risque.<br><b>D&eacute;rive</b> (1&nbsp;h EF) : &lt;5&nbsp;% vert &middot; 5&ndash;8 orange &middot; &gt;8 rouge.<br><b>FC repos</b> : +&gt;10&nbsp;bpm/7&nbsp;j = signal fort.<br><b>Tendances 4&ndash;8&nbsp;sem.</b>, jamais un chiffre isol&eacute;. Recalibrage /90&nbsp;j.</div>
+          </details>
+          <a class="sd-ext" href="https://connect.garmin.com/modern/" target="_blank" rel="noopener">Body Battery &middot; VO&#8322;max &middot; Training Status &rarr;</a>
+        </div>
+      </section>
       <div class="panel calendar-panel">
         <div class="section-head">
           <div>
@@ -2343,6 +2455,7 @@ if ("serviceWorker" in navigator) {
         : `<span style="color:#94a3b8">Pas de données récentes.</span>`;
     }
     renderAdapt(d, age);
+    if(window.SUIVI) SUIVI.setReadiness(d);
   }
 
   function renderAdapt(d, age){
@@ -2376,7 +2489,13 @@ if ("serviceWorker" in navigator) {
     fetch(ENDPOINT + "?token=" + encodeURIComponent(READ_TOKEN), {cache:"no-store"})
       .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
       .then(d=>{ render(d); if(manual && typeof toast==="function") toast("Données santé à jour ✓"); })
-      .catch(e=>{ if(status) status.textContent = "Lecture impossible"; console.warn("[health]", e.message); });
+      .catch(e=>{ if(status) status.textContent = "Lecture impossible"; if(window.SUIVI) SUIVI.setReadiness(null); console.warn("[health]", e.message); });
+
+    // Branche charge : séances Apple Health -> /api/load (même READ_TOKEN)
+    fetch("/api/load?token=" + encodeURIComponent(READ_TOKEN), {cache:"no-store"})
+      .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+      .then(s=>{ if(window.SUIVI) SUIVI.setCharge(s); })
+      .catch(e=>{ if(window.SUIVI) SUIVI.setCharge(null); console.warn("[load]", e.message); });
   }
   window.refreshHealth = refreshHealth;
 
@@ -2388,6 +2507,201 @@ if ("serviceWorker" in navigator) {
   if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", ()=>refreshHealth(false));
   else refreshHealth(false);
   setInterval(()=>refreshHealth(false), 30*60*1000); // rafraîchissement léger toutes les 30 min
+})();
+</script>
+
+<script>
+/* ===== Module « Suivi data » — cockpit récupération + charge ===== */
+(function(){
+  "use strict";
+  const $ = s => document.querySelector(s);
+  if(!$("#suivi-data")) return;
+
+  // ── Gardes-fous terminaux (édite ces deux dates) ──
+  const CLEARANCE_CARDIAQUE = "2019-01-01"; // dernière clairance cardio
+  const DERNIER_TEST_SEUIL  = "2025-01-01"; // dernier test FTP/VMA/seuil
+  const MOIS_CLEARANCE_MAX = 12, JOURS_RECALIBRAGE = 90;
+
+  // Seuils (le corps de la « note » distillé) — tunables ici uniquement.
+  const SEUILS = {
+    sleep:    { vert:6.5, orange:6.0 },              // heures absolues
+    fcRepos:  { vert:3,   orange:5   },              // écart FC repos vs base 7 j
+    acwr:     { vert:[0.8,1.3], orange:[1.3,1.5] },
+    monotony: { vert:1.5, orange:2.0 },
+    derive:   { vert:5,   orange:8   }               // % dérive cardiaque
+  };
+  const NIV = {vert:0, orange:1, rouge:2, na:-1};
+  const pire = (a,b)=> NIV[a] >= NIV[b] ? a : b;
+  const fmt  = (n,d=1)=> n==null ? "—" : (Math.round(n*10**d)/10**d).toLocaleString("fr-FR");
+  const daysSince = iso => Math.floor((Date.now()-new Date(iso))/864e5);
+
+  const state = { rLevels:[], cLevels:[] };
+
+  function row(lbl,val,unit,lvl,delta,title){
+    return `<div class="sd-row" data-lvl="${lvl}" title="${title||''}">`
+      + `<span class="lbl">${lbl}</span>`
+      + `<span class="val">${val}${unit?`<span class="u">${unit}</span>`:''}</span>`
+      + `<span class="delta">${delta||''}</span></div>`;
+  }
+
+  // ── Branche RÉCUPÉRATION (schéma réel : sleep_h / resting_hr / resting_hr_baseline_7d / hrv) ──
+  function setReadiness(d){
+    const box = $("#sd-readiness"), badge = $("#sd-src-recup");
+    state.rLevels = [];
+    if(!d){
+      badge.dataset.state="down"; badge.querySelector(".txt").textContent="Récup hors ligne";
+      box.innerHTML = `<div class="sd-empty">Pipeline muet. Rouvre Garmin Connect puis ré-autorise la synchro dans Réglages iOS.</div>`;
+      computeVerdict(); return;
+    }
+    badge.dataset.state="ok"; badge.querySelector(".txt").textContent="Récup à jour";
+    const date = d.date || d.resting_hr_date || d.sleep_h_date;
+    if(date) $("#sd-datestamp").textContent = "à jour — "+new Date(date+"T00:00:00").toLocaleDateString("fr-FR");
+
+    let html="", lvl;
+    // Sommeil — seuils absolus
+    const sl = typeof d.sleep_h==="number" ? d.sleep_h : null;
+    lvl = sl==null ? "na" : sl>=SEUILS.sleep.vert ? "vert" : sl>=SEUILS.sleep.orange ? "orange" : "rouge";
+    if(lvl!=="na") state.rLevels.push(lvl);
+    html += row("Sommeil", fmt(sl,1), "h", lvl, "", "Sommeil — seuils absolus (≥6,5 vert · 6–6,5 orange · <6 rouge)");
+    // FC repos — écart vs base 7 j
+    const hr  = typeof d.resting_hr==="number" ? d.resting_hr : null;
+    const bhr = typeof d.resting_hr_baseline_7d==="number" ? d.resting_hr_baseline_7d : null;
+    if(hr!=null && bhr!=null){
+      const del = Math.round((hr-bhr)*10)/10;
+      lvl = del>SEUILS.fcRepos.orange ? "rouge" : del>SEUILS.fcRepos.vert ? "orange" : "vert";
+      state.rLevels.push(lvl);
+      html += row("FC repos", fmt(hr,0), "bpm", lvl, (del>=0?"+":"")+fmt(del,1), "FC repos vs base 7 j (+>10 bpm/7 j = alerte)");
+    } else {
+      html += row("FC repos", fmt(hr,0), "bpm", "na", "", "");
+    }
+    // HRV — informatif (souvent null en Garmin→AH, aucune baseline → ne pilote pas le verdict)
+    const hrv = typeof d.hrv==="number" ? d.hrv : null;
+    html += row("HRV", hrv==null?"—":fmt(hrv,0), hrv==null?"":"ms", "na", hrv==null?"non transmis":"", "HRV Garmin→Apple Health souvent absente — informatif");
+    box.innerHTML = html;
+    computeVerdict();
+  }
+
+  // ── Branche CHARGE (/api/load) ──
+  function setCharge(s){
+    const box = $("#sd-charge"), badge = $("#sd-src-charge");
+    state.cLevels = [];
+    if(!s){
+      badge.dataset.state="down"; badge.querySelector(".txt").textContent="Charge hors ligne";
+      box.innerHTML = `<div class="sd-empty">Branche charge indisponible. Vérifie le déploiement de <code>load.mjs</code> et l'automation <b>Workouts</b> (Health Auto Export).</div>`;
+      computeVerdict(); return;
+    }
+    if(s.empty){
+      badge.dataset.state="stale"; badge.querySelector(".txt").textContent="Charge — aucune séance";
+      box.innerHTML = `<div class="sd-empty">Aucune séance reçue sur 28 j. Contrôle l'automation <b>Workouts</b> (HAE) : type Workouts, JSON, FC incluse.</div>`;
+      computeVerdict(); return;
+    }
+    const upd = s.updatedAt, last = s.lastActivity || {};
+    badge.dataset.state = upd && daysSince(upd)>3 ? "stale":"ok";
+    badge.querySelector(".txt").textContent = last.date
+      ? "Charge · "+new Date(last.date+"T00:00:00").toLocaleDateString("fr-FR")
+      : "Charge à jour";
+
+    let html="", lvl;
+    // ACWR
+    if(s.acwr==null){ html += row("ACWR 7/28","—","","na","",""); }
+    else{
+      const [gl,gh]=SEUILS.acwr.vert, oh=SEUILS.acwr.orange[1];
+      lvl = (s.acwr>=gl&&s.acwr<=gh)?"vert":(s.acwr>gh&&s.acwr<=oh)?"orange":s.acwr>oh?"rouge":"orange";
+      state.cLevels.push(lvl); html += row("ACWR 7/28", fmt(s.acwr,2), "", lvl, "", "Charge 7 j / 28 j");
+    }
+    // Monotonie (Foster)
+    if(s.monotony==null){ html += row("Monotonie","—","","na","",""); }
+    else{
+      lvl = s.monotony<SEUILS.monotony.vert?"vert":s.monotony<SEUILS.monotony.orange?"orange":"rouge";
+      state.cLevels.push(lvl); html += row("Monotonie", fmt(s.monotony,1), "", lvl, "", "Monotonie de Foster (7 j)");
+    }
+    // Dérive cardiaque (sortie longue)
+    const dr = s.longRun && s.longRun.cardiacDrift;
+    if(dr==null){ html += row("Dérive cardiaque","—","","na","",""); }
+    else{
+      lvl = dr<SEUILS.derive.vert?"vert":dr<SEUILS.derive.orange?"orange":"rouge";
+      state.cLevels.push(lvl); html += row("Dérive cardiaque", fmt(dr,1), "%", lvl, "", "Dérive FC sortie longue");
+    }
+    // Chute cadence — informatif
+    const cd = s.longRun && s.longRun.cadenceDrop;
+    html += row("Chute cadence", cd==null?"—":"-"+fmt(cd,0), cd==null?"":"spm", "na", "", "Proxy fatigue chaîne postérieure — surveiller, pas noté");
+    box.innerHTML = html;
+    computeVerdict();
+  }
+
+  // ── Verdict : le plus conservateur gagne, cap médical écrase ──
+  function computeVerdict(){
+    const v = $("#sd-verdict"), symptom = $("#sd-symptom").checked;
+    const clearanceOld = daysSince(CLEARANCE_CARDIAQUE) > MOIS_CLEARANCE_MAX*30;
+    let lvl = state.rLevels.concat(state.cLevels).reduce((a,c)=>pire(a,c), "na");
+    if(lvl==="na") lvl = "vert";
+    let head, sub;
+    if(symptom){
+      lvl="rouge"; head="Stop — cap médical actif";
+      sub="Symptômes neuro/mollet gauche signalés. Aucun travail reproduisant la douleur. Repos ou mobilité indolore uniquement.";
+    } else {
+      const M = {
+        vert:  ["Feu vert — exécuter le plan","Signaux alignés. Séance prévue possible, intensité comprise si programmée."],
+        orange:["Prudence — alléger 10–15 %","Un signal dévie. Garde le volume, coupe l'intensité ou raccourcis les plages rapides."],
+        rouge: ["Décharge — Z1–Z2 courte ou repos","Signal conservateur au rouge. Consultation si ça persiste 3–5 j."]
+      };
+      [head,sub] = M[lvl];
+      if(lvl==="vert" && clearanceOld){
+        head="Feu vert — mais plafond intensité";
+        sub="Signaux verts, or clairance cardiaque > "+MOIS_CLEARANCE_MAX+" mois : reste en aérobie avant tout bloc dur.";
+        lvl="orange";
+      }
+    }
+    v.dataset.lvl=lvl; $("#sd-verdict-head").textContent=head; $("#sd-verdict-sub").textContent=sub;
+    $("#sd-med").classList.toggle("on", symptom);
+    $("#sd-med-note").textContent = clearanceOld
+      ? "Clairance cardiaque > "+MOIS_CLEARANCE_MAX+" mois : garde-fou non masquable avant tout bloc haute intensité."
+      : "Clairance cardiaque à jour.";
+  }
+
+  // ── Nudge recalibrage ──
+  (function(){
+    const n=$("#sd-nudge"), d=daysSince(DERNIER_TEST_SEUIL);
+    if(d>JOURS_RECALIBRAGE){ n.classList.add("show");
+      n.textContent="Dernier test seuil il y a "+d+" j. Recalibre FTP/VMA/FC seuil : sinon TSS, zones et ACWR dérivent."; }
+  })();
+
+  // ── Grille 4 voyants (revue hebdo) ──
+  const VOY = [
+    ["FC en endurance fond.","2 sorties EF vs moy. 4 sem."],
+    ["Dérive cardiaque","1 h EF, 30 prem. vs 30 dern. min"],
+    ["Sensation récup.","moyenne 7 j, 1–10"],
+    ["HRV status","nuits « équilibré » /7"]
+  ];
+  const w=[null,null,null,null];
+  function paintVoy(){
+    $("#sd-voyants").innerHTML = VOY.map((vv,i)=>`<div class="sd-voyant"><span class="vy-lbl">${vv[0]}<small>${vv[1]}</small></span>`
+      + `<span class="sd-seg" data-i="${i}">`
+      + `<button data-v="vert" aria-pressed="${w[i]==='vert'}">●</button>`
+      + `<button data-v="orange" aria-pressed="${w[i]==='orange'}">●</button>`
+      + `<button data-v="rouge" aria-pressed="${w[i]==='rouge'}">●</button></span></div>`).join("");
+    $("#sd-voyants").querySelectorAll(".sd-seg button").forEach(b=>b.addEventListener("click",()=>{
+      w[+b.parentElement.dataset.i]=b.dataset.v; paintVoy(); weeklyOut();
+    }));
+  }
+  function weeklyOut(){
+    const o=$("#sd-weekly-out"), f=w.filter(Boolean);
+    if(f.length<4){ o.innerHTML="Renseigne les 4 voyants pour obtenir la décision de semaine."; return; }
+    const nV=f.filter(x=>x==="vert").length, nO=f.filter(x=>x==="orange").length, nR=f.filter(x=>x==="rouge").length;
+    let m;
+    if(nR>=3)               m="<b>≥3 rouges → décharge complète.</b> Consultation si ça persiste.";
+    else if(nV===4)         m="<b>4 verts → exécuter le plan.</b>";
+    else if(nV===3&&nO===1) m="<b>3 verts, 1 orange → exécuter, surveiller.</b>";
+    else if(nV===2&&nO===2) m="<b>2 verts, 2 oranges → alléger 10–15 %.</b>";
+    else if(nO>=3||nV<=1)   m="<b>1 vert, 3 oranges → décharge active.</b>";
+    else                    m="<b>Signaux mitigés → alléger et surveiller la HRV.</b>";
+    o.innerHTML = m+" &nbsp;·&nbsp; <span style='color:var(--muted)'>R"+nR+" / O"+nO+" / V"+nV+"</span>";
+  }
+  paintVoy();
+  $("#sd-symptom").addEventListener("change", computeVerdict);
+
+  // Exposé pour la synchro santé existante
+  window.SUIVI = { setReadiness, setCharge };
 })();
 </script>
 
