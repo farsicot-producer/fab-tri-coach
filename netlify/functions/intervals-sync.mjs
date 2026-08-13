@@ -6,7 +6,8 @@
 // la branche RÉCUP, puis stocke les deux dans le Blob. Les lecteurs
 // load.mjs et wellness.mjs se contentent de relire.
 //
-// Invocable à la main via l'URL (test / backfill) ET planifiée (netlify.toml).
+// Fonction HTTP : déclenchée à l'ouverture de l'app (front) et appelable par URL
+// pour test/backfill. PAS planifiée (une fonction planifiée renverrait 403 en HTTP).
 // Ne renvoie que des compteurs agrégés — aucune donnée perso dans la réponse.
 //
 // Variables d'environnement (Netlify → Site settings → Environment variables) :
@@ -182,8 +183,6 @@ export default async (req) => {
   }
 };
 
-// Planification (toutes les 2 h) — voir aussi netlify.toml
-export const config = { schedule: "0 */2 * * *" };
 
 function json(o, status = 200) {
   return new Response(JSON.stringify(o), {
