@@ -18,7 +18,7 @@
   status = 200
 
 # ── Hub intervals.icu ──
-# Sync (manuel via URL + planifié) : tire activites + wellness, calcule et stocke.
+# Sync : déclenchée à l'ouverture de l'app (front) + appelable par URL. Non planifiée.
 [[redirects]]
   from = "/api/intervals-sync"
   to = "/.netlify/functions/intervals-sync"
@@ -35,8 +35,3 @@
   from = "/api/wellness"
   to = "/.netlify/functions/wellness"
   status = 200
-
-# ── Planification : rafraichit le hub toutes les 2 h ──
-# (redondant avec `export const config` dans la fonction ; laisse ici pour visibilite)
-[functions."intervals-sync"]
-  schedule = "0 */2 * * *"
