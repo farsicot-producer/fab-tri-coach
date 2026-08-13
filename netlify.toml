@@ -16,3 +16,14 @@
   from = "/api/health/latest"
   to = "/.netlify/functions/health-latest"
   status = 200
+
+# Branche charge (séances Apple Health -> TRIMP/ACWR/Foster)
+[[redirects]]
+  from = "/api/workouts-ingest"
+  to = "/.netlify/functions/workouts-ingest"
+  status = 200
+
+[[redirects]]
+  from = "/api/load"
+  to = "/.netlify/functions/load"
+  status = 200
