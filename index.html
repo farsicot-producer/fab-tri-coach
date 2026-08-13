@@ -455,8 +455,6 @@ textarea{min-height:92px;resize:vertical}
   color:#233d78;
   border:1px solid #dbe5ff;
 }
-.garmin-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.export-card{padding:20px}
 .day-mover{
   display:flex;
   align-items:center;
@@ -695,7 +693,7 @@ textarea{min-height:92px;resize:vertical}
   .sidebar{position:relative;height:auto;padding:18px}
   .nav{grid-template-columns:repeat(2,1fr)}
   .main{padding:18px}
-  .cards,.metrics,.adapt-grid,.garmin-layout{grid-template-columns:1fr}
+  .cards,.metrics,.adapt-grid{grid-template-columns:1fr}
   .calendar{grid-template-columns:1fr}
   .day{border-right:0;border-bottom:1px solid var(--line);min-height:auto}
   .session-card{min-height:132px}
@@ -995,7 +993,6 @@ textarea{min-height:92px;resize:vertical}
   }
   .metrics,
   .adapt-grid,
-  .garmin-layout,
   .actions-grid{
     grid-template-columns:1fr;
     gap:12px;
@@ -1090,8 +1087,6 @@ textarea{min-height:92px;resize:vertical}
 .sd-med label{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink);cursor:pointer}
 .sd-med input{accent-color:var(--sd-rouge);width:16px;height:16px;flex-shrink:0}
 .sd-med .cap-note{font-size:11px;color:var(--muted);margin:7px 0 0;line-height:1.4}
-.sd-nudge{margin-top:10px;border-radius:12px;padding:9px 12px;font-size:12px;line-height:1.4;background:var(--orange-soft);border:1px solid rgba(214,107,0,.25);color:#8a4a05;display:none}
-.sd-nudge.show{display:block}
 .sd-weekly{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
 .sd-weekly>summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--muted);list-style:none;display:flex;align-items:center;gap:6px;user-select:none}
 .sd-weekly>summary::-webkit-details-marker{display:none}
@@ -1141,7 +1136,6 @@ textarea{min-height:92px;resize:vertical}
       <button data-view="adapt"><span class="ico">⚙</span>Adaptation</button>
       <button data-view="ppg" class="mobile-hide"><span class="ico">⌁</span>PPG visuelle</button>
       <button data-view="settings"><span class="ico">◇</span>Réglages</button>
-      <button data-view="garmin" class="mobile-hide"><span class="ico">↗</span>Garmin / export</button>
     </div>
     <div class="garmin-card">
       <div class="sync-row"><span class="sync-dot" id="healthDot"></span><div><strong>Suivi data</strong><br><span id="healthSyncStatus" style="color:#cbd5e1;font-size:13px">Connexion…</span></div></div>
@@ -1164,10 +1158,6 @@ textarea{min-height:92px;resize:vertical}
 
     <div id="countdownBanner"></div>
 
-    <div class="rule-banner">
-      <p><strong>Règle du programme :</strong> si fatigue &gt; 2 jours, supprimer la séance qualité et garder Z2. Jamais deux jours durs de suite.</p>
-      <button class="btn small" onclick="showView('adapt')">En savoir plus</button>
-    </div>
 
     <section class="section active" id="view-overview">
       <section class="sd" id="suivi-data" aria-label="Suivi data">
@@ -1190,7 +1180,6 @@ textarea{min-height:92px;resize:vertical}
           <label><input type="checkbox" id="sd-symptom"> Sympt&ocirc;mes neuro / mollet gauche pr&eacute;sents aujourd'hui</label>
           <p class="cap-note" id="sd-med-note"></p>
         </div>
-        <div class="sd-nudge" id="sd-nudge"></div>
         <details class="sd-weekly" id="sd-weekly">
           <summary>Revue hebdo &mdash; grille 4 voyants</summary>
           <div id="sd-voyants"></div>
@@ -1198,7 +1187,7 @@ textarea{min-height:92px;resize:vertical}
         </details>
         <div class="sd-foot">
           <details class="sd-ref"><summary>Rep&egrave;res &amp; bonnes pratiques 50+</summary>
-            <div class="ref-body"><b>80/20</b> : ~75&nbsp;% du volume en Z2.<br><b>Progression</b> : +10&nbsp;% max/sem ; 3&nbsp;sem. charg&eacute;es + 1 d&eacute;charge.<br><b>ACWR</b> : 0,8&ndash;1,3 vert &middot; 1,3&ndash;1,5 surveillance &middot; &gt;1,5 risque.<br><b>D&eacute;rive</b> (1&nbsp;h EF) : &lt;5&nbsp;% vert &middot; 5&ndash;8 orange &middot; &gt;8 rouge.<br><b>FC repos</b> : +&gt;10&nbsp;bpm/7&nbsp;j = signal fort.<br><b>Tendances 4&ndash;8&nbsp;sem.</b>, jamais un chiffre isol&eacute;. Recalibrage /90&nbsp;j.</div>
+            <div class="ref-body"><b>80/20</b> : ~75&nbsp;% du volume en Z2.<br><b>Progression</b> : +10&nbsp;% max/sem ; 3&nbsp;sem. charg&eacute;es + 1 d&eacute;charge.<br><b>Charge aiguë/chronique</b> : 0,8&ndash;1,3 vert &middot; 1,3&ndash;1,5 surveillance &middot; &gt;1,5 risque.<br><b>FC repos</b> : +&gt;10&nbsp;bpm/7&nbsp;j = signal fort.</div>
           </details>
           <a class="sd-ext" href="https://connect.garmin.com/modern/" target="_blank" rel="noopener">Body Battery &middot; VO&#8322;max &middot; Training Status &rarr;</a>
         </div>
@@ -1390,28 +1379,6 @@ textarea{min-height:92px;resize:vertical}
           </div>
 
           <div id="racePreview"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="view-garmin">
-      <div class="garmin-layout">
-        <div class="panel export-card">
-          <h2>Garmin Connect</h2>
-          <p>Un push direct vers Garmin Connect n’est pas réaliste depuis un fichier HTML local sans API, authentification et format workout compatible. L’usage efficace : garder cette web app comme cockpit, puis créer dans Garmin les séances structurées récurrentes.</p>
-          <div class="detail-list">
-            <div class="detail-item"><strong>À créer dans Garmin</strong><p>CAP seuil, CAP Z4, vélo sweet spot, vélo VO2, FTP/tempo, bricks spécifiques.</p></div>
-            <div class="detail-item"><strong>À laisser libre</strong><p>Z2, natation technique et PPG : l’exécution propre compte plus que le micro-détail.</p></div>
-          </div>
-        </div>
-        <div class="panel export-card">
-          <h2>Exports</h2>
-          <label>Date du lundi de la semaine 1</label>
-          <input type="date" id="startDate">
-          <button class="btn primary block" onclick="exportICS()" style="margin-top:12px">Exporter calendrier .ics</button>
-          <button class="btn block" onclick="exportCSV()" style="margin-top:10px">Exporter planning CSV</button>
-          <button class="btn block" onclick="exportJSON()" style="margin-top:10px">Exporter sauvegarde JSON</button>
-          <p class="note">Le .ics ajoute les séances dans ton calendrier. Le CSV sert de base pour copier/coller ou retravailler les séances structurées.</p>
         </div>
       </div>
     </section>
@@ -1945,52 +1912,6 @@ function selectPPGSession(){
   detailTab = "exercice";
   renderAll();
 }
-function download(filename, text, type="text/plain"){
-  const blob = new Blob([text], {type});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-function exportCSV(){
-  const rows = [["semaine","bloc","titre_semaine","jour_propose","sport","seance","duree_min","type","statut"]];
-  DATA.weeks.forEach(w=>w.sessions.forEach(s=>{
-    const day = DAY_NAMES[Number(state.moves[s.id] ?? s.defaultDay)];
-    rows.push([w.n,w.block,w.title,day,s.sport,s.name,s.minutes,s.type,statusOf(s.id)||"a_faire"]);
-  }));
-  const csv = rows.map(r=>r.map(x=>`"${String(x).replaceAll('"','""')}"`).join(",")).join("\n");
-  download("programme_tri_2026.csv", csv, "text/csv;charset=utf-8");
-}
-function exportJSON(){
-  download("programme_tri_2026_sauvegarde.json", JSON.stringify({data:DATA,state}, null, 2), "application/json;charset=utf-8");
-}
-function exportICS(){
-  const start = document.getElementById("startDate").value;
-  if(!start){toast("Choisis la date du lundi de la semaine 1"); return;}
-  const startDate = new Date(start+"T00:00:00");
-  function ymd(d){return d.toISOString().slice(0,10).replaceAll("-","");}
-  let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Tri2026//Coaching//FR\nCALSCALE:GREGORIAN\n";
-  DATA.weeks.forEach(w=>w.sessions.forEach(s=>{
-    const day = Number(state.moves[s.id] ?? s.defaultDay);
-    const d = new Date(startDate);
-    d.setDate(startDate.getDate() + (w.n-1)*7 + day);
-    const end = new Date(d); end.setDate(d.getDate()+1);
-    const summary = `Tri2026 ${capitalize(s.sport)} - ${s.name}`;
-    const desc = `${w.block} semaine ${w.n} - ${w.title}. Règle: si fatigue > 2 jours, supprimer la qualité et garder Z2.`;
-    ics += "BEGIN:VEVENT\n";
-    ics += `UID:${s.id}@tri2026\n`;
-    ics += `DTSTAMP:${ymd(new Date())}T080000Z\n`;
-    ics += `DTSTART;VALUE=DATE:${ymd(d)}\n`;
-    ics += `DTEND;VALUE=DATE:${ymd(end)}\n`;
-    ics += `SUMMARY:${escapeICS(summary)}\n`;
-    ics += `DESCRIPTION:${escapeICS(desc)}\n`;
-    ics += "END:VEVENT\n";
-  }));
-  ics += "END:VCALENDAR";
-  download("programme_tri_2026_calendrier.ics", ics, "text/calendar;charset=utf-8");
-}
-function escapeICS(s){return String(s).replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
 
 /* ====================================================================
    Système de figures unifié (PPG + sports)
@@ -2386,7 +2307,7 @@ if ("serviceWorker" in navigator) {
   // ⚠️ Mets ici ton READ_TOKEN (le même que dans Netlify). Il sera visible dans
   //    le code du site : ce sont tes données de bien-être, pas un secret critique.
   const READ_TOKEN = '0q}"9Mux460l';
-  const ENDPOINT = "/api/health/latest";
+  const ENDPOINT = "/api/wellness";  // bascule intervals.icu (récup) — /api/health/latest reste en repli
 
   function daysAgo(dateStr){
     if(!dateStr) return null;
@@ -2504,8 +2425,16 @@ if ("serviceWorker" in navigator) {
     if(e.target && e.target.id === "adaptFatigue") e.target.dataset.userSet = "1";
   });
 
-  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", ()=>refreshHealth(false));
-  else refreshHealth(false);
+  // Rafraîchit le hub intervals.icu à l'ouverture, puis relit dès que c'est prêt.
+  function triggerSync(){
+    fetch("/api/intervals-sync", {cache:"no-store"})
+      .then(r=> r.ok ? r.json() : null)
+      .then(j=>{ if(j && j.ok) refreshHealth(false); })
+      .catch(()=>{});
+  }
+  function init(){ refreshHealth(false); triggerSync(); }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
   setInterval(()=>refreshHealth(false), 30*60*1000); // rafraîchissement léger toutes les 30 min
 })();
 </script>
@@ -2519,8 +2448,7 @@ if ("serviceWorker" in navigator) {
 
   // ── Gardes-fous terminaux (édite ces deux dates) ──
   const CLEARANCE_CARDIAQUE = "2019-01-01"; // dernière clairance cardio
-  const DERNIER_TEST_SEUIL  = "2025-01-01"; // dernier test FTP/VMA/seuil
-  const MOIS_CLEARANCE_MAX = 12, JOURS_RECALIBRAGE = 90;
+  const MOIS_CLEARANCE_MAX = 12;
 
   // Seuils (le corps de la « note » distillé) — tunables ici uniquement.
   const SEUILS = {
@@ -2528,7 +2456,7 @@ if ("serviceWorker" in navigator) {
     fcRepos:  { vert:3,   orange:5   },              // écart FC repos vs base 7 j
     acwr:     { vert:[0.8,1.3], orange:[1.3,1.5] },
     monotony: { vert:1.5, orange:2.0 },
-    derive:   { vert:5,   orange:8   }               // % dérive cardiaque
+    hrv:      { vert:-8,  orange:-15 }               // écart HRV vs base 7 j (ms)
   };
   const NIV = {vert:0, orange:1, rouge:2, na:-1};
   const pire = (a,b)=> NIV[a] >= NIV[b] ? a : b;
@@ -2574,9 +2502,17 @@ if ("serviceWorker" in navigator) {
     } else {
       html += row("FC repos", fmt(hr,0), "bpm", "na", "", "");
     }
-    // HRV — informatif (souvent null en Garmin→AH, aucune baseline → ne pilote pas le verdict)
-    const hrv = typeof d.hrv==="number" ? d.hrv : null;
-    html += row("HRV", hrv==null?"—":fmt(hrv,0), hrv==null?"":"ms", "na", hrv==null?"non transmis":"", "HRV Garmin→Apple Health souvent absente — informatif");
+    // HRV nocturne vs base 7 j (intervals.icu) — plus bas = moins bonne récup
+    const hrv  = typeof d.hrv==="number" ? d.hrv : null;
+    const bhrv = typeof d.hrv_baseline_7d==="number" ? d.hrv_baseline_7d : null;
+    if(hrv!=null && bhrv!=null){
+      const del = Math.round((hrv-bhrv)*10)/10;
+      lvl = del < SEUILS.hrv.orange ? "rouge" : del < SEUILS.hrv.vert ? "orange" : "vert";
+      state.rLevels.push(lvl);
+      html += row("HRV", fmt(hrv,0), "ms", lvl, (del>=0?"+":"")+fmt(del,1), "HRV nocturne vs base 7 j (intervals.icu)");
+    } else {
+      html += row("HRV", hrv==null?"—":fmt(hrv,0), hrv==null?"":"ms", "na", hrv==null?"non transmise":"", "HRV nocturne (intervals.icu)");
+    }
     box.innerHTML = html;
     computeVerdict();
   }
@@ -2603,24 +2539,17 @@ if ("serviceWorker" in navigator) {
 
     let html="", lvl;
     // ACWR
-    if(s.acwr==null){ html += row("ACWR 7/28","—","","na","",""); }
+    if(s.acwr==null){ html += row("Charge aiguë/chronique","—","","na","",""); }
     else{
       const [gl,gh]=SEUILS.acwr.vert, oh=SEUILS.acwr.orange[1];
       lvl = (s.acwr>=gl&&s.acwr<=gh)?"vert":(s.acwr>gh&&s.acwr<=oh)?"orange":s.acwr>oh?"rouge":"orange";
-      state.cLevels.push(lvl); html += row("ACWR 7/28", fmt(s.acwr,2), "", lvl, "", "Charge 7 j / 28 j");
+      state.cLevels.push(lvl); html += row("Charge aiguë/chronique", fmt(s.acwr,2), "", lvl, "", "Ratio charge aiguë 7 j / chronique 28 j");
     }
     // Monotonie (Foster)
     if(s.monotony==null){ html += row("Monotonie","—","","na","",""); }
     else{
       lvl = s.monotony<SEUILS.monotony.vert?"vert":s.monotony<SEUILS.monotony.orange?"orange":"rouge";
       state.cLevels.push(lvl); html += row("Monotonie", fmt(s.monotony,1), "", lvl, "", "Monotonie de Foster (7 j)");
-    }
-    // Dérive cardiaque (sortie longue)
-    const dr = s.longRun && s.longRun.cardiacDrift;
-    if(dr==null){ html += row("Dérive cardiaque","—","","na","",""); }
-    else{
-      lvl = dr<SEUILS.derive.vert?"vert":dr<SEUILS.derive.orange?"orange":"rouge";
-      state.cLevels.push(lvl); html += row("Dérive cardiaque", fmt(dr,1), "%", lvl, "", "Dérive FC sortie longue");
     }
     // Chute cadence — informatif
     const cd = s.longRun && s.longRun.cadenceDrop;
@@ -2658,13 +2587,6 @@ if ("serviceWorker" in navigator) {
       ? "Clairance cardiaque > "+MOIS_CLEARANCE_MAX+" mois : garde-fou non masquable avant tout bloc haute intensité."
       : "Clairance cardiaque à jour.";
   }
-
-  // ── Nudge recalibrage ──
-  (function(){
-    const n=$("#sd-nudge"), d=daysSince(DERNIER_TEST_SEUIL);
-    if(d>JOURS_RECALIBRAGE){ n.classList.add("show");
-      n.textContent="Dernier test seuil il y a "+d+" j. Recalibre FTP/VMA/FC seuil : sinon TSS, zones et ACWR dérivent."; }
-  })();
 
   // ── Grille 4 voyants (revue hebdo) ──
   const VOY = [
