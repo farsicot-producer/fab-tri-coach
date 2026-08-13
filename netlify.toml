@@ -6,7 +6,7 @@
   publish = "."
   functions = "netlify/functions"
 
-# Jolis chemins /api/... -> fonctions Netlify
+# ── Pipeline santé existant (inchangé, sert de repli) ──
 [[redirects]]
   from = "/api/health/ingest"
   to = "/.netlify/functions/health-ingest"
@@ -17,13 +17,26 @@
   to = "/.netlify/functions/health-latest"
   status = 200
 
-# Branche charge (séances Apple Health -> TRIMP/ACWR/Foster)
+# ── Hub intervals.icu ──
+# Sync (manuel via URL + planifié) : tire activites + wellness, calcule et stocke.
 [[redirects]]
-  from = "/api/workouts-ingest"
-  to = "/.netlify/functions/workouts-ingest"
+  from = "/api/intervals-sync"
+  to = "/.netlify/functions/intervals-sync"
   status = 200
 
+# Lecteur branche CHARGE (ACWR / monotonie / derive) consomme par « Suivi data ».
 [[redirects]]
   from = "/api/load"
   to = "/.netlify/functions/load"
   status = 200
+
+# Lecteur branche RECUP (sommeil / FC repos / HRV) — future source de la branche Recup.
+[[redirects]]
+  from = "/api/wellness"
+  to = "/.netlify/functions/wellness"
+  status = 200
+
+# ── Planification : rafraichit le hub toutes les 2 h ──
+# (redondant avec `export const config` dans la fonction ; laisse ici pour visibilite)
+[functions."intervals-sync"]
+  schedule = "0 */2 * * *"
