@@ -158,6 +158,27 @@ function buildWellness(wellness) {
   const b7rhr = base7(F.restingHR);
   const b7hrv = base7(F.hrv);
 
+  // Baseline sommeil 7 j (en heures) — sert de repère de régularité
+  const slVals = [];
+  for (const w of desc) {
+    const v = val(w, F.sleepSecs);
+    if (v != null) { slVals.push(v > 100 ? v / 3600 : v); if (slVals.length >= 7) break; }
+  }
+  const b7sleep = slVals.length ? slVals.reduce((a, b) => a + b, 0) / slVals.length : null;
+
+  // Tendance FC repos : moyenne des 7 derniers jours vs les 7 précédents
+  const rhrAll = [];
+  for (const w of desc) { const v = val(w, F.restingHR); if (v != null) rhrAll.push(v); }
+  let rhrTrend = null;
+  if (rhrAll.length >= 10) {
+    const recent = rhrAll.slice(0, 7);
+    const prior  = rhrAll.slice(7, 14);
+    if (prior.length >= 3) {
+      const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
+      rhrTrend = avg(recent) - avg(prior);
+    }
+  }
+
   return {
     updatedAt: new Date().toISOString(),
     date: desc.length ? desc[0].id : null,
@@ -166,6 +187,8 @@ function buildWellness(wellness) {
     sleep_quality: latest(F.sleepQual),
     resting_hr: rhr != null ? Math.round(rhr) : null,
     resting_hr_baseline_7d: b7rhr != null ? Math.round(b7rhr) : null,
+    resting_hr_trend_7d: rhrTrend != null ? round(rhrTrend, 1) : null,
+    sleep_baseline_7d: b7sleep != null ? round(b7sleep, 1) : null,
     hrv: hrv != null ? Math.round(hrv) : null,
     hrv_baseline_7d: b7hrv != null ? Math.round(b7hrv) : null,
     steps: latest(F.steps),
