@@ -208,8 +208,9 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 
 /* ppg */
 .ppg{background:var(--card);border:1px solid var(--border-subtle);border-radius:var(--r-md);box-shadow:var(--shadow-card);padding:14px;display:flex;gap:14px;align-items:flex-start}
-.ppg .pi{width:104px;height:104px;border-radius:14px;overflow:hidden;background:#ECEAE4;border:1px solid var(--border-subtle);display:grid;place-items:center;flex:none;color:var(--ppg)}
+.ppg .pi{width:104px;height:104px;border-radius:14px;overflow:hidden;background:#ECEAE4;border:1px solid var(--border-subtle);display:grid;place-items:center;flex:none;color:var(--ppg);position:relative}
 .ppg .pi svg{width:30px;height:30px;opacity:.7}
+.ppg .pi img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ppg .pc{flex:1;min-width:0}
 .ppg .ptop{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:5px}
 .ppg .ptop strong{font-size:16px;font-weight:800;flex-basis:100%}
@@ -698,15 +699,15 @@ function screenPPG(){
   return `<div>
    <div class="ohead" style="display:flex;align-items:center;gap:12px">
      <div class="oback" data-act="go" data-arg="settings">${icon("back")}</div>
-     <div style="font-family:var(--font-display);font-weight:800;font-size:20px">Bibliothèque PPG</div>
+     <div style="font-weight:800;font-size:20px">Bibliothèque PPG</div>
    </div>
-   <div style="padding:20px;display:flex;flex-direction:column;gap:12px">
-     ${PPG_ITEMS.map(p=>`<div class="ppg"><span class="pi">${icon(p.icon)}</span>
-       <div style="flex:1;min-width:0">
-         <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px">
-           <strong style="font-size:14px">${esc(p.title)}</strong><span class="tag">${esc(p.time)}</span></div>
-         <div style="font-size:11.5px;color:var(--text-secondary);margin-bottom:3px">${esc(p.muscles)}</div>
-         <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.4">${esc(p.cue)}</div>
+   <div style="padding:16px 16px 24px;display:flex;flex-direction:column;gap:11px">
+     ${PPG_ITEMS.map(p=>`<div class="ppg">
+       <span class="pi">${icon(p.icon)}<img src="assets/ppg/${p.id}.png" alt="${esc(p.title)}" loading="lazy" onerror="this.remove()"></span>
+       <div class="pc">
+         <div class="ptop"><strong>${esc(p.title)}</strong><span class="tag num">${esc(p.time)}</span></div>
+         <div class="pm">${esc(p.muscles)}</div>
+         <div class="pcue">${esc(p.cue)}</div>
        </div></div>`).join("")}
    </div></div>`;
 }
