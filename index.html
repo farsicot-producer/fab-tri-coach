@@ -248,6 +248,12 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 .nav{width:100%;max-width:410px;pointer-events:auto;display:flex;justify-content:space-around;align-items:center;background:var(--ink);border-radius:22px;padding:8px;box-shadow:0 22px 44px -20px rgba(30,41,62,.6)}
 .nav button{flex:1;border:0;background:transparent;color:#8B93A4;height:46px;border-radius:16px;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center}
 .nav button.on{background:var(--lime);color:var(--ink)}
+.modal-back{position:fixed;inset:0;background:rgba(30,41,62,.45);z-index:120;display:flex;align-items:center;justify-content:center;padding:24px}
+.modal{background:var(--card);border-radius:20px;padding:22px;max-width:360px;width:100%;box-shadow:0 30px 60px -20px rgba(30,41,62,.55)}
+.modal-t{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-disabled)}
+.modal-m{font-size:16px;font-weight:600;margin-top:8px;line-height:1.4}
+.modal-row{display:flex;gap:12px;margin-top:20px}
+.modal-row .btn{flex:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -404,7 +410,7 @@ const S={view:"overview",calendarMode:"Semaine",currentWeek:1,status:{},moves:{}
  situation:"missed-quality",fatigue:"Modérée",avail:"48h",
  adaptResult:"Sélectionnez une situation puis générez l'ajustement.",
  fcMax:"",pace:"",ftp:"",raceName:"",raceDate:"",weeklyGoalHours:8,
- symptom:false, wellness:null, charge:null};
+ symptom:false, wellness:null, charge:null, confirm:null};
 try{Object.assign(S,JSON.parse(localStorage.getItem(LS)||"{}"));}catch(e){}
 function persist(){try{localStorage.setItem(LS,JSON.stringify({status:S.status,moves:S.moves,fcMax:S.fcMax,pace:S.pace,ftp:S.ftp,raceName:S.raceName,raceDate:S.raceDate,currentWeek:S.currentWeek}));}catch(e){}}
 const statusOf=id=>S.status[id]||"";
@@ -541,7 +547,8 @@ function blockProgress(blk,all){
 }
 function screenOverview(){
   const all=allFlat(), block=blockForWeek(S.currentWeek), ws=weekSessions(S.currentWeek);
-  const dur=ws.reduce((a,x)=>a+x.minutes,0);
+  const dur=ws.filter(x=>["done","z2"].includes(statusOf(x.id))).reduce((a,x)=>a+x.minutes,0);
+  const durH=Math.floor(dur/60)+"h"+String(dur%60).padStart(2,"0");
   const done=ws.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
   const next=ws.filter(x=>statusOf(x.id)!=="done").slice(0,2);
   const totals=Array(7).fill(0); ws.forEach(x=>totals[x.dayEff]+=x.minutes);
@@ -565,7 +572,7 @@ function screenOverview(){
       <div class="hero-title">Programme de la semaine</div>
     </div>
     <div class="hero-bot">
-      <div class="hero-metric"><span class="big num">${fmtMin(dur)}</span><span class="of num">/ ${S.weeklyGoalHours}h00</span></div>
+      <div class="hero-metric"><span class="big num">${durH}</span><span class="of num">/ ${S.weeklyGoalHours}h00</span></div>
       <div class="hero-sub num">${ws.length} séances · ${done} faites · Semaine ${S.currentWeek}</div>
       <div class="hero-bar"><i style="width:${goalPct}%"></i></div>
       <div class="hero-legend"><span>Volume réalisé</span><span class="val num">${goalPct}%</span></div>
@@ -583,7 +590,7 @@ function screenOverview(){
   </div>
 
   <div class="card" style="margin-top:14px">
-    <div class="sechead" style="margin:0"><h3>Objectif de la semaine</h3><span class="sub"><span class="num" style="color:var(--text-primary);font-weight:700">${fmtMin(dur)}</span> / ${S.weeklyGoalHours}h00</span></div>
+    <div class="sechead" style="margin:0"><h3>Objectif de la semaine</h3><span class="sub"><span class="num" style="color:var(--text-primary);font-weight:700">${durH}</span> / ${S.weeklyGoalHours}h00</span></div>
     <div class="pbar" style="margin-top:12px"><i style="width:${goalPct}%"></i></div>
     <div class="bars">${totals.map((mn,i)=>{const f=ws.find(x=>x.dayEff===i);
       if(!f)return `<div class="col2"><div class="bar rest" style="height:10%"></div><span class="g">${icon("moon")}</span></div>`;
@@ -759,11 +766,22 @@ function overlayDetail(){
 "use strict";
 /* ════════════ Rendu ════════════ */
 const SCREENS={overview:screenOverview,calendar:screenCalendar,adapt:screenAdapt,settings:screenSettings,ppg:screenPPG};
+function confirmModal(){
+  const c=S.confirm||{};
+  return `<div class="modal-back"><div class="modal">
+    <div class="modal-t">Confirmation</div>
+    <div class="modal-m">${esc(c.msg||"Confirmer ?")}</div>
+    <div class="modal-row">
+      <button class="btn secondary" data-act="confirmNo">Annuler</button>
+      <button class="btn" style="background:var(--danger);color:#fff;border-color:var(--danger)" data-act="confirmYes">Réinitialiser</button>
+    </div>
+  </div></div>`;
+}
 function render(){
   const fn=SCREENS[S.view]||screenOverview;
   document.getElementById("app").innerHTML=fn();
-  document.getElementById("overlay").innerHTML=S.detailId?overlayDetail():"";
-  document.getElementById("navwrap").classList.toggle("hidden",!!S.detailId);
+  document.getElementById("overlay").innerHTML=S.detailId?overlayDetail():(S.confirm?confirmModal():"");
+  document.getElementById("navwrap").classList.toggle("hidden",!!S.detailId||!!S.confirm);
   const navMap={ppg:"settings"};
   const active=navMap[S.view]||S.view;
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===active));
@@ -805,8 +823,10 @@ const ACTIONS={
     S.ftp=(document.getElementById("fFtp")||{}).value||"";persist();render();},
   saveRace:()=>{S.raceName=(document.getElementById("fRace")||{}).value||"";
     S.raceDate=(document.getElementById("fRaceDate")||{}).value||"";persist();render();},
-  resetTracking:()=>{if(confirm("Réinitialiser tous les statuts et déplacements ?")){S.status={};S.moves={};persist();render();}},
-  resetProgram:()=>{if(confirm("Remettre à zéro le programme complet ?")){S.status={};S.moves={};S.fcMax=S.pace=S.ftp=S.raceName=S.raceDate="";persist();render();}}
+  resetTracking:()=>{S.confirm={kind:"tracking",msg:"Réinitialiser tous les statuts et déplacements ?"};render();},
+  resetProgram:()=>{S.confirm={kind:"program",msg:"Remettre à zéro le programme complet ? Statuts, déplacements, zones et course cible seront effacés."};render();},
+  confirmNo:()=>{S.confirm=null;render();},
+  confirmYes:()=>{const k=S.confirm&&S.confirm.kind;S.confirm=null;if(k==="program"){S.status={};S.moves={};S.fcMax=S.pace=S.ftp=S.raceName=S.raceDate="";}else{S.status={};S.moves={};}persist();render();}
 };
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-act]");
