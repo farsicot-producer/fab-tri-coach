@@ -727,7 +727,7 @@ function overlayDetail(){
   if(st==="done") sPill='<span class="o-pill" style="background:rgba(63,174,89,.24);color:#CDEBD5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg>Fait</span>';
   else if(st==="missed") sPill='<span class="o-pill" style="background:rgba(210,86,76,.28);color:#F4D2CE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg>Raté</span>';
   else if(st==="z2") sPill='<span class="o-pill" style="background:rgba(255,255,255,.16);color:#fff">Adapté Z2</span>';
-  const ppgRows=exs.map(e=>`<div class="ppg"><span class="pi">${icon(e.icon)}</span>
+  const ppgRows=exs.map(e=>`<div class="ppg"><span class="pi">${icon(e.icon)}<img src="assets/ppg/${e.id}.png" alt="${esc(e.title)}" loading="lazy" onerror="this.remove()"></span>
     <div class="pc"><div class="ptop"><strong>${esc(e.title)}</strong><span class="tag num">${esc(e.time)}</span></div>
     <div class="pm">${esc(e.muscles)}</div><div class="pcue">${esc(e.cue)}</div></div></div>`).join("");
   return `<div class="ovl">
