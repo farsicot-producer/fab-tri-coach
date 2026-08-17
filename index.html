@@ -227,8 +227,18 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 .sd-verdict i.dot{width:9px;height:9px;border-radius:50%;margin-top:4px;flex:none}
 .sd-vh{font-size:13px;font-weight:800}
 .sd-vs{font-size:12px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
-.sd-br{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.sd-b h4{margin:0 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text-disabled)}
+.sd-br{display:flex;flex-direction:column;gap:12px}
+.sd-b{background:var(--card-alt);border-radius:var(--radius-md);padding:14px 16px}
+.sd-b h4{margin:0 0 10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text-disabled)}
+.sd-stats{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:10px}
+.sd-stat{flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;padding:0 0 10px}
+.sd-stat-l{font-size:11.5px;color:var(--text-secondary);line-height:1.15;min-height:0}
+.sd-stat-v{font-size:28px;font-weight:800;line-height:1;color:var(--text-primary);letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sd-stat-u{font-size:.42em;font-weight:700;color:var(--text-disabled);margin-left:3px;letter-spacing:0}
+.sd-pill{flex:0 0 auto;align-self:stretch;min-width:90px;border-radius:var(--radius-md);padding:10px 14px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;color:#fff;text-align:center}
+.sd-pill.na{background:var(--data-neutral);color:var(--text-secondary)}
+.sd-pill-l{font-size:11.5px;font-weight:700;text-transform:lowercase;opacity:.92;line-height:1.15;white-space:nowrap}
+.sd-pill-v{font-size:28px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .sd-row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed var(--border-subtle)}
 .sd-row:first-of-type{border-top:0}
 .sd-row:last-child{border-bottom:0}
@@ -447,45 +457,51 @@ function sdRow(l,v,u,lvl,d,dFirst){
   const del=d?`<span class="d${dFirst?" df":""}" style="color:${LVLC[lvl]}">${esc(d)}</span>`:"";
   return `<div class="sd-row"><span class="l">${esc(l)}</span><span class="v">${dFirst?del+val:val+del}</span></div>`;
 }
+function sdStat(l,v,u){
+  const unit=(u&&v!=="—")?`<span class="sd-stat-u">${esc(u)}</span>`:"";
+  return `<div class="sd-stat"><div class="sd-stat-l">${esc(l)}</div><div class="sd-stat-v">${esc(v)}${unit}</div></div>`;
+}
+// invert=true pour une métrique où « monter » est mauvais (ex. FC repos) : positif → rouge.
+function sdPill(l,value,invert){
+  if(value==null||isNaN(value))
+    return `<div class="sd-pill na"><div class="sd-pill-l">${esc(l)}</div><div class="sd-pill-v">—</div></div>`;
+  const r=Math.round(value), good=invert?r<=0:r>=0;
+  const bg=good?"#4E9E63":"#D2564C", disp=(r>0?"+":"")+r;
+  return `<div class="sd-pill" style="background:${bg}"><div class="sd-pill-l">${esc(l)}</div><div class="sd-pill-v">${esc(disp)}</div></div>`;
+}
 function buildRecup(){
   const d=S.wellness, L=[];
   if(!d||d.empty||(d.sleep_h==null&&d.resting_hr==null))
     return {levels:L,html:`<div class="sd-empty">Aucune donnée de bien-être. Lance <code>/api/intervals-sync</code> puis vérifie la connexion Garmin dans intervals.icu.</div>`,state:"down",label:"Récup — aucune donnée"};
-  let h="",lvl;
   const sl=typeof d.sleep_h==="number"?d.sleep_h:null, bsl=typeof d.sleep_baseline_7d==="number"?d.sleep_baseline_7d:null;
   const hr=typeof d.resting_hr==="number"?d.resting_hr:null, bhr=typeof d.resting_hr_baseline_7d==="number"?d.resting_hr_baseline_7d:null;
-  lvl=sl==null?"na":sl>=SEUILS.sleep.vert?"vert":sl>=SEUILS.sleep.orange?"orange":"rouge";
-  if(lvl!=="na")L.push(lvl);
-  h+=sdRow("Sommeil",num(sl,1),"h",lvl,"");
-  if(sl!=null&&bsl!=null){const del=Math.round((sl-bsl)*10)/10;
-    lvl=del<SEUILS.sleepDelta.orange?"rouge":del<SEUILS.sleepDelta.vert?"orange":"vert";L.push(lvl);
-    h+=sdRow("Suivi sommeil",num(bsl,1),"h",lvl,(del>=0?"+":"")+num(del,1),true);
-  } else h+=sdRow("Suivi sommeil","—","","na","");
-  if(hr!=null&&bhr!=null){const del=Math.round((hr-bhr)*10)/10;
-    lvl=del>SEUILS.fcRepos.orange?"rouge":del>SEUILS.fcRepos.vert?"orange":"vert";L.push(lvl);
-    h+=sdRow("FC repos",num(hr,0),"bpm",lvl,(del>=0?"+":"")+num(del,1),true);
-  } else h+=sdRow("FC repos",num(hr,0),"bpm","na","");
   const tr=typeof d.resting_hr_trend_7d==="number"?d.resting_hr_trend_7d:null;
-  if(tr!=null){lvl=tr>SEUILS.fcTrend.orange?"rouge":tr>SEUILS.fcTrend.vert?"orange":"vert";L.push(lvl);
-    h+=sdRow("FC repos\ntendance 7 j",(tr>=0?"+":"")+num(tr,1),"bpm",lvl,"");
-  } else h+=sdRow("FC repos\ntendance 7 j","—","","na","");
-  return {levels:L,html:h,state:"ok",label:"Récup à jour"};
+  // Niveaux conservés pour le verdict « le plus conservateur gagne », même si non affichés en direct.
+  let lvl=sl==null?"na":sl>=SEUILS.sleep.vert?"vert":sl>=SEUILS.sleep.orange?"orange":"rouge"; if(lvl!=="na")L.push(lvl);
+  let hrDelta=null;
+  if(sl!=null&&bsl!=null){const del=Math.round((sl-bsl)*10)/10; L.push(del<SEUILS.sleepDelta.orange?"rouge":del<SEUILS.sleepDelta.vert?"orange":"vert");}
+  if(hr!=null&&bhr!=null){hrDelta=Math.round((hr-bhr)*10)/10; L.push(hrDelta>SEUILS.fcRepos.orange?"rouge":hrDelta>SEUILS.fcRepos.vert?"orange":"vert");}
+  if(tr!=null)L.push(tr>SEUILS.fcTrend.orange?"rouge":tr>SEUILS.fcTrend.vert?"orange":"vert");
+  const stats=sdStat("Sommeil",sl==null?"—":num(sl,1),"h")
+    +sdStat("Suivi sommeil",bsl==null?"—":num(bsl,1),"h")
+    +sdStat("FC repos",hr==null?"—":num(hr,0),"bpm");
+  const html=`<div class="sd-stats">${stats}${sdPill("Tendance",hrDelta)}</div>`;
+  return {levels:L,html,state:"ok",label:"Récup à jour"};
 }
 function buildCharge(){
   const s=S.charge, L=[];
   if(!s||s.empty)
     return {levels:L,html:`<div class="sd-empty">Aucune activité reçue. Lance <code>/api/intervals-sync</code> et vérifie que Garmin envoie tes séances vers intervals.icu.</div>`,state:"down",label:"Charge — aucune donnée"};
-  const p=s.pmc||{};let h="";
-  h+=sdRow("Charge (7 j)",num(s.load7,0),"","na","");
-  h+=sdRow("Forme",num(p.ctl,1),"","na","");
-  h+=sdRow("Fatigue",num(p.atl,1),"","na","");
-  if(typeof p.tsb==="number"){
-    const lvl=p.tsb<SEUILS.tsb.orange?"rouge":p.tsb<SEUILS.tsb.vert?"orange":"vert";L.push(lvl);
-    h+=sdRow("Fraîcheur\n(forme − fatigue)",(p.tsb>=0?"+":"")+num(p.tsb,1),"",lvl,"");
-  }
+  const p=s.pmc||{};
+  const tsb=typeof p.tsb==="number"?p.tsb:null;
+  if(tsb!=null)L.push(tsb<SEUILS.tsb.orange?"rouge":tsb<SEUILS.tsb.vert?"orange":"vert");
+  const stats=sdStat("Charge (7 j)",s.load7==null?"—":num(s.load7,0),"")
+    +sdStat("Forme",p.ctl==null?"—":num(p.ctl,1),"")
+    +sdStat("Fatigue",p.atl==null?"—":num(p.atl,1),"");
+  const html=`<div class="sd-stats">${stats}${sdPill("Fraîcheur",tsb)}</div>`;
   const last=s.lastActivity||{};
   const state=s.updatedAt&&daysSince(s.updatedAt)>3?"stale":"ok";
-  return {levels:L,html:h,state,label:last.date?"Charge · "+new Date(last.date+"T00:00:00").toLocaleDateString("fr-FR"):"Charge à jour"};
+  return {levels:L,html,state,label:last.date?"Charge · "+new Date(last.date+"T00:00:00").toLocaleDateString("fr-FR"):"Charge à jour"};
 }
 function suiviDataCard(){
   const R=buildRecup(), C=buildCharge();
@@ -519,8 +535,8 @@ function suiviDataCard(){
       <div><div class="sd-vh">${esc(head)}</div><div class="sd-vs">${esc(sub)}</div></div>
     </div>
     <div class="sd-br">
-      <div class="sd-b"><h4 style="color:var(--activity-bike)">Récupération</h4>${R.html}</div>
       <div class="sd-b"><h4 style="color:var(--activity-run)">Charge</h4>${C.html}</div>
+      <div class="sd-b"><h4 style="color:var(--activity-bike)">Récupération</h4>${R.html}</div>
     </div>
     <div class="sd-med ${S.symptom?"on":""}">
       <label><input type="checkbox" id="symptomBox" ${S.symptom?"checked":""}> Symptômes neuro / mollet gauche présents aujourd'hui</label>
