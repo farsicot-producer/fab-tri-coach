@@ -110,8 +110,6 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 .bars{display:flex;align-items:flex-end;gap:7px;height:120px;margin-top:18px}
 .bars .col2{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:9px;cursor:pointer}
 .bars .bar{width:100%;border-radius:7px 7px 4px 4px;background:var(--data-neutral)}
-.bars .bar.peak{background:var(--lime)}
-.bars .bar.rest{background:var(--track)}
 .bars .g{width:16px;height:16px;color:var(--text-disabled)}
 
 /* progression blocs */
@@ -237,6 +235,8 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 .sd-row .l{font-size:12px;color:var(--text-secondary);white-space:pre-line;line-height:1.25}
 .sd-row .v{font-size:14px;font-weight:800;text-align:right;white-space:nowrap}
 .sd-row .d{font-weight:700;margin-left:3px;font-size:11px}
+.sd-row .d.df{margin-left:0;margin-right:5px}
+.tgt{margin-top:7px;font-size:12.5px;font-weight:700;color:var(--ink);background:rgba(30,41,62,.06);border-radius:8px;padding:5px 9px;display:inline-block;line-height:1.4}
 .sd-empty{font-size:12px;color:var(--text-disabled);line-height:1.45}
 .sd-med{margin-top:14px;border-radius:12px;padding:12px;background:var(--card);border:1px solid var(--border-subtle)}
 .sd-med.on{background:rgba(210,86,76,.08);border-color:rgba(210,86,76,.4)}
@@ -404,6 +404,19 @@ function detailSteps(s){
  if(s.sport==="velo")return[{title:"Objectif vélo",desc:"Construire puissance durable et endurance spécifique."},{title:"Échauffement",desc:"15 min progressives, cadence souple. Sur home trainer : 3 rampes de 30 sec."},{title:"Corps de séance",desc:s.name},{title:"Retour au calme",desc:"10 min Z1/Z2. Nutrition : boire régulièrement, surtout sur les sorties de plus de 2h."}];
  return [{title:"Objectif",desc:"Renforcer ce qui protège la course et le vélo : hanches, gainage, fessiers et mollets. Exécution lente, jamais à l'échec."}];
 }
+/* ── Zones perso (Réglages → cibles injectées dans les séances) ── */
+function parsePaceSec(v){const m=/^\s*(\d{1,2}):([0-5]?\d)\s*$/.exec(String(v||""));if(!m)return null;const s=(+m[1])*60+(+m[2]);return s>0?s:null;}
+function fmtPace(sec){sec=Math.round(sec);const m=Math.floor(sec/60),s=sec%60;return m+":"+String(s).padStart(2,"0");}
+const HR_PCT={z1:[.55,.65],z2:[.65,.75],z3:[.75,.82],z4:[.82,.89],z5:[.89,.97]};
+const FTP_PCT={z1:[.45,.55],z2:[.56,.75],z3:[.76,.90],z4:[.91,1.05],z5:[1.06,1.20]};
+const PACE_OFF={z1:[75,105],z2:[45,75],z3:[15,30],z4:[-5,5],z5:[-20,-8]};
+function userZones(){const fc=parseInt(S.fcMax,10),ftp=parseInt(S.ftp,10),p=parsePaceSec(S.pace);return{fc:fc>0?fc:null,ftp:ftp>0?ftp:null,pace:p};}
+function mainZone(s){const n=(s.name||"").toLowerCase();if(n.includes("vo2"))return"z5";if(n.includes("tempo"))return"z3";if(n.includes("seuil"))return"z4";if(n.includes("récup")||n.includes("recup"))return"z1";return s.type==="quality"?"z4":"z2";}
+function zoneForStep(title,mz){const t=(title||"").toLowerCase();if(t.includes("échauff")||t.includes("echauff"))return"z2";if(t.includes("retour au calme")||t.includes("récup")||t.includes("recup"))return"z1";return mz;}
+function targetStr(sport,zone){const z=userZones(),out=[];
+  if(sport==="cap"){if(z.pace){const[a,b]=PACE_OFF[zone];out.push(`Allure ${fmtPace(z.pace+a)}–${fmtPace(z.pace+b)} /km`);}if(z.fc){const[a,b]=HR_PCT[zone];out.push(`FC ${Math.round(z.fc*a)} à ${Math.round(z.fc*b)} bpm`);}}
+  else if(sport==="velo"){if(z.ftp){const[a,b]=FTP_PCT[zone];out.push(`Puissance ${Math.round(z.ftp*a)}–${Math.round(z.ftp*b)} W`);}if(z.fc){const[a,b]=HR_PCT[zone];out.push(`FC ${Math.round(z.fc*a)} à ${Math.round(z.fc*b)} bpm`);}}
+  return out.join(" · ");}
 
 /* ════════════ État ════════════ */
 const LS="coaching-tri-v2";
@@ -429,8 +442,10 @@ const num=(n,d=1)=>n==null?"—":(Math.round(n*10**d)/10**d).toLocaleString("fr-
 const daysSince=iso=>Math.floor((Date.now()-new Date(iso))/864e5);
 const LVLC={vert:"var(--state-success)",orange:"var(--state-warning)",rouge:"var(--state-danger)",na:"var(--text-disabled)"};
 
-function sdRow(l,v,u,lvl,d){
-  return `<div class="sd-row"><span class="l">${esc(l)}</span><span class="v">${esc(v)}${u?" "+esc(u):""}${d?`<span class="d" style="color:${LVLC[lvl]}">${esc(d)}</span>`:""}</span></div>`;
+function sdRow(l,v,u,lvl,d,dFirst){
+  const val=`${esc(v)}${u?" "+esc(u):""}`;
+  const del=d?`<span class="d${dFirst?" df":""}" style="color:${LVLC[lvl]}">${esc(d)}</span>`:"";
+  return `<div class="sd-row"><span class="l">${esc(l)}</span><span class="v">${dFirst?del+val:val+del}</span></div>`;
 }
 function buildRecup(){
   const d=S.wellness, L=[];
@@ -444,11 +459,11 @@ function buildRecup(){
   h+=sdRow("Sommeil",num(sl,1),"h",lvl,"");
   if(sl!=null&&bsl!=null){const del=Math.round((sl-bsl)*10)/10;
     lvl=del<SEUILS.sleepDelta.orange?"rouge":del<SEUILS.sleepDelta.vert?"orange":"vert";L.push(lvl);
-    h+=sdRow("Sommeil vs habitude",num(bsl,1),"h",lvl,(del>=0?"+":"")+num(del,1));
-  } else h+=sdRow("Sommeil vs habitude","—","","na","");
+    h+=sdRow("Suivi sommeil",num(bsl,1),"h",lvl,(del>=0?"+":"")+num(del,1),true);
+  } else h+=sdRow("Suivi sommeil","—","","na","");
   if(hr!=null&&bhr!=null){const del=Math.round((hr-bhr)*10)/10;
     lvl=del>SEUILS.fcRepos.orange?"rouge":del>SEUILS.fcRepos.vert?"orange":"vert";L.push(lvl);
-    h+=sdRow("FC repos",num(hr,0),"bpm",lvl,(del>=0?"+":"")+num(del,1));
+    h+=sdRow("FC repos",num(hr,0),"bpm",lvl,(del>=0?"+":"")+num(del,1),true);
   } else h+=sdRow("FC repos",num(hr,0),"bpm","na","");
   const tr=typeof d.resting_hr_trend_7d==="number"?d.resting_hr_trend_7d:null;
   if(tr!=null){lvl=tr>SEUILS.fcTrend.orange?"rouge":tr>SEUILS.fcTrend.vert?"orange":"vert";L.push(lvl);
@@ -462,8 +477,8 @@ function buildCharge(){
     return {levels:L,html:`<div class="sd-empty">Aucune activité reçue. Lance <code>/api/intervals-sync</code> et vérifie que Garmin envoie tes séances vers intervals.icu.</div>`,state:"down",label:"Charge — aucune donnée"};
   const p=s.pmc||{};let h="";
   h+=sdRow("Charge (7 j)",num(s.load7,0),"","na","");
-  h+=sdRow("Forme (CTL)",num(p.ctl,1),"","na","");
-  h+=sdRow("Fatigue (ATL)",num(p.atl,1),"","na","");
+  h+=sdRow("Forme",num(p.ctl,1),"","na","");
+  h+=sdRow("Fatigue",num(p.atl,1),"","na","");
   if(typeof p.tsb==="number"){
     const lvl=p.tsb<SEUILS.tsb.orange?"rouge":p.tsb<SEUILS.tsb.vert?"orange":"vert";L.push(lvl);
     h+=sdRow("Fraîcheur\n(forme − fatigue)",(p.tsb>=0?"+":"")+num(p.tsb,1),"",lvl,"");
@@ -594,9 +609,10 @@ function screenOverview(){
     <div class="sechead" style="margin:0"><h3>Objectif de la semaine</h3><span class="sub"><span class="num" style="color:var(--text-primary);font-weight:700">${durH}</span> / ${S.weeklyGoalHours}h00</span></div>
     <div class="pbar" style="margin-top:12px"><i style="width:${goalPct}%"></i></div>
     <div class="bars">${totals.map((mn,i)=>{const f=ws.find(x=>x.dayEff===i);
-      if(!f)return `<div class="col2"><div class="bar rest" style="height:10%"></div><span class="g">${icon("moon")}</span></div>`;
-      const h=Math.max(10,Math.round(mn/mx*100)),peak=mn===mx;
-      return `<div class="col2" data-act="open" data-arg="${f.id}"><div class="bar ${peak?"peak":""}" style="height:${h}%"></div><span class="g" style="color:${SPORT_META[f.sport].color}">${icon(SPORT_META[f.sport].icon)}</span></div>`;}).join("")}</div>
+      if(!f)return `<div class="col2"><div class="bar" style="height:10%;background:var(--data-neutral)"></div><span class="g">${icon("moon")}</span></div>`;
+      const h=Math.max(10,Math.round(mn/mx*100)), st=statusOf(f.id);
+      const bg=(st==="done"||st==="z2")?"var(--lime)":st==="missed"?"var(--data-neutral)":(TINT[f.sport]||SPORT_META[f.sport].color);
+      return `<div class="col2" data-act="open" data-arg="${f.id}"><div class="bar" style="height:${h}%;background:${bg}"></div><span class="g" style="color:${SPORT_META[f.sport].color}">${icon(SPORT_META[f.sport].icon)}</span></div>`;}).join("")}</div>
     <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border-subtle);font-size:13px;color:var(--text-secondary);line-height:1.5"><b style="color:var(--text-primary)">Conseil</b> — privilégie la qualité technique et la régularité. L'intensité doit rester utile, pas héroïque.</div>
   </div>
 
@@ -720,6 +736,8 @@ function overlayDetail(){
   const steps=detailSteps(session);
   const obj=steps.length?steps[0]:null;
   const body=steps.slice(1);
+  const mz=mainZone(session);
+  const tgMain=(session.sport==="cap"||session.sport==="velo")?targetStr(session.sport,mz):"";
   const intention=session.type==="quality"
     ? "Si fatigue &gt; 2 jours, transforme en 30–45 min Z2 : la séance qualité n'est utile que si tu es frais."
     : "Garde l'intention prévue et une sensation de contrôle en fin de séance.";
@@ -744,8 +762,8 @@ function overlayDetail(){
     </div>
     <div style="padding:16px 16px 28px;display:flex;flex-direction:column;gap:12px">
       <div class="o-note">${intention}</div>
-      ${obj?`<div class="card"><div style="font-size:14px;font-weight:800;margin-bottom:5px">Objectif</div><div style="font-size:14px;color:var(--text-secondary);line-height:1.5">${esc(obj.desc)}</div></div>`:""}
-      ${body.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Déroulé</h3></div>`+body.map((x,i)=>`<div class="step"><div class="n num">${i+1}</div><div class="st"><h4>${esc(String(x.title).replace(/^\d+\.\s*/,""))}</h4><p>${esc(x.desc)}</p></div></div>`).join(""):""}
+      ${obj?`<div class="card"><div style="font-size:14px;font-weight:800;margin-bottom:5px">Objectif</div><div style="font-size:14px;color:var(--text-secondary);line-height:1.5">${esc(obj.desc)}</div>${tgMain?`<div class="tgt">${esc(tgMain)}</div>`:""}</div>`:""}
+      ${body.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Déroulé</h3></div>`+body.map((x,i)=>{const zt=(session.sport==="cap"||session.sport==="velo")?targetStr(session.sport,zoneForStep(x.title,mz)):"";return `<div class="step"><div class="n num">${i+1}</div><div class="st"><h4>${esc(String(x.title).replace(/^\d+\.\s*/,""))}</h4><p>${esc(x.desc)}</p>${zt?`<div class="tgt">${esc(zt)}</div>`:""}</div></div>`;}).join(""):""}
       ${exs.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Exercices PPG</h3></div>`+ppgRows:""}
       <div style="margin-top:8px">
         <div class="cta-lbl">Statut de la séance</div>
