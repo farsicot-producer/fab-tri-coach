@@ -440,7 +440,7 @@ const PPG_ITEMS=[
  {id:"glutebridge",icon:"bridge",title:"Pont fessier",time:"15 reps",muscles:"Grand fessier, ischios",cue:"Pieds à plat, monter les hanches en contractant les fessiers."},
  {id:"birddog",icon:"birddog",title:"Bird dog",time:"12 reps/côté",muscles:"Lombaires, fessiers, épaules",cue:"Gainage neutre, étirer bras et jambe opposés sans vriller."},
  {id:"lunge",icon:"lunge",title:"Fente arrière",time:"8 reps/côté",muscles:"Quadriceps, fessiers, mollets",cue:"Buste haut, genou avant stable, descendre contrôlé."},
- {id:"calf",icon:"calf",title:"Mollets debout",time:"20 reps",muscles:"Soléaire, gastrocnémiens",cue:"Monter fort, redescendre lentement, garder l'appui du gros orteil."},
+ {id:"calf",icon:"calf",title:"Mollets debout",time:"12 reps",muscles:"Soléaire, gastrocnémiens",cue:"Monter fort, redescendre lentement, garder l'appui du gros orteil."},
  {id:"deadbug",icon:"deadbug",title:"Dead bug",time:"10 reps/côté",muscles:"Transverse, fléchisseurs hanche",cue:"Lombaires stables, mouvement lent bras/jambe opposés."},
  {id:"hip90",icon:"hip90",title:"Mobilité 90/90",time:"8 reps/côté",muscles:"Hanches, rotateurs externes",cue:"Amplitude propre, respiration calme, pas de douleur."}
 ];
@@ -475,6 +475,18 @@ function ppgExercisesFor(s){
  else if(l.includes("mobilité"))ids=["hip90","deadbug","glutebridge"];
  else ids=["plank","sideplank","glutebridge","birddog"];
  return ids.map(i=>PPG_ITEMS.find(e=>e.id===i)).filter(Boolean);
+}
+function ppgCircuitFor(s){
+ const l=s.name.toLowerCase();
+ const neuro="Côté gauche (neuro) : reste dans l'amplitude propre, stoppe net si ça irradie ou fourmille. Mollets : contrôle l'excentrique, pas de rebond.";
+ let tours=3,rest="45–60 s";
+ if(l.includes("mobilité")&&l.includes("hanches")){tours=2;rest="30–45 s";}
+ else if(l.includes("fessiers")){tours=3;rest="45–60 s";}
+ else if(l.includes("mollets")){tours=3;rest="60 s";}
+ else if(l.includes("force")){tours=3;rest="45–60 s";}
+ else if(l.includes("stabilité")){tours=3;rest="45–60 s";}
+ else if(l.includes("mobilité")){tours=2;rest="30–45 s";}
+ return {tours,rest,note:neuro};
 }
 function detailSteps(s){
  if(s.sport==="natation"){const d=SWIM_DATA[swimKeyFor(s.name)];
@@ -555,7 +567,7 @@ function buildRecup(){
   const stats=sdStat("Sommeil",sl==null?"—":num(sl,1),"h")
     +sdStat("Suivi sommeil",bsl==null?"—":num(bsl,1),"h")
     +sdStat("FC repos",hr==null?"—":num(hr,0),"bpm");
-  const html=`<div class="sd-stats">${stats}${sdPill("Tendance",hrDelta)}</div>`;
+  const html=`<div class="sd-stats">${stats}${sdPill("Tendance",hrDelta,true)}</div>`;
   return {levels:L,html,state:"ok",label:"Récup à jour"};
 }
 function buildCharge(){
@@ -576,20 +588,22 @@ function buildCharge(){
 function suiviDataCard(){
   const R=buildRecup(), C=buildCharge();
   const clearOld=daysSince(CLEARANCE_CARDIAQUE)>MOIS_CLEARANCE_MAX*30;
-  let lvl=R.levels.concat(C.levels).reduce((a,c)=>pire(a,c),"na"); if(lvl==="na")lvl="vert";
+  let lvl=R.levels.concat(C.levels).reduce((a,c)=>pire(a,c),"na");
   let head,sub;
   if(S.symptom){lvl="rouge";head="Stop — cap médical actif";
-    sub="Symptômes neuro/mollet gauche signalés. Aucun travail reproduisant la douleur. Repos ou mobilité indolore uniquement.";}
+    sub="Douleur neuro / mollet gauche aujourd'hui. Repos ou mobilité sans douleur, rien d'autre.";}
+  else if(lvl==="na"){head="Pas de données — juge à la sensation";
+    sub="Aucun signal reçu aujourd'hui. Cale l'intensité sur ton ressenti.";}
   else{
-    const M={vert:["Feu vert — exécuter le plan","Signaux alignés. Séance prévue possible, intensité comprise si programmée."],
-      orange:["Prudence — alléger 10–15 %","Un signal dévie. Garde le volume, coupe l'intensité ou raccourcis les plages rapides."],
-      rouge:["Décharge — Z1–Z2 courte ou repos","Signal conservateur au rouge. Consultation si ça persiste 3–5 j."]};
+    const M={vert:["Feu vert — exécute le plan","Tout est bon. Fais la séance prévue, intensité comprise."],
+      orange:["Feu orange — allège 10–15 %","Un signal n'est pas bon. Garde le volume, enlève l'intensité."],
+      rouge:["Feu rouge — Z1–Z2 courte ou repos","Un signal est au rouge. Consulte si ça dure 3 à 5 jours."]};
     [head,sub]=M[lvl];
-    if(lvl==="vert"&&clearOld){head="Feu vert — mais plafond intensité";
-      sub="Signaux verts, or clairance cardiaque > "+MOIS_CLEARANCE_MAX+" mois : reste en aérobie avant tout bloc dur.";lvl="orange";}
+    if(lvl==="vert"&&clearOld){head="Aérobie seulement — intensité bloquée";
+      sub="Signaux bons, mais clairance cardiaque trop ancienne (> "+MOIS_CLEARANCE_MAX+" mois). Reste en aérobie tant qu'un bloc intense n'est pas revalidé.";lvl="orange";}
   }
-  const BG={vert:"rgba(63,174,89,.12)",orange:"rgba(242,169,59,.14)",rouge:"rgba(229,86,74,.12)"};
-  const BD={vert:"rgba(63,174,89,.35)",orange:"rgba(242,169,59,.4)",rouge:"rgba(229,86,74,.35)"};
+  const BG={vert:"rgba(63,174,89,.12)",orange:"rgba(242,169,59,.14)",rouge:"rgba(229,86,74,.12)",na:"rgba(130,130,130,.10)"};
+  const BD={vert:"rgba(63,174,89,.35)",orange:"rgba(242,169,59,.4)",rouge:"rgba(229,86,74,.35)",na:"rgba(130,130,130,.28)"};
   const stamp=S.wellness&&S.wellness.date?"à jour — "+new Date(S.wellness.date+"T00:00:00").toLocaleDateString("fr-FR"):"—";
   return `<div class="card" style="padding:18px">
     <div class="sd-head">
@@ -610,7 +624,7 @@ function suiviDataCard(){
     </div>
     <div class="sd-med ${S.symptom?"on":""}">
       <label><input type="checkbox" id="symptomBox" ${S.symptom?"checked":""}> Symptômes neuro / mollet gauche présents aujourd'hui</label>
-      <p>${clearOld?"Clairance cardiaque > "+MOIS_CLEARANCE_MAX+" mois : garde-fou non masquable avant tout bloc haute intensité.":"Clairance cardiaque à jour."}</p>
+      <p>${clearOld?"Clairance cardiaque trop ancienne (> "+MOIS_CLEARANCE_MAX+" mois) — garde-fou avant tout bloc intense.":"Clairance cardiaque à jour."}</p>
     </div>
   </div>`;
 }
@@ -654,7 +668,6 @@ function screenOverview(){
   const planned=ws.reduce((a,x)=>a+x.minutes,0);
   const plannedH=Math.floor(planned/60)+"h"+String(planned%60).padStart(2,"0");
   const done=ws.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
-  const next=ws.filter(x=>statusOf(x.id)!=="done").slice(0,2);
   const totals=Array(7).fill(0); ws.forEach(x=>totals[x.dayEff]+=x.minutes);
   const mx=Math.max(...totals,1);
   const goalPct=planned>0?Math.min(100,Math.round(dur/planned*100)):0;
@@ -684,14 +697,6 @@ function screenOverview(){
   </div>
 
   ${raceHTML}
-
-  <div class="sechead"><h3>Prochaines séances</h3><a data-act="go" data-arg="calendar-liste">Tout voir</a></div>
-  <div class="sess">
-    ${next.length?next.map(x=>`<div class="row" data-act="open" data-arg="${x.id}">
-      <span class="chip" style="background:${TINT[x.sport]};color:${SPORT_META[x.sport].color}">${icon(SPORT_META[x.sport].icon)}</span>
-      <div class="rt"><h4>${esc(x.name)}</h4><div class="meta">${SLBL[x.sport]} · ${esc(TYPE_LABELS[x.type]||"Séance")}</div></div>
-      <div class="when"><span class="d">${DAY_NAMES[x.dayEff].toUpperCase()}</span><span class="num">${fmtMin(x.minutes)}</span></div></div>`).join(""):`<div class="sub">Toutes les séances de la semaine sont faites.</div>`}
-  </div>
 
   <div class="card" style="margin-top:14px">
     <div class="sechead" style="margin:0"><h3>Objectif de la semaine</h3><span class="sub"><span class="num" style="color:var(--text-primary);font-weight:700">${durH}</span> / ${plannedH}</span></div>
@@ -915,6 +920,7 @@ function overlayDetail(){
   const ppgRows=exs.map(e=>`<div class="ppg"><span class="pi">${icon(e.icon)}<img src="assets/ppg/${e.id}.png" alt="${esc(e.title)}" loading="lazy" onerror="this.remove()"></span>
     <div class="pc"><div class="ptop"><strong>${esc(e.title)}</strong><span class="tag num">${esc(e.time)}</span></div>
     <div class="pm">${esc(e.muscles)}</div><div class="pcue">${esc(e.cue)}</div></div></div>`).join("");
+  const ppgHead=exs.length?(()=>{const c=ppgCircuitFor(session);return `<div class="card" style="padding:12px 14px"><div style="font-size:14px;font-weight:800;margin-bottom:4px">Format circuit</div><div style="font-size:13px;color:var(--text-secondary);line-height:1.5"><strong>${c.tours} tours</strong> de la liste · récup ${esc(c.rest)} entre les tours. Doses indiquées <strong>par tour</strong>.</div><div style="font-size:12px;color:var(--text-disabled);line-height:1.45;margin-top:6px">${esc(c.note)}</div></div>`;})():"";
   return `<div class="ovl">
     <div class="ohead">
       <div class="oback" data-act="closeDetail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg></div>
@@ -932,7 +938,7 @@ function overlayDetail(){
       ${session.sport==="natation"?`<button class="rt-open" data-act="openRoutine"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg></span><span class="tx"><h4>Échauffement</h4><p>Routine mobilité + activation · ${ROUTINE_NATATION.length} étapes</p></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span></button>`:""}
       ${obj?`<div class="card"><div style="font-size:14px;font-weight:800;margin-bottom:5px">Objectif</div><div style="font-size:14px;color:var(--text-secondary);line-height:1.5">${esc(obj.desc)}</div>${tgMain?`<div class="tgt">${esc(tgMain)}</div>`:""}</div>`:""}
       ${body.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Déroulé</h3></div>`+body.map((x,i)=>{const zt=(session.sport==="cap"||session.sport==="velo")?targetStr(session.sport,zoneForStep(x.title,mz)):"";return `<div class="step"><div class="n num">${i+1}</div><div class="st"><h4>${esc(String(x.title).replace(/^\d+\.\s*/,""))}</h4><p>${esc(x.desc)}</p>${zt?`<div class="tgt">${esc(zt)}</div>`:""}</div></div>`;}).join(""):""}
-      ${exs.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Exercices PPG</h3></div>`+ppgRows:""}
+      ${exs.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Exercices PPG</h3></div>`+ppgHead+ppgRows:""}
       <div style="margin-top:8px">
         <div class="cta-lbl">Statut de la séance</div>
         <div class="cta-row">
