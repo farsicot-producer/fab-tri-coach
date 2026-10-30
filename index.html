@@ -254,6 +254,37 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 .sd-med input{accent-color:var(--ink);width:18px;height:18px;margin-top:1px}
 .sd-med p{font-size:11px;color:var(--text-disabled);margin:7px 0 0;line-height:1.4}
 
+/* prochaine séance (addon triathlon-coach) */
+.ns-sess{display:flex;gap:12px;align-items:flex-start}
+.ns-ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none}
+.ns-ico svg{width:22px;height:22px}
+.ns-name{font-size:16px;font-weight:800;line-height:1.25;color:var(--text-primary)}
+.ns-meta{font-size:12px;color:var(--text-secondary);margin-top:3px}
+.ns-was{font-size:11.5px;color:var(--text-disabled);margin-top:8px;line-height:1.4}
+.ns-alt{font-size:12px;color:var(--text-secondary);margin-top:6px}
+.ns-r{padding:8px 0;border-bottom:1px dashed var(--border-subtle)}
+.ns-r:first-of-type{padding-top:0}
+.ns-r:last-child{border-bottom:0;padding-bottom:0}
+.ns-r .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ns-r .s{font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.ns-r .s i{width:7px;height:7px;border-radius:50%;flex:none;display:inline-block}
+.ns-r .m{font-size:13px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.ns-r .lec{font-size:11.5px;color:var(--text-disabled);margin-top:3px;line-height:1.4}
+.ns-notes{margin:10px 0 0;padding:0;list-style:none;font-size:12px;color:var(--text-secondary);line-height:1.45}
+.ns-notes li{padding-left:12px;position:relative;margin-top:3px}
+.ns-notes li::before{content:"";position:absolute;left:2px;top:7px;width:4px;height:4px;border-radius:50%;background:var(--text-disabled)}
+.ns-more{margin-top:12px;border-top:1px solid var(--border-subtle);padding-top:10px}
+.ns-more>summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--text-secondary);list-style:none;display:flex;align-items:center;gap:6px;user-select:none}
+.ns-more>summary::-webkit-details-marker{display:none}
+.ns-more>summary::before{content:"▸";color:var(--text-disabled);transition:transform .15s}
+.ns-more[open]>summary::before{transform:rotate(90deg)}
+.ns-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.ns-kpi{background:var(--card-alt);border-radius:10px;padding:8px 6px;text-align:center}
+.ns-kpi .k{font-size:10.5px;color:var(--text-secondary);font-weight:600}
+.ns-kpi .v{font-size:16px;font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
+.ns-gaps{margin:10px 0 0;padding-left:16px;font-size:11.5px;color:var(--text-secondary);line-height:1.5}
+.ns-foot{font-size:11px;color:var(--text-disabled);margin-top:10px;line-height:1.4}
+
 /* nav basse */
 .navwrap{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;padding:12px 16px calc(14px + env(safe-area-inset-bottom));pointer-events:none;z-index:60}
 .nav{width:100%;max-width:410px;pointer-events:auto;display:flex;justify-content:space-around;align-items:center;background:var(--ink);border-radius:22px;padding:8px;box-shadow:0 22px 44px -20px rgba(30,41,62,.6)}
@@ -515,7 +546,8 @@ const S={view:"overview",calendarMode:"Semaine",currentWeek:1,status:{},moves:{}
  situation:"missed-quality",fatigue:"Modérée",avail:"48h",
  adaptResult:"Sélectionnez une situation puis générez l'ajustement.",
  fcMax:"",pace:"",ftp:"",raceName:"",raceDate:"",weeklyGoalHours:8,
- symptom:false, wellness:null, charge:null, confirm:null, routineOpen:false};
+ symptom:false, wellness:null, charge:null, confirm:null, routineOpen:false,
+ next:null, nextKey:null, feel:"", dataReady:false};
 let routineIdx=0;
 try{Object.assign(S,JSON.parse(localStorage.getItem(LS)||"{}"));}catch(e){}
 function persist(){try{localStorage.setItem(LS,JSON.stringify({status:S.status,moves:S.moves,fcMax:S.fcMax,pace:S.pace,ftp:S.ftp,raceName:S.raceName,raceDate:S.raceDate,currentWeek:S.currentWeek}));}catch(e){}}
@@ -629,6 +661,102 @@ function suiviDataCard(){
   </div>`;
 }
 
+/* ════════════ Prochaine séance — addon triathlon-coach ════════════
+   Backend : /api/next-session (netlify/functions/next-session.mjs).
+   Le front envoie la séance PRÉVUE ; le serveur renvoie maintenir / alléger /
+   remplacer / repos. Le verdict Suivi data est transmis : le plus prudent gagne. */
+const NS_DEC={maintenir:["Maintenir","exécute la séance prévue"],alleger:["Alléger","même séance, moins de charge"],
+  remplacer:["Remplacer","récupération active à la place"],repos:["Repos","priorité à la récupération"]};
+const NS_ZONE={z1:"Z1 récupération",z2:"Z2 endurance",z3:"Z3 tempo",z4:"Z4 seuil",z5:"Z5 VO2"};
+const DAY_FULL=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
+function suiviLevel(){const R=buildRecup(),C=buildCharge();return R.levels.concat(C.levels).reduce((a,c)=>pire(a,c),"na");}
+function nextPlanned(){
+  const td=(new Date().getDay()+6)%7;
+  for(const w of [S.currentWeek,S.currentWeek+1]){
+    if(w>30)break;
+    const list=weekSessions(w).filter(x=>!statusOf(x.id)).sort((a,b)=>a.dayEff-b.dayEff);
+    const f=w===S.currentWeek?list.find(x=>x.dayEff>=td):list[0];
+    if(f)return {...f,week:w,offset:w===S.currentWeek?f.dayEff-td:7-td+f.dayEff};
+  }
+  return null;
+}
+function nsWhen(p){const d=p.offset===0?"Aujourd'hui":p.offset===1?"Demain":DAY_FULL[p.dayEff][0].toUpperCase()+DAY_FULL[p.dayEff].slice(1);
+  return p.week!==S.currentWeek?d+" (sem. "+p.week+")":d;}
+function nsKey(){const p=nextPlanned();if(!p)return "none";
+  return [p.id,p.minutes,S.symptom?1:0,S.feel,suiviLevel(),S.fcMax,S.pace,S.ftp].join("|");}
+let nsTimer=null;
+function ensureNext(){const k=nsKey();if(k===S.nextKey)return;S.nextKey=k;S.next=null;clearTimeout(nsTimer);nsTimer=setTimeout(fetchNext,200);}
+async function fetchNext(){
+  const key=S.nextKey, p=nextPlanned();
+  if(!p){S.next={ok:true,none:true};render();return;}
+  const prm=new URLSearchParams({sport:p.sport,type:p.type,minutes:String(p.minutes),name:p.name,zone:mainZone(p),id:p.id});
+  if(READ_TOKEN)prm.set("token",READ_TOKEN);
+  if(S.fcMax)prm.set("fcmax",S.fcMax); if(S.ftp)prm.set("ftp",S.ftp); if(S.pace)prm.set("pace",S.pace);
+  if(S.symptom)prm.set("symptom","1");
+  if(daysSince(CLEARANCE_CARDIAQUE)>MOIS_CLEARANCE_MAX*30)prm.set("cap","1");
+  if(S.feel==="fatigue")prm.set("feel","fatigue");
+  const lv=suiviLevel(); if(lv!=="na")prm.set("suivi",lv);
+  let j;
+  try{const r=await fetch("/api/next-session?"+prm.toString(),{cache:"no-store"});j=await r.json();}
+  catch(_){j={ok:false,error:"Réseau indisponible"};}
+  if(key!==S.nextKey)return;            // réponse périmée (paramètres changés entre-temps)
+  S.next=j; if(S.view==="overview"&&!S.detailId&&!S.routineOpen)render();
+}
+function nsReason(r){
+  return `<div class="ns-r"><div class="top"><span class="s"><i style="background:${LVLC[r.level]}"></i>${esc(r.signal)}</span><span class="m">${esc(r.mesure)}</span></div>
+    <div class="lec">${esc(r.lecture)}</div></div>`;
+}
+function nextSessionCard(){
+  const p=nextPlanned();
+  const BG={vert:"rgba(63,174,89,.12)",orange:"rgba(242,169,59,.14)",rouge:"rgba(229,86,74,.12)",na:"rgba(130,130,130,.10)"};
+  const BD={vert:"rgba(63,174,89,.35)",orange:"rgba(242,169,59,.4)",rouge:"rgba(229,86,74,.35)",na:"rgba(130,130,130,.28)"};
+  const shell=(stamp,badge,body)=>`<div class="card" style="padding:18px">
+    <div class="sd-head">
+      <div><div style="font-family:var(--font-display);font-weight:800;font-size:16px">Prochaine séance</div>
+      <div style="font-size:11.5px;color:var(--text-secondary);margin-top:2px">${esc(stamp)}</div></div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">${badge}</div>
+    </div>${body}</div>`;
+  const verdict=(lvl,h,s)=>`<div class="sd-verdict" style="background:${BG[lvl]};border:1px solid ${BD[lvl]}">
+      <i class="dot" style="background:${LVLC[lvl]}"></i><div><div class="sd-vh">${esc(h)}</div><div class="sd-vs">${esc(s)}</div></div></div>`;
+  if(!p)return shell("Programme terminé","",verdict("na","Plus de séance prévue","Les 30 semaines sont bouclées ou toutes les séances restantes sont notées."));
+  const stamp=nsWhen(p)+" · semaine "+p.week;
+  const feel=`<div class="sd-med ${S.feel==="fatigue"?"on":""}" style="margin-top:12px">
+      <label><input type="checkbox" id="feelBox" ${S.feel==="fatigue"?"checked":""}> Je me sens lourd ce matin</label>
+      <p>Ton ressenti passe avant les chiffres : coché, la séance est au minimum allégée.</p></div>`;
+  const j=S.next;
+  if(!j)return shell(stamp,`<span class="sd-badge stale"><i></i>Calcul…</span>`,verdict("na","Analyse de ta charge en cours…","Lecture de 90 jours d'activités et de bien-être sur intervals.icu."));
+  if(!j.ok)return shell(stamp,`<span class="sd-badge down"><i></i>Hors ligne</span>`,
+    verdict("na","Recommandation indisponible",(j.error||"Erreur serveur")+". Prévu : "+p.name+" ("+fmtMin(p.minutes)+"). Applique le verdict Suivi data.")+feel);
+  const ss=j.session||{}, [h,sub]=NS_DEC[j.decision]||["—",""];
+  const changed=j.decision!=="maintenir";
+  const meta=ss.type==="rest"?"Aucun entraînement structuré":[fmtMin(ss.minutes),ss.zone?NS_ZONE[ss.zone]:null].filter(Boolean).join(" · ");
+  const tgt=(ss.zone&&(ss.sport==="cap"||ss.sport==="velo"))?targetStr(ss.sport,ss.zone):"";
+  const m=SPORT_META[ss.sport];
+  const ico=m?`<span class="ns-ico" style="background:${SPORT_TINT[ss.sport]||"var(--card)"};color:${m.color}">${icon(m.icon)}</span>`
+             :`<span class="ns-ico" style="background:var(--card);color:var(--text-secondary)">${icon("moon")}</span>`;
+  const sess=`<div class="sd-b"><h4>${esc(changed?"Séance recommandée":"Séance du plan")}</h4>
+    <div class="ns-sess">${ico}<div style="min-width:0">
+      <div class="ns-name">${esc(ss.type==="rest"?"Repos":(ss.sportLabel?ss.sportLabel+" — ":"")+(ss.name||""))}</div>
+      <div class="ns-meta">${esc(ss.type==="rest"?ss.name:meta)}</div>
+      ${tgt?`<div class="tgt">${esc(tgt)}</div>`:""}
+      ${ss.alternative?`<div class="ns-alt">${esc(ss.alternative)}</div>`:""}
+      ${changed?`<div class="ns-was">Prévu : ${esc(p.name)} · ${esc(fmtMin(p.minutes))}</div>`:""}
+    </div></div></div>`;
+  const why=`<div class="sd-b"><h4>Pourquoi</h4><div>${(j.reasons||[]).map(nsReason).join("")}</div>
+    ${(j.notes||[]).length?`<ul class="ns-notes">${j.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:""}</div>`;
+  const k=j.metrics||{};
+  const kpi=(l,v)=>`<div class="ns-kpi"><div class="k">${esc(l)}</div><div class="v">${esc(v)}</div></div>`;
+  const more=`<details class="ns-more"><summary>Chiffres mesurés &amp; limites des données</summary>
+    <div class="ns-kpis">${kpi("Forme CTL",num(k.ctl,0))}${kpi("Fatigue ATL",num(k.atl,0))}${kpi("Fraîcheur TSB",num(k.tsb,0))}${kpi("ACWR",num(k.acwr_ewma,2))}</div>
+    <div class="ns-kpis">${kpi("Basse intens.",k.low_pct==null?"—":num(k.low_pct,0)+" %")}${kpi("Monotonie",num(k.monotony,1))}${kpi("CTL / sem.",num(k.ctl_ramp_week,1))}${kpi("Séances",j.source?String(j.source.activities):"—")}</div>
+    ${(j.gaps||[]).length?`<ul class="ns-gaps">${j.gaps.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>`:""}
+    <div class="ns-foot">Moteur : triathlon-coach (MIT), ${j.source?j.source.window_days:"—"} j d'historique intervals.icu. Aide à la décision, pas un avis médical : ton ressenti passe avant les chiffres.</div>
+  </details>`;
+  const fresh=j.generatedAt?"Calculé "+new Date(j.generatedAt).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}):"Calculé";
+  return shell(stamp,`<span class="sd-badge ok"><i></i>${esc(fresh)}</span>`,
+    verdict(j.level||"na",h+" — "+sub,ss.change||"")+`<div class="sd-br">${sess}${why}</div>`+feel+more);
+}
+
 /* ════════════ Composants ════════════ */
 function ring(pct,size,label,color){
   const r=(size-8)/2, c=2*Math.PI*r;
@@ -711,6 +839,8 @@ function screenOverview(){
 
   <div class="card" style="padding:18px;margin-top:22px"><div style="font-family:var(--font-display);font-weight:800;font-size:16px;margin-bottom:12px">Progression du programme</div><div class="blocks4">${BLOCKS.map(b=>{const pr=blockProgress(b,all),on=(S.currentWeek>=b.range[0]&&S.currentWeek<=b.range[1]);
     return `<div class="b${on?" on":""}"><div class="bn">${esc(b.name)}</div><div class="bs">${esc(b.title)}</div><div class="bt"><i style="width:${pr.pct}%"></i></div><div class="bp num">${pr.pct}%</div></div>`;}).join("")}</div></div>
+
+  <div style="margin-top:22px">${nextSessionCard()}</div>
 
   <div style="margin-top:22px">${suiviDataCard()}</div>
 
@@ -978,6 +1108,7 @@ function render(){
   const active=navMap[S.view]||S.view;
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===active));
   window.scrollTo({top:0});
+  if(S.dataReady)ensureNext();
 }
 
 /* ════════════ Actions ════════════ */
@@ -1032,6 +1163,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("change",e=>{
   if(e.target&&e.target.id==="symptomBox"){S.symptom=e.target.checked;render();}
+  if(e.target&&e.target.id==="feelBox"){S.feel=e.target.checked?"fatigue":"";render();}
 });
 /* Carrousel routine : swipe tactile + clavier */
 let _rsx=null,_rsy=null;
@@ -1059,7 +1191,7 @@ function q(u){return READ_TOKEN?u+"?token="+encodeURIComponent(READ_TOKEN):u;}
 async function grab(u){try{const r=await fetch(q(u),{cache:"no-store"});if(!r.ok)return null;return await r.json();}catch(_){return null;}}
 async function loadData(){
   const [w,c]=await Promise.all([grab("/api/wellness"),grab("/api/load")]);
-  S.wellness=w; S.charge=c; render();
+  S.wellness=w; S.charge=c; S.dataReady=true; render();
 }
 function boot(){
   document.querySelectorAll("#nav button[data-ic]").forEach(b=>{b.innerHTML=icon(b.dataset.ic);});

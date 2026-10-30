@@ -35,3 +35,10 @@
   from = "/api/wellness"
   to = "/.netlify/functions/wellness"
   status = 200
+
+# ── Addon « Prochaine séance » (moteur triathlon-coach, MIT) ──
+# Recommandation maintenir / alléger / remplacer / repos sur la séance prévue.
+[[redirects]]
+  from = "/api/next-session"
+  to = "/.netlify/functions/next-session"
+  status = 200
