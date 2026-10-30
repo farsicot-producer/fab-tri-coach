@@ -599,7 +599,7 @@ function buildRecup(){
   const stats=sdStat("Sommeil",sl==null?"—":num(sl,1),"h")
     +sdStat("Suivi sommeil",bsl==null?"—":num(bsl,1),"h")
     +sdStat("FC repos",hr==null?"—":num(hr,0),"bpm");
-  const html=`<div class="sd-stats">${stats}${sdPill("Tendance",hrDelta,true)}</div>`;
+  const html=`<div class="sd-stats">${stats}${sdPill("Tendance",hrDelta==null?null:-hrDelta)}</div>`;
   return {levels:L,html,state:"ok",label:"Récup à jour"};
 }
 function buildCharge(){
@@ -653,10 +653,6 @@ function suiviDataCard(){
     <div class="sd-br">
       <div class="sd-b"><h4 style="color:var(--activity-run)">Charge</h4>${C.html}</div>
       <div class="sd-b"><h4 style="color:var(--activity-bike)">Récupération</h4>${R.html}</div>
-    </div>
-    <div class="sd-med ${S.symptom?"on":""}">
-      <label><input type="checkbox" id="symptomBox" ${S.symptom?"checked":""}> Symptômes neuro / mollet gauche présents aujourd'hui</label>
-      <p>${clearOld?"Clairance cardiaque trop ancienne (> "+MOIS_CLEARANCE_MAX+" mois) — garde-fou avant tout bloc intense.":"Clairance cardiaque à jour."}</p>
     </div>
   </div>`;
 }
@@ -720,13 +716,10 @@ function nextSessionCard(){
       <i class="dot" style="background:${LVLC[lvl]}"></i><div><div class="sd-vh">${esc(h)}</div><div class="sd-vs">${esc(s)}</div></div></div>`;
   if(!p)return shell("Programme terminé","",verdict("na","Plus de séance prévue","Les 30 semaines sont bouclées ou toutes les séances restantes sont notées."));
   const stamp=nsWhen(p)+" · semaine "+p.week;
-  const feel=`<div class="sd-med ${S.feel==="fatigue"?"on":""}" style="margin-top:12px">
-      <label><input type="checkbox" id="feelBox" ${S.feel==="fatigue"?"checked":""}> Je me sens lourd ce matin</label>
-      <p>Ton ressenti passe avant les chiffres : coché, la séance est au minimum allégée.</p></div>`;
   const j=S.next;
   if(!j)return shell(stamp,`<span class="sd-badge stale"><i></i>Calcul…</span>`,verdict("na","Analyse de ta charge en cours…","Lecture de 90 jours d'activités et de bien-être sur intervals.icu."));
   if(!j.ok)return shell(stamp,`<span class="sd-badge down"><i></i>Hors ligne</span>`,
-    verdict("na","Recommandation indisponible",(j.error||"Erreur serveur")+". Prévu : "+p.name+" ("+fmtMin(p.minutes)+"). Applique le verdict Suivi data.")+feel);
+    verdict("na","Recommandation indisponible",(j.error||"Erreur serveur")+". Prévu : "+p.name+" ("+fmtMin(p.minutes)+"). Applique le verdict Suivi data."));
   const ss=j.session||{}, [h,sub]=NS_DEC[j.decision]||["—",""];
   const changed=j.decision!=="maintenir";
   const meta=ss.type==="rest"?"Aucun entraînement structuré":[fmtMin(ss.minutes),ss.zone?NS_ZONE[ss.zone]:null].filter(Boolean).join(" · ");
@@ -742,8 +735,6 @@ function nextSessionCard(){
       ${ss.alternative?`<div class="ns-alt">${esc(ss.alternative)}</div>`:""}
       ${changed?`<div class="ns-was">Prévu : ${esc(p.name)} · ${esc(fmtMin(p.minutes))}</div>`:""}
     </div></div></div>`;
-  const why=`<div class="sd-b"><h4>Pourquoi</h4><div>${(j.reasons||[]).map(nsReason).join("")}</div>
-    ${(j.notes||[]).length?`<ul class="ns-notes">${j.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:""}</div>`;
   const k=j.metrics||{};
   const kpi=(l,v)=>`<div class="ns-kpi"><div class="k">${esc(l)}</div><div class="v">${esc(v)}</div></div>`;
   const more=`<details class="ns-more"><summary>Chiffres mesurés &amp; limites des données</summary>
@@ -754,7 +745,7 @@ function nextSessionCard(){
   </details>`;
   const fresh=j.generatedAt?"Calculé "+new Date(j.generatedAt).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}):"Calculé";
   return shell(stamp,`<span class="sd-badge ok"><i></i>${esc(fresh)}</span>`,
-    verdict(j.level||"na",h+" — "+sub,ss.change||"")+`<div class="sd-br">${sess}${why}</div>`+feel+more);
+    verdict(j.level||"na",h+" — "+sub,ss.change||"")+`<div class="sd-br">${sess}</div>`+more);
 }
 
 /* ════════════ Composants ════════════ */
@@ -837,12 +828,13 @@ function screenOverview(){
     <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border-subtle);font-size:13px;color:var(--text-secondary);line-height:1.5"><b style="color:var(--text-primary)">Conseil</b> — privilégie la qualité technique et la régularité. L'intensité doit rester utile, pas héroïque.</div>
   </div>
 
-  <div class="card" style="padding:18px;margin-top:22px"><div style="font-family:var(--font-display);font-weight:800;font-size:16px;margin-bottom:12px">Progression du programme</div><div class="blocks4">${BLOCKS.map(b=>{const pr=blockProgress(b,all),on=(S.currentWeek>=b.range[0]&&S.currentWeek<=b.range[1]);
-    return `<div class="b${on?" on":""}"><div class="bn">${esc(b.name)}</div><div class="bs">${esc(b.title)}</div><div class="bt"><i style="width:${pr.pct}%"></i></div><div class="bp num">${pr.pct}%</div></div>`;}).join("")}</div></div>
 
   <div style="margin-top:22px">${nextSessionCard()}</div>
 
   <div style="margin-top:22px">${suiviDataCard()}</div>
+
+  <div class="card" style="padding:18px;margin-top:22px"><div style="font-family:var(--font-display);font-weight:800;font-size:16px;margin-bottom:12px">Progression du programme</div><div class="blocks4">${BLOCKS.map(b=>{const pr=blockProgress(b,all),on=(S.currentWeek>=b.range[0]&&S.currentWeek<=b.range[1]);
+    return `<div class="b${on?" on":""}"><div class="bn">${esc(b.name)}</div><div class="bs">${esc(b.title)}</div><div class="bt"><i style="width:${pr.pct}%"></i></div><div class="bp num">${pr.pct}%</div></div>`;}).join("")}</div></div>
 
   <div class="menu" style="margin-top:22px">
     <div class="mrow" data-act="go" data-arg="calendar-liste"><span class="mi">${icon("list")}</span><span class="ml">Toutes les séances</span><span class="mc">${icon("caret")}</span></div>
@@ -1162,8 +1154,6 @@ document.addEventListener("click",e=>{
   if(fn){e.preventDefault();fn(el.dataset.arg);}
 });
 document.addEventListener("change",e=>{
-  if(e.target&&e.target.id==="symptomBox"){S.symptom=e.target.checked;render();}
-  if(e.target&&e.target.id==="feelBox"){S.feel=e.target.checked?"fatigue":"";render();}
 });
 /* Carrousel routine : swipe tactile + clavier */
 let _rsx=null,_rsy=null;
