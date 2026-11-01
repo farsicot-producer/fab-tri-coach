@@ -54,19 +54,19 @@ export function decide(m, planned, ctx = {}) {
   // ── Règle 0 : sécurité (terminale) ──
   if (ctx.symptom) add(3, "Cap médical", "symptômes signalés", "Douleur neuro / mollet : aucun travail qui la reproduit.");
   if (flag("COMBINED_RECOVERY_ALERT").length) {
-    const FR = { HRV_SUPPRESSED: "HRV basse", RHR_ELEVATED: "FC repos haute", SLEEP_DEGRADED: "sommeil court",
-      TSB_VERY_LOW: "TSB très bas", ACWR_HIGH: "ACWR élevé", MONOTONY_HIGH: "monotonie" };
+    const FR = { HRV_SUPPRESSED: "variabilité cardiaque basse", RHR_ELEVATED: "FC repos haute", SLEEP_DEGRADED: "sommeil court",
+      TSB_VERY_LOW: "fraîcheur très basse", ACWR_HIGH: "montée en charge trop rapide", MONOTONY_HIGH: "séances trop semblables" };
     const codes = flag("COMBINED_RECOVERY_ALERT")[0].detail.replace("concurrent signals: ", "").split(", ");
     add(3, "Alerte combinée", codes.map(c => FR[c] || c).join(" + "),
       "Plusieurs signaux de surcharge en même temps : on récupère, on ne charge pas.");
   }
-  if (sev("ACWR_HIGH") === "alert") add(3, "ACWR", fr(acwr, 2), "Charge des 7 derniers jours > 1,5 × ta charge habituelle : zone de risque.");
+  if (sev("ACWR_HIGH") === "alert") add(3, "Montée en charge", fr(acwr, 2), "Les 7 derniers jours pèsent plus de 1,5 fois ton habitude : zone de risque.");
 
   // ── Règle 1 : récupération / fatigue profonde ──
-  if (tsb != null && tsb < -25) add(2, "Fraîcheur (TSB)", signed(tsb), "Fatigue accumulée élevée.");
+  if (tsb != null && tsb < -25) add(2, "Fraîcheur", signed(tsb), "Fatigue accumulée élevée.");
   const rec = m.recovery;
   const recLabel = {
-    hrv: ["HRV 7 j", r => `${fr(r.avg_7d, 0)} ms vs ${fr(r.baseline_28d, 0)} ms (28 j)`],
+    hrv: ["Variabilité cardiaque 7 j", r => `${fr(r.avg_7d, 0)} ms vs ${fr(r.baseline_28d, 0)} ms (28 j)`],
     rhr: ["FC repos 7 j", r => `${fr(r.avg_7d, 0)} vs ${fr(r.baseline_28d, 0)} bpm (28 j) · ${signed(r.avg_7d - r.baseline_28d)}`],
     sleep: ["Sommeil 7 j", r => `${hm(r.avg_7d_sec)} vs ${hm(r.baseline_28d_sec)} (28 j)`],
   };
@@ -75,18 +75,18 @@ export function decide(m, planned, ctx = {}) {
     if (r.status === "alert") add(2, recLabel[k][0], recLabel[k][1](r), "Récupération dégradée sur la semaine.");
     else if (r.status === "watch") add(1, recLabel[k][0], recLabel[k][1](r), "Récupération à surveiller : on enlève l'intensité.");
   }
-  if (sev("RAMP_HIGH") === "alert") add(2, "Progression CTL", `${signed(m.ramp.ctl_ramp_per_week)} / sem.`, "Montée de charge trop rapide (> 10 / semaine).");
+  if (sev("RAMP_HIGH") === "alert") add(2, "Progrès de la condition physique", `${signed(m.ramp.ctl_ramp_per_week)} / sem.`, "Montée de charge trop rapide (> 10 / semaine).");
 
   // ── Signaux de charge → alléger ──
-  if (sev("ACWR_HIGH") === "warn") add(1, "ACWR", fr(acwr, 2), "Charge récente au-dessus de la zone 0,8–1,3.");
-  if (flag("MONOTONY_HIGH").length) add(1, "Monotonie", flag("MONOTONY_HIGH")[0].detail.match(/monotony ([\d.]+)/)?.[1]?.replace(".", ",") ?? "> 2",
+  if (sev("ACWR_HIGH") === "warn") add(1, "Montée en charge", fr(acwr, 2), "Les 7 derniers jours dépassent nettement ton habitude.");
+  if (flag("MONOTONY_HIGH").length) add(1, "Séances trop semblables", flag("MONOTONY_HIGH")[0].detail.match(/monotony ([\d.]+)/)?.[1]?.replace(".", ",") ?? "> 2",
     "Semaine trop uniforme : les jours faciles ne sont pas assez faciles.");
-  if (sev("RAMP_HIGH") === "warn") add(1, "Progression CTL", `${signed(m.ramp.ctl_ramp_per_week)} / sem.`, "Montée de charge rapide (> 8 / semaine).");
+  if (sev("RAMP_HIGH") === "warn") add(1, "Progrès de la condition physique", `${signed(m.ramp.ctl_ramp_per_week)} / sem.`, "Montée de charge rapide (> 8 / semaine).");
 
   // ── Règle 3 : 80/20 — ne pas ajouter d'intensité si déjà trop ──
   const low = m.intensity.low_pct;
   if (isQuality && low != null && low < 75) {
-    add(1, "Répartition 80/20", `${fr(low, 0)} % du temps en basse intensité`, "Trop de temps en intensité modérée/haute : la qualité passe en Z2.");
+    add(1, "Endurance facile", `${fr(low, 0)} % du temps en basse intensité`, "Trop de temps en intensité modérée/haute : la qualité passe en Z2.");
   }
 
   // ── Garde-fous de l'app ──
@@ -103,8 +103,8 @@ export function decide(m, planned, ctx = {}) {
     if (d == null) notes.push(`Aucune séance de ${lbl} sur la fenêtre analysée.`);
     else if (d >= 14) notes.push(`Pas de ${lbl} depuis ${d} jours : à réintégrer en douceur.`);
   }
-  if (sev("ACWR_LOW") !== "none") notes.push(`ACWR ${fr(acwr, 2)} < 0,8 : charge récente sous ton habitude (désentraînement possible).`);
-  if (tsb != null && tsb > 15 && stage === 0) notes.push(`TSB ${signed(tsb)} : très frais, la séance prévue est absorbable.`);
+  if (sev("ACWR_LOW") !== "none") notes.push(`Montée en charge ${fr(acwr, 2)} : tu t'entraînes moins que d'habitude (perte de forme possible).`);
+  if (tsb != null && tsb > 15 && stage === 0) notes.push(`Fraîcheur ${signed(tsb)} : très frais, la séance prévue passe sans problème.`);
 
   if (stage === 0) {
     reasons.push({ stage: 0, level: "vert", signal: "Synthèse", mesure: summaryLine(m), lecture: "Aucun signal ne demande d'ajustement." });
@@ -122,8 +122,8 @@ export function decide(m, planned, ctx = {}) {
 function summaryLine(m) {
   const p = m.pmc.length ? m.pmc[m.pmc.length - 1] : null;
   const parts = [];
-  if (p) parts.push(`TSB ${signed(p.tsb)}`);
-  if (m.acwr.ewma.ratio != null) parts.push(`ACWR ${fr(m.acwr.ewma.ratio, 2)}`);
+  if (p) parts.push(`Fraîcheur ${signed(p.tsb)}`);
+  if (m.acwr.ewma.ratio != null) parts.push(`Montée en charge ${fr(m.acwr.ewma.ratio, 2)}`);
   if (m.intensity.low_pct != null) parts.push(`${fr(m.intensity.low_pct, 0)} % en basse intensité`);
   return parts.join(" · ") || "données limitées";
 }
@@ -178,11 +178,11 @@ function sessionFor(stage, p, ctx) {
 export function gapsFr(m, ctx = {}) {
   const g = m.meta.data_gaps.join(" | ");
   const out = [];
-  if (m.recovery.hrv.status === "no_data") out.push("HRV non disponible (Fenix 5) : récupération lue sur FC repos + sommeil.");
+  if (m.recovery.hrv.status === "no_data") out.push("Variabilité cardiaque non mesurée par la Fenix 5 : récupération lue sur FC repos + sommeil.");
   if (/lthr_bpm missing|lthr_source=estimated/.test(g)) out.push("FC seuil estimée à 90 % de la FC max.");
   if (ctx.noFcMax) out.push("FC max non renseignée dans Réglages : classification d'intensité limitée.");
-  if (!ctx.css) out.push("CSS natation inconnue : intensité natation non classée.");
-  if (m.flags.some(f => f.code === "CTL_UNRELIABLE")) out.push(`Historique ${m.meta.window_days} j < 42 j : forme (CTL) pas encore fiable.`);
+  if (!ctx.css) out.push("Allure seuil natation inconnue : intensité natation non classée.");
+  if (m.flags.some(f => f.code === "CTL_UNRELIABLE")) out.push(`Historique ${m.meta.window_days} j < 42 j : condition physique pas encore fiable.`);
   if (m.flags.some(f => f.code === "DATA_SPARSE")) out.push("Peu de données sur la fenêtre : décision à prendre avec prudence.");
   if (m.recovery.sleep.status === "no_data") out.push("Sommeil : moins de 14 nuits sur 28 j, statut non évalué.");
   if (m.recovery.rhr.status === "no_data") out.push("FC repos : moins de 14 jours sur 28 j, statut non évalué.");
