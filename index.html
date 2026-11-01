@@ -50,6 +50,38 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 .hero-logo{position:absolute;top:50%;right:14px;transform:translateY(-50%);opacity:.9}
 .hero-eyebrow{font-size:14px;font-weight:700;color:#fff}
 .hero-title{font-weight:800;font-size:28px;color:#fff;line-height:1.03;letter-spacing:-.02em;margin-top:8px;max-width:66%}
+.hero-feu{align-self:flex-start;display:inline-flex;align-items:center;gap:9px;margin-top:16px;padding:8px 14px 8px 10px;border:0;border-radius:var(--r-pill);background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:13.5px;line-height:1.3;text-align:left;cursor:pointer;max-width:66%}
+.hero-feu i{flex:none;width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.18)}
+.hero-feu small{font-weight:500;color:var(--on-dark-muted)}
+.prio{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:var(--r-pill);font-size:11px;font-weight:700;vertical-align:1px}
+.prio.cle{background:var(--ink);color:var(--lime)}.prio.facultative{background:var(--card-alt);color:var(--text-secondary)}
+.daychips{display:flex;gap:6px;flex-wrap:wrap}.daychips button{flex:1;min-width:38px;padding:9px 0;border-radius:var(--r-sm);border:1px solid var(--border-subtle);background:var(--card);font-weight:700;font-size:13px;color:var(--text-secondary);cursor:pointer}
+.daychips button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.slotnote{font-size:12.5px;color:var(--text-secondary);margin-top:8px;line-height:1.45}
+.flash{display:flex;gap:10px;align-items:flex-start;background:var(--ink);color:#fff;border-radius:var(--r-md);padding:13px 14px;margin-bottom:16px;font-size:14px;line-height:1.45;font-weight:600}
+.flash span{flex:1}.flash button{border:0;background:transparent;color:var(--on-dark-muted);font-size:20px;line-height:1;cursor:pointer;padding:0 2px}
+.pausec .pt{font-size:17px;font-weight:800;margin-top:6px}
+.card.sundayc{display:flex;align-items:center;gap:12px;background:var(--ink);border-color:var(--ink);color:#fff;cursor:pointer;margin-top:22px}.sundayc>div{flex:1}.sundayc .st{font-size:16px;font-weight:800;margin-top:4px}.sundayc .ss{font-size:13px;color:var(--on-dark-muted);margin-top:2px}.sundayc svg{width:20px;height:20px}
+.modal-back.sheetback{align-items:flex-end;padding:0}.sheet{background:var(--canvas);width:100%;max-width:440px;border-radius:22px 22px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -20px 50px -20px rgba(30,41,62,.5)}
+.sopts{display:flex;flex-direction:column;gap:8px;margin-top:12px}.sopt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--card);border:1px solid var(--border-subtle);border-radius:var(--r-md);padding:13px 14px;cursor:pointer}
+.sopt b{font-size:15px;color:var(--text-primary)}.sopt span{font-size:13px;color:var(--text-secondary)}
+.imp-btn{width:100%;margin-top:10px;background:transparent!important;border:1px dashed var(--slate)!important;color:var(--slate)!important}
+.effort{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}.effort button{padding:10px 0;border-radius:10px;border:1px solid var(--border-subtle);background:var(--card);font-weight:700;font-size:14px;color:var(--text-secondary);cursor:pointer}
+.effort button.hi{border-color:rgba(210,86,76,.35)}.effort button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.adjnote{background:rgba(78,92,126,.08);border:1px solid rgba(78,92,126,.22);border-radius:var(--r-md);padding:13px 14px;font-size:14px;line-height:1.45;color:var(--text-primary)}.adjnote b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-bottom:3px}
+.abadge.dropped{opacity:.55}.abadge.dropped .at{text-decoration:line-through}.st-dropped{background:var(--card-alt);color:var(--text-disabled)}
+.prio.adj{background:rgba(78,92,126,.12);color:var(--slate)}
+.dtag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:var(--r-pill);margin-right:4px;vertical-align:1px}
+.dtag.mes{background:rgba(107,154,114,.16);color:#3F7A4C}.dtag.dec{background:rgba(192,132,87,.16);color:#9A5F33}.dtag.int{background:rgba(78,92,126,.14);color:var(--slate)}
+.bl{font-size:14px;line-height:1.5;color:var(--text-secondary);margin-top:10px}
+.brows{margin-top:14px;border-top:1px solid var(--border-divider)}.brow{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--border-divider);font-size:13.5px;cursor:pointer}
+.brow .bd{width:30px;font-weight:700;color:var(--text-disabled)}.brow .bn{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brow .bs{color:var(--text-secondary);white-space:nowrap}
+.bdot{width:9px;height:9px;border-radius:50%;flex:none}.bdot.done{background:var(--ok)}.bdot.z2{background:var(--warn)}.bdot.missed{background:var(--danger)}.bdot.dropped{background:var(--data-neutral)}.bdot.todo{background:transparent;border:1.5px solid var(--text-disabled)}
+.decision{margin-top:16px;background:var(--card-alt);border-radius:var(--r-md);padding:14px}.decision .dl{font-size:17px;font-weight:800;margin:4px 0 4px}.dok{margin-top:10px;font-weight:800;color:#2F8A47}
+.evo{margin-top:14px;padding-top:12px;border-top:1px solid var(--border-divider)}.evo .et{display:flex;justify-content:space-between;align-items:baseline;font-weight:700;font-size:14px}.evo .et b{font-size:22px}.evo .ex{font-size:13px;color:var(--text-secondary);line-height:1.45;margin-top:4px}
+.adjr{padding:12px 0;border-top:1px solid var(--border-divider)}.adjr:first-of-type{border-top:0}.adjr .aw{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}.adjr .aw span{color:var(--text-disabled);font-weight:600;white-space:nowrap}.adjr .am{font-size:13.5px;color:var(--text-secondary);line-height:1.45;margin:4px 0 8px}
+.cta.sm{height:36px;font-size:13px;flex:none;padding:0 14px;width:auto;display:inline-flex}
+.reperes summary{font-weight:800;font-size:15px;cursor:pointer}
 .hero-bot{background:var(--ink);padding:28px 20px;color:#fff;display:flex;flex-direction:column;justify-content:center;min-height:235px}
 .hero-metric{display:flex;align-items:baseline;gap:8px}
 .hero-metric .big{font-size:40px;font-weight:800;line-height:.9}
@@ -375,7 +407,7 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
     <div class="nav" id="nav">
       <button data-v="overview" class="on" data-ic="house"></button>
       <button data-v="calendar" data-ic="calendar"></button>
-      <button data-v="adapt" data-ic="sliders"></button>
+      <button data-v="bilan" data-ic="chart" aria-label="Bilan"></button>
       <button data-v="settings" data-ic="gear"></button>
     </div>
   </div>
@@ -456,9 +488,8 @@ const SPORT_META={
  ppg:{color:"var(--activity-strength)",icon:"strength"}
 };
 const SPORT_TINT={natation:"rgba(28,126,214,.12)",cap:"rgba(242,146,74,.12)",velo:"rgba(76,175,80,.12)",ppg:"rgba(155,107,214,.12)"};
-const STATUS_META={done:{label:"Fait",color:"var(--state-success)"},missed:{label:"Raté",color:"var(--state-danger)"},z2:{label:"Adapté Z2",color:"var(--navy-900)"},"":{label:"À faire",color:"var(--text-secondary)"}};
-const TYPE_LABELS={endurance:"Endurance",technique:"Technique",quality:"Qualité",mobility:"Mobilité",strength:"Force"};
-const SITUATIONS=[{key:"missed-quality",label:"Séance qualité ratée"},{key:"missed-easy",label:"Séance facile ratée"},{key:"missed-ppg",label:"PPG ratée"},{key:"missed-long",label:"Sortie longue ratée"},{key:"out-of-order",label:"Séances dans le désordre"}];
+const STATUS_META={done:{label:"Fait",color:"var(--state-success)"},missed:{label:"Raté",color:"var(--state-danger)"},z2:{label:"Facile",color:"var(--navy-900)"},"":{label:"À faire",color:"var(--text-secondary)"}};
+const TYPE_LABELS={club:"Club",endurance:"Endurance",technique:"Technique",quality:"Qualité",mobility:"Mobilité",strength:"Force"};
 const RULES=[
  {title:"1. Jamais deux jours durs de suite",desc:"Intensité course + intensité vélo doivent être séparées par 24–48h."},
  {title:"2. Réduire plutôt qu'arrêter",desc:"En fatigue : 30–45 min Z2 ou natation technique. Éviter les semaines à zéro."},
@@ -482,20 +513,33 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 const fmtMin=m=>{const h=Math.floor(m/60),mm=m%60;return h?`${h}h${String(mm).padStart(2,"0")}`:`${mm}min`;};
 const blockForWeek=n=>BLOCKS.find(b=>n>=b.range[0]&&n<=b.range[1])||BLOCKS[0];
 function swimKeyFor(name){const k=Object.keys(SWIM_DATA).find(k=>name.toLowerCase().includes(k.toLowerCase()));return k||(name.toLowerCase().includes("récup")?"Alignement":"Endurance");}
+/* Créneaux : natation = club mardi et jeudi soir (fixe) ; course et PPG = à caler selon tes dispos ;
+   vélo = samedi ou dimanche. Priorité : "cle" (rattrapée si possible, supprimée en dernier),
+   "support" (réduite, jamais rattrapée), "facultative" (supprimée en premier). */
+const PRIO={ // [natation, course, PPG, natation, vélo] — natation club : hors arbitrage (null)
+ b1:[null,"support","support",null,"cle"],
+ b2:[null,"support","support",null,"cle"],
+ b3:[null,"cle","support",null,"cle"],
+ b4:[null,"support","support",null,"support"]};
+const PRIO_LABEL={cle:"Séance clé",support:"",facultative:"Facultative"};
+const SLOT={natation:"club",cap:"libre",ppg:"libre",velo:"weekend"};
 function buildWeek(n){
  const block=blockForWeek(n),idx=n-block.range[0],rec=RECOVERY_WEEKS.includes(n),mul=rec?0.6:1;
  const bs=55+idx*3,br=40+idx*4,bp=25+(idx%2)*5,bb=90+idx*8;
  const rq=block.key==="b3"&&!rec, bt=block.key==="b2"&&!rec;
+ const brick=block.key==="b3"&&!rec&&idx%2===0, brickRun=idx>=4?20:15;
+ const pr=rec?[null,"facultative","support",null,"facultative"]:PRIO[block.key];
  return [
-  {id:`w${n}s0`,sport:"natation",name:idx%2?"Endurance souple":"Alignement technique",type:"technique",minutes:Math.round(bs*mul),day:0},
-  {id:`w${n}s1`,sport:"cap",name:rq?RUN_Q[idx]:`${Math.round(br*mul)}' Z2 continu`,type:rq?"quality":"endurance",minutes:Math.round(br*mul),day:1},
-  {id:`w${n}s2`,sport:"ppg",name:"Gainage + mobilité hanches",type:"mobility",minutes:Math.round(bp*mul),day:2},
-  {id:`w${n}s3`,sport:"natation",name:"Propulsion",type:"endurance",minutes:Math.round((bs-5)*mul),day:3},
-  {id:`w${n}s4`,sport:"velo",name:rec?"Sortie Z2 récupération":(bt?BIKE_T[idx]:"Sortie longue Z2"),type:bt?"quality":"endurance",minutes:Math.round(bb*mul),day:5}
+  {id:`w${n}s0`,sport:"natation",name:"Natation club",type:"club",minutes:60,day:1,prio:pr[0]},
+  {id:`w${n}s1`,sport:"cap",name:rq?RUN_Q[idx]:`${Math.round(br*mul)}' Z2 continu`,type:rq?"quality":"endurance",minutes:Math.round(br*mul),day:0,prio:pr[1]},
+  {id:`w${n}s2`,sport:"ppg",name:"Gainage + mobilité hanches",type:"mobility",minutes:Math.round(bp*mul),day:2,prio:pr[2]},
+  {id:`w${n}s3`,sport:"natation",name:"Natation club",type:"club",minutes:60,day:3,prio:pr[3]},
+  brick?{id:`w${n}s4`,sport:"velo",name:`Enchaînement : vélo Z2 + ${brickRun}' course allure tri`,type:"quality",brick:brickRun,minutes:Math.round(bb)+brickRun,day:5,prio:pr[4]}
+   :{id:`w${n}s4`,sport:"velo",name:rec?"Sortie Z2 récupération":(bt?BIKE_T[idx]:"Sortie longue Z2"),type:bt?"quality":"endurance",minutes:Math.round(bb*mul),day:5,prio:pr[4]}
  ];
 }
 function allFlat(){const o=[];for(let n=1;n<=30;n++)buildWeek(n).forEach(x=>o.push({...x,week:n}));return o;}
-function sessionById(id){if(!id)return null;const m=id.match(/^w(\d+)s\d+$/);if(!m)return null;const w=Number(m[1]);const s=buildWeek(w).find(x=>x.id===id);return s?{week:w,session:s}:null;}
+function sessionById(id){if(!id)return null;const m=id.match(/^w(\d+)s\d+$/);if(!m)return null;const w=Number(m[1]);const s=weekSessions(w).find(x=>x.id===id);return s?{week:w,session:s}:null;}
 function ppgExercisesFor(s){
  const l=s.name.toLowerCase();let ids;
  if(l.includes("mobilité")&&l.includes("hanches"))ids=["hip90","plank","sideplank","deadbug"];
@@ -520,9 +564,9 @@ function ppgCircuitFor(s){
  return {tours,rest,note:neuro};
 }
 function detailSteps(s){
- if(s.sport==="natation"){const d=SWIM_DATA[swimKeyFor(s.name)];
-  return [{title:"Objectif",desc:`${d.goal} ${d.use}`},...d.steps.map((x,i)=>({title:`${i+1}. ${i===0?"Échauffement":i===d.steps.length-1?"Retour au calme":"Bloc"}`,desc:x}))];}
+ if(s.sport==="natation")return[{title:"Séance du club",desc:"Contenu fixé par le club. Feu vert : nage normalement. Feu orange : reste en dedans sur les séries rapides. Feu rouge : technique souple ou repos."}];
  if(s.sport==="cap")return[{title:"Objectif CAP",desc:`Exécuter ${s.name} sans dérive excessive. Priorité à la foulée propre et à la fraîcheur.`},{title:"Échauffement",desc:"10–15 min Z1/Z2 + mobilisation chevilles/hanches. Ajouter 3 accélérations très progressives si séance qualité."},{title:"Corps de séance",desc:s.name},{title:"Retour au calme",desc:"8–10 min très facile. Si jambes lourdes : finir plus court, pas plus vite."}];
+ if(s.sport==="velo"&&s.brick)return[{title:"Objectif",desc:"Habituer les jambes à courir après le vélo : c'est la séance la plus proche de la course."},{title:"Échauffement",desc:"15 min progressives, cadence souple."},{title:"Vélo",desc:"Sortie Z2, fin à cadence un peu plus haute (90+ tr/min) sur les 10 dernières minutes."},{title:"Transition",desc:"Moins de 5 min : chaussures, casquette, c'est reparti. Prépare ton matériel avant de partir."},{title:"Course",desc:s.brick+" min à allure tri : les 5 premières minutes plus lentes, foulée courte. Arrêt immédiat si le mollet tire."},{title:"Retour au calme",desc:"5 min de marche, puis boire et manger dans la demi-heure."}];
  if(s.sport==="velo")return[{title:"Objectif vélo",desc:"Construire puissance durable et endurance spécifique."},{title:"Échauffement",desc:"15 min progressives, cadence souple. Sur home trainer : 3 rampes de 30 sec."},{title:"Corps de séance",desc:s.name},{title:"Retour au calme",desc:"10 min Z1/Z2. Nutrition : boire régulièrement, surtout sur les sorties de plus de 2h."}];
  return [{title:"Objectif",desc:"Renforcer ce qui protège la course et le vélo : hanches, gainage, fessiers et mollets. Exécution lente, jamais à l'échec."}];
 }
@@ -543,17 +587,16 @@ function targetStr(sport,zone){const z=userZones(),out=[];
 /* ════════════ État ════════════ */
 const LS="coaching-tri-v2";
 const S={view:"overview",calendarMode:"Semaine",currentWeek:1,status:{},moves:{},detailId:null,
- situation:"missed-quality",fatigue:"Modérée",avail:"48h",
- adaptResult:"Sélectionnez une situation puis générez l'ajustement.",
  fcMax:"",pace:"",ftp:"",raceName:"",raceDate:"",weeklyGoalHours:8,
  symptom:false, wellness:null, charge:null, confirm:null, routineOpen:false,
- next:null, nextKey:null, feel:"", dataReady:false};
+ next:null, nextKey:null, feel:"", dataReady:false,
+ adj:[], rpe:{}, pause:null, hist:{}, bilanDone:{}, sheet:null, flash:null};
 let routineIdx=0;
 try{Object.assign(S,JSON.parse(localStorage.getItem(LS)||"{}"));}catch(e){}
-function persist(){try{localStorage.setItem(LS,JSON.stringify({status:S.status,moves:S.moves,fcMax:S.fcMax,pace:S.pace,ftp:S.ftp,raceName:S.raceName,raceDate:S.raceDate,currentWeek:S.currentWeek}));}catch(e){}}
+function persist(){try{localStorage.setItem(LS,JSON.stringify({adj:S.adj,rpe:S.rpe,pause:S.pause,hist:S.hist,bilanDone:S.bilanDone,status:S.status,moves:S.moves,fcMax:S.fcMax,pace:S.pace,ftp:S.ftp,raceName:S.raceName,raceDate:S.raceDate,currentWeek:S.currentWeek}));}catch(e){}}
 const statusOf=id=>S.status[id]||"";
-function setStatus(id,st){if(st)S.status[id]=st;else delete S.status[id];persist();render();}
-function moveDay(id,cur){S.moves[id]=(cur+1)%7;persist();render();}
+function setStatus(id,st){if(st)S.status[id]=st;else{delete S.status[id];delete S.rpe[id];}persist();render();}
+function setDay(id,d){const f=sessionById(id);if(!f)return;S.adj=S.adj.filter(o=>!(o.sid===id&&o.kind==="move"));if(d===f.session.day)delete S.moves[id];else S.moves[id]=d;persist();render();}
 </script>
 <script>
 "use strict";
@@ -576,11 +619,11 @@ function sdStat(l,v,u){
   return `<div class="sd-stat"><div class="sd-stat-l">${esc(l)}</div><div class="sd-stat-v">${esc(v)}${unit}</div></div>`;
 }
 // invert=true pour une métrique où « monter » est mauvais (ex. FC repos) : positif → rouge.
-function sdPill(l,value,invert){
+function sdPill(l,value,invert,lvl){
   if(value==null||isNaN(value))
     return `<div class="sd-pill na"><div class="sd-pill-l">${esc(l)}</div><div class="sd-pill-v">—</div></div>`;
   const r=Math.round(value), good=invert?r<=0:r>=0;
-  const bg=good?"#4E9E63":"#D2564C", disp=(r>0?"+":"")+r;
+  const bg=lvl?{vert:"#4E9E63",orange:"#D99A3C",rouge:"#D2564C"}[lvl]:(good?"#4E9E63":"#D2564C"), disp=(r>0?"+":"")+r;
   return `<div class="sd-pill" style="background:${bg}"><div class="sd-pill-l">${esc(l)}</div><div class="sd-pill-v">${esc(disp)}</div></div>`;
 }
 function buildRecup(){
@@ -608,36 +651,46 @@ function buildCharge(){
     return {levels:L,html:`<div class="sd-empty">Aucune activité reçue. Lance <code>/api/intervals-sync</code> et vérifie que Garmin envoie tes séances vers intervals.icu.</div>`,state:"down",label:"Charge — aucune donnée"};
   const p=s.pmc||{};
   const tsb=typeof p.tsb==="number"?p.tsb:null;
-  if(tsb!=null)L.push(tsb<SEUILS.tsb.orange?"rouge":tsb<SEUILS.tsb.vert?"orange":"vert");
+  const tsbLvl=tsb==null?null:tsb<SEUILS.tsb.orange?"rouge":tsb<SEUILS.tsb.vert?"orange":"vert";
+  if(tsbLvl)L.push(tsbLvl);
   const stats=sdStat("Charge (7 j)",s.load7==null?"—":num(s.load7,0),"")
-    +sdStat("Forme",p.ctl==null?"—":num(p.ctl,1),"")
-    +sdStat("Fatigue",p.atl==null?"—":num(p.atl,1),"");
-  const html=`<div class="sd-stats">${stats}${sdPill("Fraîcheur",tsb)}</div>`;
+    +sdStat("Condition physique",p.ctl==null?"—":num(p.ctl,1),"")
+    +sdStat("Fatigue récente",p.atl==null?"—":num(p.atl,1),"");
+  const html=`<div class="sd-stats">${stats}${sdPill("Fraîcheur",tsb,false,tsbLvl)}</div>`;
   const last=s.lastActivity||{};
   const state=s.updatedAt&&daysSince(s.updatedAt)>3?"stale":"ok";
   return {levels:L,html,state,label:last.date?"Charge · "+new Date(last.date+"T00:00:00").toLocaleDateString("fr-FR"):"Charge à jour"};
 }
-function suiviDataCard(){
+function formeDuJour(){
   const R=buildRecup(), C=buildCharge();
   const clearOld=daysSince(CLEARANCE_CARDIAQUE)>MOIS_CLEARANCE_MAX*30;
   let lvl=R.levels.concat(C.levels).reduce((a,c)=>pire(a,c),"na");
-  let head,sub;
-  if(S.symptom){lvl="rouge";head="Stop — cap médical actif";
+  let head,sub,court;
+  if(S.symptom){lvl="rouge";head="Stop — cap médical actif";court="Stop · repos";
     sub="Douleur neuro / mollet gauche aujourd'hui. Repos ou mobilité sans douleur, rien d'autre.";}
-  else if(lvl==="na"){head="Pas de données — juge à la sensation";
+  else if(lvl==="na"){head="Pas de données — juge à la sensation";court=S.dataReady?"Pas de données · écoute tes sensations":"Lecture de tes données…";
     sub="Aucun signal reçu aujourd'hui. Cale l'intensité sur ton ressenti.";}
   else{
-    const M={vert:["Feu vert — exécute le plan","Tout est bon. Fais la séance prévue, intensité comprise."],
-      orange:["Feu orange — allège 10–15 %","Un signal n'est pas bon. Garde le volume, enlève l'intensité."],
-      rouge:["Feu rouge — Z1–Z2 courte ou repos","Un signal est au rouge. Consulte si ça dure 3 à 5 jours."]};
-    [head,sub]=M[lvl];
-    if(lvl==="vert"&&clearOld){head="Aérobie seulement — intensité bloquée";
+    const M={vert:["Feu vert — exécute le plan","Tout est bon. Fais la séance prévue, intensité comprise.","Feu vert · fais la séance prévue"],
+      orange:["Feu orange — allège 10–15 %","Un signal n'est pas bon. Garde le volume, enlève l'intensité.","Feu orange · allège la séance"],
+      rouge:["Feu rouge — Z1–Z2 courte ou repos","Un signal est au rouge. Consulte si ça dure 3 à 5 jours.","Feu rouge · repos ou très facile"]};
+    [head,sub,court]=M[lvl];
+    if(lvl==="vert"&&clearOld){head="Aérobie seulement — intensité bloquée";court="Feu orange · endurance seulement";
       sub="Signaux bons, mais clairance cardiaque trop ancienne (> "+MOIS_CLEARANCE_MAX+" mois). Reste en aérobie tant qu'un bloc intense n'est pas revalidé.";lvl="orange";}
   }
+  return {R,C,lvl,head,sub,court};
+}
+function heroFeu(){
+  if(S.pause)return `<button class="hero-feu" data-act="go" data-arg="overview"><i style="background:var(--text-disabled)"></i><span>Plan en pause · ${esc(PAUSE_LBL[S.pause.reason].toLowerCase())}</span></button>`;
+  const f=formeDuJour();
+  return `<button class="hero-feu" data-act="toSuivi" aria-label="Forme du jour : ${esc(f.court)}"><i style="background:${LVLC[f.lvl]}"></i><span>${esc(f.court)}</span></button>`;
+}
+function suiviDataCard(){
+  const {R,C,lvl,head,sub}=formeDuJour();
   const BG={vert:"rgba(63,174,89,.12)",orange:"rgba(242,169,59,.14)",rouge:"rgba(229,86,74,.12)",na:"rgba(130,130,130,.10)"};
   const BD={vert:"rgba(63,174,89,.35)",orange:"rgba(242,169,59,.4)",rouge:"rgba(229,86,74,.35)",na:"rgba(130,130,130,.28)"};
   const stamp=S.wellness&&S.wellness.date?"à jour — "+new Date(S.wellness.date+"T00:00:00").toLocaleDateString("fr-FR"):"—";
-  return `<div class="card" style="padding:18px">
+  return `<div class="card" id="suivi-data" style="padding:18px;scroll-margin-top:16px">
     <div class="sd-head">
       <div><div style="font-family:var(--font-display);font-weight:800;font-size:16px">Suivi data</div>
       <div style="font-size:11.5px;color:var(--text-secondary);margin-top:2px">${esc(stamp)}</div></div>
@@ -670,7 +723,7 @@ function nextPlanned(){
   const td=(new Date().getDay()+6)%7;
   for(const w of [S.currentWeek,S.currentWeek+1]){
     if(w>30)break;
-    const list=weekSessions(w).filter(x=>!statusOf(x.id)).sort((a,b)=>a.dayEff-b.dayEff);
+    const list=weekSessions(w).filter(x=>!x.dropped&&!statusOf(x.id)).sort((a,b)=>a.dayEff-b.dayEff);
     const f=w===S.currentWeek?list.find(x=>x.dayEff>=td):list[0];
     if(f)return {...f,week:w,offset:w===S.currentWeek?f.dayEff-td:7-td+f.dayEff};
   }
@@ -738,8 +791,8 @@ function nextSessionCard(){
   const k=j.metrics||{};
   const kpi=(l,v)=>`<div class="ns-kpi"><div class="k">${esc(l)}</div><div class="v">${esc(v)}</div></div>`;
   const more=`<details class="ns-more"><summary>Chiffres mesurés &amp; limites des données</summary>
-    <div class="ns-kpis">${kpi("Forme CTL",num(k.ctl,0))}${kpi("Fatigue ATL",num(k.atl,0))}${kpi("Fraîcheur TSB",num(k.tsb,0))}${kpi("ACWR",num(k.acwr_ewma,2))}</div>
-    <div class="ns-kpis">${kpi("Basse intens.",k.low_pct==null?"—":num(k.low_pct,0)+" %")}${kpi("Monotonie",num(k.monotony,1))}${kpi("CTL / sem.",num(k.ctl_ramp_week,1))}${kpi("Séances",j.source?String(j.source.activities):"—")}</div>
+    <div class="ns-kpis">${kpi("Condition physique",num(k.ctl,0))}${kpi("Fatigue récente",num(k.atl,0))}${kpi("Fraîcheur",num(k.tsb,0))}${kpi("Montée en charge",num(k.acwr_ewma,2))}</div>
+    <div class="ns-kpis">${kpi("Endurance facile",k.low_pct==null?"—":num(k.low_pct,0)+" %")}${kpi("Séances trop semblables",num(k.monotony,1))}${kpi("Progrès condition / sem.",num(k.ctl_ramp_week,1))}${kpi("Séances",j.source?String(j.source.activities):"—")}</div>
     ${(j.gaps||[]).length?`<ul class="ns-gaps">${j.gaps.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>`:""}
     <div class="ns-foot">Moteur : triathlon-coach (MIT), ${j.source?j.source.window_days:"—"} j d'historique intervals.icu. Aide à la décision, pas un avis médical : ton ressenti passe avant les chiffres.</div>
   </details>`;
@@ -767,21 +820,301 @@ function activityBadge(s,dayEff){
   const pillCls=st==="done"?"st-done":st==="z2"?"st-adapt":st==="missed"?"st-missed":"st-todo";
   const pillIco=st==="done"?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg>':st==="missed"?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg>':"";
   const badge=isDone?'<span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span>':"";
+  if(s.dropped)return `<div class="abadge dropped" data-act="open" data-arg="${s.id}">
+    <span class="ai" style="background:${TINT[s.sport]||"var(--card-alt)"};color:${m.color}">${icon(m.icon)}</span>
+    <div class="ab"><div class="at">${esc(s.name)}</div><div class="as">Retirée par le plan</div></div>
+    <span class="pill st-dropped">Retirée</span></div>`;
   return `<div class="abadge${isDone?" is-done":""}" data-act="open" data-arg="${s.id}">
     <span class="ai" style="background:${TINT[s.sport]||"var(--card-alt)"};color:${m.color}">${icon(m.icon)}${badge}</span>
-    <div class="ab"><div class="at">${esc(s.name)}</div><div class="as">${fmtMin(s.minutes)} · ${esc(TYPE_LABELS[s.type]||"Séance")}</div></div>
+    <div class="ab"><div class="at">${esc(s.name)}</div><div class="as">${fmtMin(s.minutes)} · ${esc(TYPE_LABELS[s.type]||"Séance")}${s.prio&&PRIO_LABEL[s.prio]?`<span class="prio ${s.prio}">${PRIO_LABEL[s.prio]}</span>`:""}${s.adjMotif?`<span class="prio adj">Ajustée</span>`:""}</div></div>
     <span class="pill ${pillCls}">${pillIco}${esc(sm.label)}</span></div>`;
 }
 
+/* ════════════ Moteur d'adaptation ════════════
+   Plan de référence (buildWeek, jamais modifié) + journal d'ajustements S.adj
+   = plan effectif (weekSessions). Chaque ajustement porte son motif et s'annule.
+   Règle : le plus prudent gagne ; le moteur allège, déplace ou retire, il n'ajoute jamais. */
+const EXPECTED_EFFORT={club:5,endurance:4,technique:4,mobility:3,quality:7,strength:4};
+const DAY_LONG=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
+const round5=m=>Math.max(10,Math.round(m/5)*5);
+const todayIdx=()=>(new Date().getDay()+6)%7;
+const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+const fmtDate=iso=>new Date(iso+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
+function applyReduce(x,pct,easy){
+  x.minutes=round5(x.minutes*(1-pct/100));
+  if(easy&&x.type==="quality"){x.type="endurance";
+    x.name=x.sport==="cap"?`${x.minutes}' Z2 continu`:x.brick?"Sortie Z2 souple (sans course)":"Sortie Z2 souple";x.brick=0;}
+}
+function weekSessions(n){
+  const base=buildWeek(n).map(x=>({...x,week:n,dayEff:S.moves[x.id]??x.day}));
+  const map=Object.fromEntries(base.map(x=>[x.id,x]));
+  for(const op of S.adj){
+    if(op.week!==n)continue;
+    if(op.kind==="weekReduce"){
+      base.forEach(x=>{if(x.sport==="natation")return;applyReduce(x,op.pct,op.noKey);
+        if(op.noKey&&x.prio==="cle")x.prio="support";x.adjMotif=op.motif;x.adjOp=op.id;});
+      continue;}
+    const x=map[op.sid]; if(!x)continue;
+    if(op.kind==="move")x.dayEff=op.day;
+    else if(op.kind==="reduce")applyReduce(x,op.pct,op.easy);
+    else if(op.kind==="drop")x.dropped=true;
+    else if(op.kind==="replace")Object.assign(x,{name:op.name,minutes:op.minutes,type:op.type});
+    if(op.day!=null&&op.kind!=="move")x.dayEff=op.day;
+    if(op.kind!=="advance"){x.adjMotif=op.motif;x.adjOp=op.id;}
+  }
+  return base;
+}
+const activeSessions=n=>weekSessions(n).filter(x=>!x.dropped);
+function addOp(op){op.id="a"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);op.ts=Date.now();S.adj.push(op);persist();return op;}
+function undoOp(id){
+  const op=S.adj.find(o=>o.id===id); if(!op)return;
+  S.adj=S.adj.filter(o=>o.id!==id);
+  if(op.prevStatus)Object.assign(S.status,op.prevStatus);
+  if(op.prevWeek!=null)S.currentWeek=op.prevWeek;
+  if(op.bilanWeek!=null)delete S.bilanDone[op.bilanWeek];
+  persist();
+}
+function weekStatuses(n){const o={};buildWeek(n).forEach(x=>{if(S.status[x.id])o[x.id]=S.status[x.id];});return o;}
+function clearWeekStatuses(n){buildWeek(n).forEach(x=>{delete S.status[x.id];delete S.rpe[x.id];});}
+const isHard=s=>!s.dropped&&s.type==="quality";
+function hardAround(ws,d,exceptId){return ws.some(o=>o.id!==exceptId&&isHard(o)&&Math.abs(o.dayEff-d)<=1);}
+
+/* Séance manquée : règles par sport et par priorité. earliest = premier jour possible pour la replacer. */
+function missed(s,earliest,src){
+  const n=s.week, ws=weekSessions(n), base={week:n,sid:s.id,src:src||"imprevu"};
+  if(s.sport==="natation")
+    return addOp({...base,kind:"drop",motif:"Séance club manquée : on ne la rattrape pas."});
+  if(s.sport==="ppg"){
+    const host=ws.filter(o=>!o.dropped&&o.id!==s.id&&o.dayEff>=earliest&&o.type!=="quality"&&o.sport!=="ppg"&&!statusOf(o.id)).sort((a,b)=>a.dayEff-b.dayEff)[0];
+    if(host)return addOp({...base,kind:"replace",name:"Gainage express",minutes:15,type:"mobility",day:host.dayEff,
+      motif:`PPG manquée : 15 min de gainage après ta séance de ${DAY_LONG[host.dayEff]}, pas de séance complète en dette.`});
+    return addOp({...base,kind:"drop",motif:"PPG manquée : pas de séance facile d'ici dimanche pour y greffer 15 min de gainage. On passe."});
+  }
+  const isLong=s.sport==="velo"&&s.type!=="quality";
+  if(s.type==="quality"||s.prio==="cle"){
+    const allowed=s.sport==="velo"?[5,6]:[0,1,2,3,4,5,6];
+    const cand=allowed.filter(d=>d>=earliest&&d<=Math.min(6,earliest+1)&&d!==s.dayEff);
+    const d=cand.find(d=>s.type!=="quality"||!hardAround(ws,d,s.id));
+    if(d!=null){
+      if(isLong)return addOp({...base,kind:"reduce",pct:30,easy:false,day:d,
+        motif:`Sortie longue décalée à ${DAY_LONG[d]}, à 70 % du volume : on ne rattrape pas tout.`});
+      return addOp({...base,kind:"move",day:d,motif:`Séance clé décalée à ${DAY_LONG[d]} : la veille et le lendemain restent sans séance dure.`});
+    }
+    return addOp({...base,kind:"drop",motif:isLong?"Pas de créneau ce week-end : on passe à la semaine suivante sans empiler."
+      :"Pas de créneau sous 48 h sans enchaîner deux séances dures : on ne rattrape pas, la suivante reste prioritaire."});
+  }
+  return addOp({...base,kind:"drop",motif:"Séance d'endurance manquée : on ne la rattrape pas. Reprends simplement la suivante."});
+}
+function imprevuMissed(id){
+  const f=sessionById(id); if(!f)return;
+  const s=f.session, base=s.week===S.currentWeek?Math.max(s.dayEff,todayIdx()):s.dayEff;
+  const op=missed(s,base+1); S.flash=op.motif;
+}
+function imprevuShort(id){
+  const f=sessionById(id); if(!f)return;
+  const op=addOp({week:f.week,sid:id,src:"imprevu",kind:"reduce",pct:40,easy:false,
+    motif:"Version courte (−40 %) : garde l'échauffement et le cœur de séance, coupe le volume."});
+  S.flash=op.motif;
+}
+function imprevuAway(nDays){
+  const td=todayIdx(), n=S.currentWeek, end=td+nDays-1;
+  const hit=weekSessions(n).filter(x=>!x.dropped&&!statusOf(x.id)&&x.dayEff>=td&&x.dayEff<=end).sort((a,b)=>a.dayEff-b.dayEff);
+  if(!hit.length){S.flash=`Aucune séance prévue sur ces ${nDays} jours : rien à changer.`;return;}
+  const out=hit.map(s=>missed(s,end+1).motif);
+  S.flash=`Absent ${nDays} jours : ${hit.length} séance${hit.length>1?"s":""} ajustée${hit.length>1?"s":""}. `+out[out.length-1]+(hit.length>1?" Le détail est dans Bilan › Ajustements.":"");
+}
+const PAUSE_LBL={vacances:"Vacances",malade:"Malade ou blessé"};
+function startPause(reason){S.pause={reason,from:todayISO()};S.detailId=null;S.sheet=null;
+  S.flash=reason==="vacances"?"Plan en pause. Fais le sport que tu veux : ce que ta montre enregistre compte dans ta charge.":"Plan en pause. Repos, et reprends quand tu n'as plus de symptôme.";persist();}
+function endPause(){
+  const p=S.pause; if(!p)return;
+  const days=Math.max(0,daysSince(p.from)), ill=p.reason==="malade";
+  const lvl=ill?(days<3?0:days<=7?1:2):(days<7?0:days<=14?1:2);
+  S.pause=null;
+  if(lvl===0){S.flash=`Pause de ${days} j : reprise telle que prévue.`;persist();return;}
+  const target=lvl===2?Math.max(1,S.currentWeek-1):S.currentWeek;
+  const op=addOp({week:target,kind:"weekReduce",pct:30,noKey:true,src:"reprise",prevWeek:S.currentWeek,prevStatus:weekStatuses(target),
+    motif:lvl===2?`Reprise après ${days} j (${PAUSE_LBL[p.reason].toLowerCase()}) : on refait la semaine ${target} à −30 %, sans séance clé. La suite du plan est décalée d'une semaine.`
+      :`Reprise après ${days} j (${PAUSE_LBL[p.reason].toLowerCase()}) : semaine à −30 %, sans séance clé.`});
+  clearWeekStatuses(target); S.currentWeek=target; S.flash=op.motif; persist();
+}
+
+/* Effort ressenti : 2 séances de suite notées 2 points au-dessus du prévu → la prochaine séance clé est allégée. */
+function expectedEffort(s){return EXPECTED_EFFORT[s.type]??4;}
+function checkEffortDrift(){
+  const rated=[];
+  for(const w of [S.currentWeek-1,S.currentWeek]){if(w<1)continue;
+    weekSessions(w).filter(x=>S.rpe[x.id]!=null).sort((a,b)=>a.dayEff-b.dayEff).forEach(x=>rated.push(x));}
+  const last=rated.slice(-2);
+  if(last.length<2||!last.every(x=>S.rpe[x.id]>=expectedEffort(x)+2))return;
+  for(const w of [S.currentWeek,S.currentWeek+1]){if(w>30)break;
+    const t=weekSessions(w).filter(x=>!x.dropped&&!statusOf(x.id)&&(w!==S.currentWeek||x.dayEff>=todayIdx())&&(x.prio==="cle"||x.type==="quality")).sort((a,b)=>a.dayEff-b.dayEff)[0];
+    if(t){if(S.adj.some(o=>o.sid===t.id&&o.src==="auto"))return;
+      const op=addOp({week:w,sid:t.id,src:"auto",kind:"reduce",pct:15,easy:true,
+        motif:"Effort ressenti plus élevé que prévu sur tes 2 dernières séances : la prochaine séance clé passe en version allégée."});
+      S.flash=op.motif;return;}
+  }
+}
+
+/* Bilan de la semaine */
+function bilanFor(n){
+  const all=weekSessions(n), act=all.filter(x=>!x.dropped), dropped=all.filter(x=>x.dropped);
+  const doneL=act.filter(x=>["done","z2"].includes(statusOf(x.id)));
+  const minDone=doneL.reduce((a,x)=>a+x.minutes,0), minPlan=act.reduce((a,x)=>a+x.minutes,0);
+  const td=todayIdx(), due=all.filter(x=>x.dayEff<=td), conf=due.length?Math.round(due.filter(x=>["done","z2"].includes(statusOf(x.id))).length/due.length*100):100, partial=td<6;
+  const rated=all.filter(x=>S.rpe[x.id]!=null);
+  const effAvg=rated.length?rated.reduce((a,x)=>a+S.rpe[x.id],0)/rated.length:null;
+  const expAvg=rated.length?rated.reduce((a,x)=>a+expectedEffort(x),0)/rated.length:null;
+  const felt=doneL.reduce((a,x)=>a+(S.rpe[x.id]||0)*x.minutes,0);
+  const drift=rated.filter(x=>S.rpe[x.id]>=expectedEffort(x)+2).length;
+  const p=(S.charge&&S.charge.pmc)||{}, tsb=typeof p.tsb==="number"?p.tsb:null, lvl=suiviLevel();
+  let score=0; const why=[];
+  if(lvl==="rouge"){score+=2;why.push("feu rouge ce matin");} else if(lvl==="orange"){score+=1;why.push("feu orange ce matin");}
+  if(tsb!=null&&tsb<SEUILS.tsb.orange){score+=1;why.push("fraîcheur très basse");}
+  if(drift>=2){score+=1;why.push("effort ressenti au-dessus du prévu");}
+  let dec;
+  if(n>=30)dec={key:"end",label:"Programme terminé",desc:"Les 30 semaines sont bouclées."};
+  else if(conf<50&&due.length>=2&&!RECOVERY_WEEKS.includes(n))dec={key:"redo",label:`Refaire la semaine ${n}`,desc:"Moins de la moitié des séances prévues à ce jour sont faites : on consolide avant d'avancer."};
+  else if(score>=2)dec={key:"light",label:`Semaine ${n+1} allégée (−20 %)`,desc:"Signaux de fatigue : "+why.join(", ")+"."};
+  else dec={key:"next",label:`Passer à la semaine ${n+1}, telle que prévue`,desc:why.length?"Un signal à surveiller ("+why.join(", ")+"), pas assez pour alléger.":"Rien ne demande d'ajuster."};
+  return {all,act,dropped,doneL,minDone,minPlan,conf,due,partial,effAvg,expAvg,felt,rated,tsb,dec};
+}
+function validateBilan(){
+  const n=S.currentWeek, b=bilanFor(n), d=b.dec;
+  if(d.key==="end")return;
+  if(d.key==="redo"){addOp({week:n,kind:"advance",src:"bilan",bilanWeek:n,prevStatus:weekStatuses(n),motif:`Bilan semaine ${n} : on refait la semaine (moins de la moitié des séances faites).`});clearWeekStatuses(n);}
+  else if(d.key==="light"){addOp({week:n+1,kind:"weekReduce",pct:20,noKey:false,src:"bilan",bilanWeek:n,prevWeek:n,motif:`Bilan semaine ${n} : semaine ${n+1} allégée de 20 % (fatigue).`});S.currentWeek=n+1;}
+  else {addOp({week:n,kind:"advance",src:"bilan",bilanWeek:n,prevWeek:n,motif:`Bilan semaine ${n} : passage à la semaine ${n+1}, telle que prévue.`});S.currentWeek=n+1;}
+  S.bilanDone[n]=d.key; S.flash=d.label+" : c'est enregistré."; persist();
+}
+function freshnessText(t){
+  if(t==null)return "Pas de donnée de fraîcheur.";
+  if(t>5)return "Tu es frais : la charge récente est plus basse que ce que tu encaisses d'habitude.";
+  if(t>=SEUILS.tsb.vert)return "Équilibré : tu encaisses ta charge sans t'enfoncer.";
+  if(t>=SEUILS.tsb.orange)return "Chargé, mais normal en semaine d'entraînement.";
+  return "Fatigue accumulée élevée : il faut récupérer.";
+}
+function recordHistory(){
+  const p=S.charge&&S.charge.pmc; if(!p||typeof p.ctl!=="number")return;
+  S.hist[todayISO()]={ctl:p.ctl,atl:p.atl,tsb:p.tsb};
+  const keys=Object.keys(S.hist).sort(); while(keys.length>90)delete S.hist[keys.shift()];
+  persist();
+}
+
+/* ════════════ Moteur — composants d'interface ════════════ */
+function flashCard(){return S.flash?`<div class="flash"><span>${esc(S.flash)}</span><button data-act="flashClose" aria-label="Fermer">×</button></div>`:"";}
+function pauseCard(){
+  const p=S.pause, d=Math.max(0,daysSince(p.from));
+  return `<div class="card pausec">
+    <div class="eyebrow">Plan en pause</div>
+    <div class="pt">${esc(PAUSE_LBL[p.reason])} depuis le ${esc(fmtDate(p.from))} · ${d} j</div>
+    <div class="sub" style="margin-top:6px">${p.reason==="vacances"?"Fais le sport que tu veux : tout ce que ta montre enregistre compte dans ta charge.":"Repos. Reprends quand tu n'as plus de symptôme depuis 24 h."}</div>
+    <button class="btn primary block" style="margin-top:14px;width:100%" data-act="endPause">Je reprends</button></div>`;
+}
+function sundayCard(){
+  if(new Date().getDay()!==0||S.bilanDone[S.currentWeek]||S.pause)return "";
+  return `<div class="card sundayc" data-act="go" data-arg="bilan"><div><div class="eyebrow" style="color:var(--lime)">Dimanche</div>
+    <div class="st">Ton bilan de la semaine ${S.currentWeek} est prêt</div><div class="ss">Valide la suite du plan en un geste.</div></div>${icon("caret")}</div>`;
+}
+function imprevuSheet(){
+  const f=sessionById(S.detailId); if(!f)return "";
+  const opt=(act,arg,t,d)=>`<button class="sopt" data-act="${act}" ${arg!=null?`data-arg="${arg}"`:""}><b>${t}</b><span>${d}</span></button>`;
+  const away=S.sheet==="away";
+  return `<div class="modal-back sheetback" data-act="sheetClose"><div class="sheet" data-act="noop">
+    <div class="modal-t">${away?"Pas dispo combien de jours ?":"Imprévu"}</div>
+    ${away?`<div class="sub" style="margin:6px 0 12px">À partir d'aujourd'hui. Les séances clés sont décalées si possible, les autres sont retirées.</div>
+      <div class="daychips">${[2,3,4,5].map(n=>`<button data-act="away" data-arg="${n}">${n} j</button>`).join("")}</div>
+      <button class="cta ghost" style="width:100%;margin-top:12px" data-act="sheetOpen" data-arg="imprevu">Retour</button>`
+    :`<div class="sopts">
+      ${opt("impMissed",null,"Je ne peux pas la faire","Le plan la décale ou la retire, selon son importance.")}
+      ${opt("impShort",null,"J'ai moins de temps","Version courte : −40 % de volume.")}
+      ${opt("sheetOpen","away","Pas dispo plusieurs jours","Voyage, travail : on réorganise la semaine.")}
+      ${opt("pause","malade","Malade ou blessé","Plan en pause, reprise progressive ensuite.")}
+      ${opt("pause","vacances","Je pars en vacances","Plan en pause, sport libre.")}
+    </div>
+    <button class="cta ghost" style="width:100%;margin-top:12px" data-act="sheetClose">Annuler</button>`}
+  </div></div>`;
+}
+const EFFORT_HINT=["","Très facile","Très facile","Facile","Facile","Modéré","Modéré","Difficile","Difficile","Très difficile","Maximal"];
+function effortBlock(s){
+  const v=S.rpe[s.id], exp=expectedEffort(s);
+  return `<div class="cta-lbl" style="margin-top:16px">Effort ressenti</div>
+    <div class="effort">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="${v===n?"on":""}${n>=exp+2?" hi":""}" data-act="rpe" data-arg="${n}">${n}</button>`).join("")}</div>
+    <div class="slotnote">${v?`${v}/10 · ${EFFORT_HINT[v]}. `:""}Attendu pour cette séance : autour de ${exp}/10 (${EFFORT_HINT[exp].toLowerCase()}).</div>`;
+}
+function sparkline(vals,color){
+  if(vals.length<2)return "";
+  const w=280,h=56,mn=Math.min(...vals),mx=Math.max(...vals),r=mx-mn||1;
+  const pts=vals.map((v,i)=>`${(i/(vals.length-1)*w).toFixed(1)},${(h-4-(v-mn)/r*(h-8)).toFixed(1)}`).join(" ");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+function screenBilan(){
+  const n=S.currentWeek, b=bilanFor(n), blk=blockForWeek(n);
+  const tag=t=>`<span class="dtag ${t}">${{mes:"Mesuré",dec:"Déclaré",int:"Interprété"}[t]}</span>`;
+  const rows=b.all.slice().sort((a,c)=>a.dayEff-c.dayEff).map(x=>{
+    const st=x.dropped?"dropped":statusOf(x.id)||"todo";
+    const lbl={done:"Faite",z2:"Facile",missed:"Ratée",dropped:"Retirée",todo:"À faire"}[st];
+    return `<div class="brow" data-act="open" data-arg="${x.id}"><i class="bdot ${st}"></i><span class="bd">${DAY_NAMES[x.dayEff]}</span>
+      <span class="bn">${esc(x.name)}</span><span class="bs">${S.rpe[x.id]!=null?S.rpe[x.id]+"/10 · ":""}${lbl}</span></div>`;}).join("");
+  const effLine=b.effAvg==null?"Aucun effort ressenti noté cette semaine.":
+    `Effort ressenti moyen ${num(b.effAvg,1)}/10 pour ${num(b.expAvg,1)} attendu : ${b.effAvg>=b.expAvg+1.5?"plus dur que prévu.":b.effAvg<=b.expAvg-1.5?"plus facile que prévu.":"conforme."}`;
+  const p=(S.charge&&S.charge.pmc)||{};
+  const keys=Object.keys(S.hist).sort(), H=keys.map(k=>S.hist[k]);
+  const evo=(lbl,key,color,txt)=>{const v=p[key];const series=H.map(h=>h[key]).filter(x=>typeof x==="number");
+    const delta=series.length>=2?series[series.length-1]-series[0]:null;
+    return `<div class="evo"><div class="et"><span>${lbl}</span><b class="num">${v==null?"—":num(v,0)}</b></div>
+      ${sparkline(series,color)}<div class="ex">${txt}${delta!=null?` Sur ${series.length} jours : ${delta>=0?"+":""}${num(delta,0)}.`:""}</div></div>`;};
+  const adj=S.adj.slice().reverse();
+  const adjHtml=adj.length?adj.map(o=>{const s=o.sid?sessionById(o.sid):null;
+    const what=s?`S${o.week} · ${DAY_NAMES[s.session.dayEff]} · ${s.session.name}`:`Semaine ${o.week}`;
+    return `<div class="adjr"><div class="aw">${esc(what)}<span>${new Date(o.ts).toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}</span></div>
+      <div class="am">${esc(o.motif)}</div><button class="cta ghost sm" data-act="undo" data-arg="${o.id}">Annuler</button></div>`;}).join("")
+    :`<div class="sub">Aucun ajustement pour l'instant. Ils apparaîtront ici avec leur motif, et tu pourras les annuler.</div>`;
+  const done=S.bilanDone[n];
+  return `<div class="screen">
+    <div class="h1" style="margin-bottom:4px">Bilan</div>
+    <div class="sub" style="margin-bottom:16px">Semaine ${n} · ${esc(blk.name)} — ${esc(blk.title)}</div>
+    ${flashCard()}
+    ${S.pause?pauseCard():""}
+    <div class="card" style="padding:18px">
+      <div class="h-card">Bilan de la semaine</div>
+      <div class="bl">${tag("mes")} ${b.doneL.length} séance${b.doneL.length>1?"s":""} sur ${b.all.length} · ${fmtMin(b.minDone)} sur ${fmtMin(b.minPlan)}${b.partial?` · ${b.conf} % des séances prévues à ce jour`:` · ${b.conf} % faites`}${b.dropped.length?` · ${b.dropped.length} retirée${b.dropped.length>1?"s":""} par le plan`:""}.</div>
+      <div class="bl">${tag("dec")} ${esc(effLine)}${b.felt?` Charge ressentie : ${num(b.felt,0)}.`:""}</div>
+      <div class="bl">${tag("int")} Fraîcheur ${b.tsb==null?"—":(b.tsb>0?"+":"")+num(b.tsb,0)} : ${esc(freshnessText(b.tsb))}</div>
+      <div class="brows">${rows}</div>
+      <div class="decision">
+        <div class="eyebrow">${b.partial?"Décision provisoire":"Décision proposée"}</div>
+        <div class="dl">${esc(b.dec.label)}</div><div class="sub">${esc(b.dec.desc)}</div>
+        ${done?`<div class="dok">✓ Validé</div>`:b.dec.key==="end"?"":`<button class="btn primary" style="width:100%;margin-top:12px" data-act="validateBilan">Valider</button>
+        <div class="slotnote" style="text-align:center">${new Date().getDay()===0?"":"Le bilan se valide normalement le dimanche."}</div>`}
+      </div>
+    </div>
+    <div class="card" style="padding:18px;margin-top:22px">
+      <div class="h-card" style="margin-bottom:4px">Évolution</div>
+      <div class="sub" style="margin-bottom:6px">Données de ta montre (intervals.icu), un point par jour à l'ouverture de l'app.</div>
+      ${evo("Condition physique","ctl","var(--activity-bike)","Ce que tu as construit sur 6 semaines. Doit monter doucement pendant les blocs.")}
+      ${evo("Fatigue récente","atl","var(--activity-run)","La charge des 7 derniers jours. Monte vite, redescend vite.")}
+      ${evo("Fraîcheur","tsb","var(--slate)","Condition physique moins fatigue récente. Négatif : chargé ; positif : frais.")}
+      ${H.length<2?`<div class="slotnote">La courbe se construit : reviens dans quelques jours.</div>`:""}
+    </div>
+    <div class="card" style="padding:18px;margin-top:22px">
+      <div class="h-card" style="margin-bottom:10px">Ajustements du plan</div>${adjHtml}
+    </div>
+    <details class="card reperes" style="margin-top:22px"><summary>Repères du plan</summary>
+      ${RULES.map(r=>`<div style="margin-top:12px"><div style="font-size:14px;font-weight:800">${esc(r.title)}</div><div class="sub">${esc(r.desc)}</div></div>`).join("")}
+      <div style="margin-top:12px"><div style="font-size:14px;font-weight:800">4. Séance clé, support, facultative</div><div class="sub">Une séance clé se décale si possible et se supprime en dernier. Une séance support se réduit mais ne se rattrape pas. Une facultative saute en premier. La natation club n'est jamais arbitrée.</div></div>
+    </details>
+  </div>`;
+}
+
 /* ════════════ Écrans ════════════ */
-function weekSessions(n){return buildWeek(n).map(x=>({...x,dayEff:S.moves[x.id]??x.day}));}
 function blockProgress(blk,all){
   const ss=all.filter(x=>x.week>=blk.range[0]&&x.week<=blk.range[1]);
   const done=ss.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
   return {done,total:ss.length,pct:ss.length?Math.round(done/ss.length*100):0};
 }
 function screenOverview(){
-  const all=allFlat(), block=blockForWeek(S.currentWeek), ws=weekSessions(S.currentWeek);
+  const all=allFlat(), block=blockForWeek(S.currentWeek), ws=activeSessions(S.currentWeek);
   const dur=ws.filter(x=>["done","z2"].includes(statusOf(x.id))).reduce((a,x)=>a+x.minutes,0);
   const durH=Math.floor(dur/60)+"h"+String(dur%60).padStart(2,"0");
   const planned=ws.reduce((a,x)=>a+x.minutes,0);
@@ -806,6 +1139,7 @@ function screenOverview(){
       <div class="hero-logo"><svg viewBox="150 150 724 724" width="88" height="88" fill="none" aria-label="Logo FA" style="color:#fff"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g stroke-width="3.5" opacity="0.9"><path d="M180 160 L844 824"></path><path d="M844 160 L180 824"></path></g><g stroke-width="6"><circle cx="445" cy="252" r="42"></circle><circle cx="579" cy="252" r="42"></circle><path d="M445 252 L490 205 L531 252 L445 252"></path><path d="M490 205 H553 L531 252"></path><path d="M553 205 L579 252"></path><path d="M478 187 H499"></path><path d="M553 205 L546 181 H568"></path></g><g stroke-width="6"><path d="M209 486 C232 457 255 451 276 468 C292 481 304 492 329 492"></path><circle cx="344" cy="469" r="15"></circle><path d="M184 515 C204 530 224 500 244 515 C264 530 284 500 304 515 C324 530 344 500 364 515"></path><path d="M184 539 C204 554 224 524 244 539 C264 554 284 524 304 539 C324 554 344 524 364 539"></path></g><g stroke-width="6"><circle cx="824" cy="448" r="15"></circle><path d="M744 480 C764 455 778 451 793 475 C807 496 818 500 837 482"></path><path d="M790 482 C775 505 762 522 751 537 L715 573"></path><path d="M751 537 C777 536 791 544 800 558 L761 578"></path></g><g stroke-width="7"><path d="M425 850 V714 Q425 700 439 700 H519 M425 776 H494"></path><path d="M484 850 L559 700 L634 850 M526 790 H597"></path></g></g></svg></div>
       <div class="hero-eyebrow">${esc(block.name)} · ${esc(block.title)}</div>
       <div class="hero-title">Programme de la semaine</div>
+      ${heroFeu()}
     </div>
     <div class="hero-bot">
       <div class="hero-metric"><span class="big num">${durH}</span><span class="of num">/ ${plannedH}</span></div>
@@ -815,6 +1149,7 @@ function screenOverview(){
     </div>
   </div>
 
+  ${S.flash?`<div style="margin-top:0">${flashCard()}</div>`:""}
   ${raceHTML}
 
   <div class="card" style="margin-top:22px">
@@ -829,7 +1164,9 @@ function screenOverview(){
   </div>
 
 
-  <div style="margin-top:22px">${nextSessionCard()}</div>
+  <div style="margin-top:22px">${S.pause?pauseCard():nextSessionCard()}</div>
+
+  ${sundayCard()}
 
   <div style="margin-top:22px">${suiviDataCard()}</div>
 
@@ -841,6 +1178,14 @@ function screenOverview(){
     <div class="mrow" data-act="go" data-arg="ppg"><span class="mi">${icon("strength")}</span><span class="ml">PPG</span><span class="mc">${icon("caret")}</span></div>
   </div>
 </div>`;
+}
+function dayPicker(session,cur){
+  const slot=SLOT[session.sport]||"libre";
+  const days=slot==="weekend"?[5,6]:slot==="club"?[1,3]:[0,1,2,3,4,5,6];
+  const note=slot==="club"?"Créneau club : mardi ou jeudi soir.":slot==="weekend"?"Sortie vélo : samedi ou dimanche.":"À caler selon tes dispos, y compris le même jour qu'une natation.";
+  return `<div class="cta-lbl" style="margin-top:16px">Jour de la séance</div>
+    <div class="daychips">${days.map(d=>`<button class="${d===cur?"on":""}" data-act="setDay" data-arg="${d}">${DAY_NAMES[d]}</button>`).join("")}</div>
+    <div class="slotnote">${note}</div>`;
 }
 function screenCalendar(){
   const block=blockForWeek(S.currentWeek), ws=weekSessions(S.currentWeek);
@@ -877,27 +1222,6 @@ function screenCalendar(){
   return `<div class="screen"><div class="h1" style="margin-bottom:14px">Calendrier</div>
     ${seg(["Semaine","Liste"],S.calendarMode,"calmode")}${body}</div>`;
 }
-function screenAdapt(){
-  return `<div class="screen">
-   <div class="h1" style="margin-bottom:6px">Adaptation</div>
-   <div class="sub" style="margin-bottom:18px">Une séance ratée n'est pas une dette. C'est une donnée de charge.</div>
-   <div class="eyebrow" style="margin-bottom:10px">Situation</div>
-   <div style="display:flex;flex-direction:column;gap:8px">
-     ${SITUATIONS.map(s=>`<button class="btn ${S.situation===s.key?"primary":"secondary"} block left" data-act="sit" data-arg="${s.key}">${esc(s.label)}</button>`).join("")}
-   </div>
-   <div class="eyebrow" style="margin:20px 0 10px">Fatigue</div>
-   ${seg(["Faible","Modérée","Élevée"],S.fatigue,"fatigue")}
-   <div class="eyebrow" style="margin:20px 0 10px">Prochaine disponibilité</div>
-   ${seg(["24h","48h","72h+"],S.avail,"avail")}
-   <button class="btn primary block" style="margin-top:20px" data-act="buildAdapt">Proposer l'ajustement</button>
-   <div class="card" style="margin-top:14px;font-size:14px;line-height:1.55;color:var(--text-secondary)">${esc(S.adaptResult)}</div>
-   <div class="sechead" style="margin:24px 2px 12px"><h3>Règles de décision</h3></div>
-   <div style="display:flex;flex-direction:column;gap:10px">
-     ${RULES.map(r=>`<div class="card"><div style="font-size:14px;font-weight:800;margin-bottom:4px">${esc(r.title)}</div><div style="font-size:13px;color:var(--text-secondary);line-height:1.5">${esc(r.desc)}</div></div>`).join("")}
-   </div>
-   <button class="btn secondary block" style="margin-top:18px;color:var(--danger);border-color:rgba(210,86,76,.5)" data-act="resetTracking">Réinitialiser le suivi</button>
-  </div>`;
-}
 function screenSettings(){
   return `<div class="screen">
    <div class="h1" style="margin-bottom:16px">Réglages</div>
@@ -921,6 +1245,7 @@ function screenSettings(){
    </div>
    <div class="menu">
      <div class="mrow" data-act="go" data-arg="ppg"><span class="mi">${icon("strength")}</span><span class="ml">Bibliothèque PPG</span><span class="mc">${icon("caret")}</span></div>
+     <div class="mrow danger" data-act="resetTracking"><span class="mi">${icon("reset")}</span><span class="ml">Réinitialiser le suivi</span><span class="mc">${icon("caret")}</span></div>
      <div class="mrow danger" data-act="resetProgram"><span class="mi">${icon("reset")}</span><span class="ml">Réinitialiser le programme</span><span class="mc">${icon("caret")}</span></div>
    </div>
   </div>`;
@@ -1023,7 +1348,7 @@ function routineGo(i){
 function overlayDetail(){
   const f=sessionById(S.detailId); if(!f)return "";
   const {week,session}=f, st=statusOf(session.id), blk=blockForWeek(week);
-  const cur=S.moves[session.id]??session.day;
+  const cur=session.dayEff;
   const exs=session.sport==="ppg"?ppgExercisesFor(session):[];
   const SLBL={natation:"Natation",cap:"Course",velo:"Vélo",ppg:"PPG"};
   const steps=detailSteps(session);
@@ -1037,7 +1362,7 @@ function overlayDetail(){
   let sPill="";
   if(st==="done") sPill='<span class="o-pill" style="background:rgba(63,174,89,.24);color:#CDEBD5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg>Fait</span>';
   else if(st==="missed") sPill='<span class="o-pill" style="background:rgba(210,86,76,.28);color:#F4D2CE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg>Raté</span>';
-  else if(st==="z2") sPill='<span class="o-pill" style="background:rgba(255,255,255,.16);color:#fff">Adapté Z2</span>';
+  else if(st==="z2") sPill='<span class="o-pill" style="background:rgba(255,255,255,.16);color:#fff">Version facile</span>';
   const ppgRows=exs.map(e=>`<div class="ppg"><span class="pi">${icon(e.icon)}<img src="assets/ppg/${e.id}.png" alt="${esc(e.title)}" loading="lazy" onerror="this.remove()"></span>
     <div class="pc"><div class="ptop"><strong>${esc(e.title)}</strong><span class="tag num">${esc(e.time)}</span></div>
     <div class="pm">${esc(e.muscles)}</div><div class="pcue">${esc(e.cue)}</div></div></div>`).join("");
@@ -1055,23 +1380,23 @@ function overlayDetail(){
       </div>
     </div>
     <div style="padding:16px 16px 28px;display:flex;flex-direction:column;gap:12px">
-      <div class="o-note">${intention}</div>
+      ${flashCard()}
+      ${session.adjMotif?`<div class="adjnote"><b>${session.dropped?"Retirée du plan":"Ajustée par le plan"}</b>${esc(session.adjMotif)}${session.adjOp&&!S.adj.find(o=>o.id===session.adjOp&&o.kind==="weekReduce")?`<div style="margin-top:10px"><button class="cta ghost sm" data-act="undo" data-arg="${session.adjOp}">${session.dropped?"Remettre la séance":"Annuler l'ajustement"}</button></div>`:""}</div>`:""}
+      ${session.dropped?"":`<div class="o-note">${intention}</div>`}
       ${session.sport==="natation"?`<button class="rt-open" data-act="openRoutine"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg></span><span class="tx"><h4>Échauffement</h4><p>Routine mobilité + activation · ${ROUTINE_NATATION.length} étapes</p></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span></button>`:""}
       ${obj?`<div class="card"><div style="font-size:14px;font-weight:800;margin-bottom:5px">Objectif</div><div style="font-size:14px;color:var(--text-secondary);line-height:1.5">${esc(obj.desc)}</div>${tgMain?`<div class="tgt">${esc(tgMain)}</div>`:""}</div>`:""}
       ${body.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Déroulé</h3></div>`+body.map((x,i)=>{const zt=(session.sport==="cap"||session.sport==="velo")?targetStr(session.sport,zoneForStep(x.title,mz)):"";return `<div class="step"><div class="n num">${i+1}</div><div class="st"><h4>${esc(String(x.title).replace(/^\d+\.\s*/,""))}</h4><p>${esc(x.desc)}</p>${zt?`<div class="tgt">${esc(zt)}</div>`:""}</div></div>`;}).join(""):""}
       ${exs.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Exercices PPG</h3></div>`+ppgHead+ppgRows:""}
-      <div style="margin-top:8px">
+      ${session.dropped?"":`<div style="margin-top:8px">
         <div class="cta-lbl">Statut de la séance</div>
         <div class="cta-row">
           <button class="cta done ${st==="done"?"sel":"ghost"}" data-act="st" data-arg="done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg>Fait</button>
-          <button class="cta miss ${st==="missed"?"sel":"ghost"}" data-act="st" data-arg="missed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg>Raté</button>
+          <button class="cta adapt ${st==="z2"?"sel":"ghost"}" data-act="st" data-arg="z2">Faite en facile</button>
         </div>
-        <div class="cta-row" style="margin-top:10px">
-          <button class="cta adapt ${st==="z2"?"sel":"ghost"}" data-act="st" data-arg="z2">Adapté Z2</button>
-          <button class="cta ghost" data-act="moveDay">Déplacer vers ${DAY_NAMES[(cur+1)%7]}</button>
-        </div>
+        ${(st==="done"||st==="z2")?effortBlock(session):`<button class="cta ghost imp-btn" data-act="sheetOpen" data-arg="imprevu">Imprévu</button>`}
+        ${dayPicker(session,cur)}
         ${st?`<button class="cta ghost" style="width:100%;margin-top:10px" data-act="st" data-arg="">Réinitialiser le statut</button>`:""}
-      </div>
+      </div>`}
     </div>
   </div>`;
 }
@@ -1079,7 +1404,7 @@ function overlayDetail(){
 <script>
 "use strict";
 /* ════════════ Rendu ════════════ */
-const SCREENS={overview:screenOverview,calendar:screenCalendar,adapt:screenAdapt,settings:screenSettings,ppg:screenPPG};
+const SCREENS={overview:screenOverview,calendar:screenCalendar,bilan:screenBilan,settings:screenSettings,ppg:screenPPG};
 function confirmModal(){
   const c=S.confirm||{};
   return `<div class="modal-back"><div class="modal">
@@ -1094,7 +1419,9 @@ function confirmModal(){
 function render(){
   const fn=SCREENS[S.view]||screenOverview;
   document.getElementById("app").innerHTML=fn();
-  document.getElementById("overlay").innerHTML=S.confirm?confirmModal():((S.detailId?overlayDetail():"")+(S.routineOpen?overlayRoutine():""));
+  const ov=document.querySelector(".ovl"), keep=ov&&S.detailId===render._last?ov.scrollTop:0; render._last=S.detailId;
+  document.getElementById("overlay").innerHTML=S.confirm?confirmModal():((S.detailId?overlayDetail():"")+(S.detailId&&S.sheet?imprevuSheet():"")+(S.routineOpen?overlayRoutine():""));
+  const ov2=document.querySelector(".ovl"); if(ov2&&keep)ov2.scrollTop=keep;
   document.getElementById("navwrap").classList.toggle("hidden",!!S.detailId||!!S.confirm);
   const navMap={ppg:"settings"};
   const active=navMap[S.view]||S.view;
@@ -1104,48 +1431,41 @@ function render(){
 }
 
 /* ════════════ Actions ════════════ */
-function buildAdaptation(){
-  const {situation,fatigue,avail}=S;
-  let m;
-  if(fatigue==="Élevée") m="Fatigue élevée : supprime la séance qualité. Fais 30–45 min en endurance légère, puis reprends le plan normal.";
-  else if(situation==="missed-quality") m=avail==="24h"?"Tu peux replacer la séance qualité demain si la veille et le lendemain restent faciles. Sinon transforme-la en endurance.":"Au-delà de 48h, ne rattrape pas la qualité — garde la séance suivante prioritaire.";
-  else if(situation==="missed-easy") m="Ne rattrape pas. Reprends simplement la prochaine séance prévue.";
-  else if(situation==="missed-ppg") m="Ajoute 12–15 min de gainage après une séance facile plutôt qu'une séance complète en dette.";
-  else if(situation==="missed-long") m="Remplace par 60–75% du volume si un créneau proche existe, sinon passe à la semaine suivante sans empiler.";
-  else m="Désordre acceptable si les intensités restent séparées par 24–48h.";
-  S.adaptResult=m; render();
-}
+
 const ACTIONS={
   open:a=>{S.detailId=a;render();},
-  closeDetail:()=>{S.detailId=null;render();},
+  closeDetail:()=>{S.detailId=null;S.sheet=null;S.flash=null;render();},
+  flashClose:()=>{S.flash=null;render();},
+  sheetOpen:a=>{S.sheet=a;render();},
+  sheetClose:()=>{S.sheet=null;render();},
+  impMissed:()=>{imprevuMissed(S.detailId);S.sheet=null;render();},
+  impShort:()=>{imprevuShort(S.detailId);S.sheet=null;render();},
+  away:a=>{imprevuAway(Number(a));S.sheet=null;S.detailId=null;S.view="calendar";S.calendarMode="Semaine";render();},
+  pause:a=>{startPause(a);S.view="overview";render();},
+  endPause:()=>{endPause();render();},
+  rpe:a=>{S.rpe[S.detailId]=Number(a);persist();checkEffortDrift();render();},
+  undo:a=>{undoOp(a);S.flash="Ajustement annulé.";render();},
+  validateBilan:()=>{validateBilan();render();},
   openRoutine:()=>{routineIdx=0;S.routineOpen=true;render();},
   closeRoutine:()=>{S.routineOpen=false;render();},
   routineNav:a=>{routineGo(routineIdx+(a==="next"?1:-1));},
   routineDot:a=>{routineGo(Number(a));},
   st:a=>{setStatus(S.detailId,a);},
-  moveDay:()=>{const f=sessionById(S.detailId);if(f)moveDay(S.detailId,S.moves[S.detailId]??f.session.day);},
-  go:a=>{if(a==="calendar-liste"){S.view="calendar";S.calendarMode="Liste";}else S.view=a;render();},
+  setDay:a=>{setDay(S.detailId,Number(a));},
+  toSuivi:()=>{const el=document.getElementById("suivi-data");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});},
+  go:a=>{S.flash=null;if(a==="calendar-liste"){S.view="calendar";S.calendarMode="Liste";}else S.view=a;render();},
   week:a=>{S.currentWeek=Number(a);persist();render();},
   "week-go":a=>{S.currentWeek=Number(a);S.calendarMode="Semaine";persist();render();},
   calmode:a=>{S.calendarMode=a;render();},
-  sit:a=>{S.situation=a;render();},
-  fatigue:a=>{S.fatigue=a;render();},
-  avail:a=>{S.avail=a;render();},
-  buildAdapt:()=>buildAdaptation(),
-  quick:a=>{S.view="adapt";
-    if(a==="missed")S.situation="missed-quality";
-    else if(a==="fatigue")S.fatigue="Élevée";
-    else {S.situation="missed-easy";S.avail="72h+";}
-    render();},
   saveZones:()=>{S.fcMax=(document.getElementById("fFcMax")||{}).value||"";
     S.pace=(document.getElementById("fPace")||{}).value||"";
     S.ftp=(document.getElementById("fFtp")||{}).value||"";persist();render();},
   saveRace:()=>{S.raceName=(document.getElementById("fRace")||{}).value||"";
     S.raceDate=(document.getElementById("fRaceDate")||{}).value||"";persist();render();},
-  resetTracking:()=>{S.confirm={kind:"tracking",msg:"Réinitialiser tous les statuts et déplacements ?"};render();},
+  resetTracking:()=>{S.confirm={kind:"tracking",msg:"Réinitialiser le suivi ? Statuts, déplacements, efforts ressentis, ajustements et bilans seront effacés."};render();},
   resetProgram:()=>{S.confirm={kind:"program",msg:"Remettre à zéro le programme complet ? Statuts, déplacements, zones et course cible seront effacés."};render();},
   confirmNo:()=>{S.confirm=null;render();},
-  confirmYes:()=>{const k=S.confirm&&S.confirm.kind;S.confirm=null;if(k==="program"){S.status={};S.moves={};S.fcMax=S.pace=S.ftp=S.raceName=S.raceDate="";}else{S.status={};S.moves={};}persist();render();}
+  confirmYes:()=>{const k=S.confirm&&S.confirm.kind;S.confirm=null;S.status={};S.moves={};S.adj=[];S.rpe={};S.pause=null;S.bilanDone={};if(k==="program"){S.fcMax=S.pace=S.ftp=S.raceName=S.raceDate="";}persist();render();}
 };
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-act]");
@@ -1172,7 +1492,7 @@ document.addEventListener("keydown",e=>{
 });
 document.getElementById("nav").addEventListener("click",e=>{
   const b=e.target.closest("button[data-v]");
-  if(b){S.view=b.dataset.v;S.detailId=null;render();}
+  if(b){S.view=b.dataset.v;S.detailId=null;S.sheet=null;S.flash=null;render();}
 });
 
 /* ════════════ Données ════════════ */
@@ -1181,7 +1501,7 @@ function q(u){return READ_TOKEN?u+"?token="+encodeURIComponent(READ_TOKEN):u;}
 async function grab(u){try{const r=await fetch(q(u),{cache:"no-store"});if(!r.ok)return null;return await r.json();}catch(_){return null;}}
 async function loadData(){
   const [w,c]=await Promise.all([grab("/api/wellness"),grab("/api/load")]);
-  S.wellness=w; S.charge=c; S.dataReady=true; render();
+  S.wellness=w; S.charge=c; S.dataReady=true; recordHistory(); render();
 }
 function boot(){
   document.querySelectorAll("#nav button[data-ic]").forEach(b=>{b.innerHTML=icon(b.dataset.ic);});
