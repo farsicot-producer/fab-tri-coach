@@ -530,10 +530,10 @@ function buildWeek(n){
  const brick=block.key==="b3"&&!rec&&idx%2===0, brickRun=idx>=4?20:15;
  const pr=rec?[null,"facultative","support",null,"facultative"]:PRIO[block.key];
  return [
-  {id:`w${n}s0`,sport:"natation",name:"Natation club",type:"club",minutes:60,day:1,prio:pr[0]},
+  {id:`w${n}s0`,sport:"natation",name:idx%2?"Endurance souple":"Alignement technique",type:"technique",minutes:Math.round(bs*mul),day:1,prio:pr[0]},
   {id:`w${n}s1`,sport:"cap",name:rq?RUN_Q[idx]:`${Math.round(br*mul)}' Z2 continu`,type:rq?"quality":"endurance",minutes:Math.round(br*mul),day:0,prio:pr[1]},
   {id:`w${n}s2`,sport:"ppg",name:"Gainage + mobilité hanches",type:"mobility",minutes:Math.round(bp*mul),day:2,prio:pr[2]},
-  {id:`w${n}s3`,sport:"natation",name:"Natation club",type:"club",minutes:60,day:3,prio:pr[3]},
+  {id:`w${n}s3`,sport:"natation",name:"Propulsion",type:"endurance",minutes:Math.round((bs-5)*mul),day:3,prio:pr[3]},
   brick?{id:`w${n}s4`,sport:"velo",name:`Enchaînement : vélo Z2 + ${brickRun}' course allure tri`,type:"quality",brick:brickRun,minutes:Math.round(bb)+brickRun,day:5,prio:pr[4]}
    :{id:`w${n}s4`,sport:"velo",name:rec?"Sortie Z2 récupération":(bt?BIKE_T[idx]:"Sortie longue Z2"),type:bt?"quality":"endurance",minutes:Math.round(bb*mul),day:5,prio:pr[4]}
  ];
@@ -564,7 +564,8 @@ function ppgCircuitFor(s){
  return {tours,rest,note:neuro};
 }
 function detailSteps(s){
- if(s.sport==="natation")return[{title:"Séance du club",desc:"Contenu fixé par le club. Feu vert : nage normalement. Feu orange : reste en dedans sur les séries rapides. Feu rouge : technique souple ou repos."}];
+ if(s.sport==="natation"){const d=SWIM_DATA[swimKeyFor(s.name)];
+  return [{title:"Objectif",desc:`${d.goal} ${d.use}`},...d.steps.map((x,i)=>({title:`${i+1}. ${i===0?"Échauffement":i===d.steps.length-1?"Retour au calme":"Bloc"}`,desc:x}))];}
  if(s.sport==="cap")return[{title:"Objectif CAP",desc:`Exécuter ${s.name} sans dérive excessive. Priorité à la foulée propre et à la fraîcheur.`},{title:"Échauffement",desc:"10–15 min Z1/Z2 + mobilisation chevilles/hanches. Ajouter 3 accélérations très progressives si séance qualité."},{title:"Corps de séance",desc:s.name},{title:"Retour au calme",desc:"8–10 min très facile. Si jambes lourdes : finir plus court, pas plus vite."}];
  if(s.sport==="velo"&&s.brick)return[{title:"Objectif",desc:"Habituer les jambes à courir après le vélo : c'est la séance la plus proche de la course."},{title:"Échauffement",desc:"15 min progressives, cadence souple."},{title:"Vélo",desc:"Sortie Z2, fin à cadence un peu plus haute (90+ tr/min) sur les 10 dernières minutes."},{title:"Transition",desc:"Moins de 5 min : chaussures, casquette, c'est reparti. Prépare ton matériel avant de partir."},{title:"Course",desc:s.brick+" min à allure tri : les 5 premières minutes plus lentes, foulée courte. Arrêt immédiat si le mollet tire."},{title:"Retour au calme",desc:"5 min de marche, puis boire et manger dans la demi-heure."}];
  if(s.sport==="velo")return[{title:"Objectif vélo",desc:"Construire puissance durable et endurance spécifique."},{title:"Échauffement",desc:"15 min progressives, cadence souple. Sur home trainer : 3 rampes de 30 sec."},{title:"Corps de séance",desc:s.name},{title:"Retour au calme",desc:"10 min Z1/Z2. Nutrition : boire régulièrement, surtout sur les sorties de plus de 2h."}];
