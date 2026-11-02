@@ -533,7 +533,7 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 
 /* En-tête de carte */
 .tc-cardhead{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)}
-.tc-cardhead__title{margin:0;font-family:var(--font-sans);font-size:17px;line-height:1.25;font-weight:300;color:var(--text-secondary);max-width:16ch}
+.tc-cardhead__title{margin:0;font-family:var(--font-sans);font-size:17px;line-height:1.25;font-weight:400;color:var(--text-strong);max-width:16ch}
 .tc-cardhead__meta{display:block;margin-top:4px;font-size:13px;line-height:1.4;color:var(--text-muted)}
 .tc-cardhead__aside{display:flex;align-items:center;gap:var(--space-2);color:var(--text-secondary);flex:none}
 .tc-cardhead--ambiance .tc-cardhead__title{font-size:22px;line-height:1.2;font-weight:400;color:var(--text-on-ambiance);max-width:none}
@@ -688,7 +688,9 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 /* Accueil (étape 2) */
 .home{display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4) var(--space-4) var(--space-2)}
 .home .tc-card+.tc-card{margin-top:0}
-.home-hello{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3)}
+.home-hello{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);min-height:148px}
+.home-hello__verdict{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:6px 12px 6px 10px;border-radius:var(--radius-pill);background:rgba(0,0,0,.28);font-size:13px;color:var(--text-on-ambiance)}
+.home-hello__verdict i{width:8px;height:8px;border-radius:50%;flex:none}
 .home-hello__eyebrow{font-size:13px;color:var(--text-on-ambiance-muted)}
 .home-hello__title{font-size:24px;font-weight:400;margin-top:4px;color:var(--text-on-ambiance)}
 .home-hello__meta{font-size:14px;color:var(--text-on-ambiance-muted);margin-top:6px}
@@ -704,6 +706,7 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 .home-more summary{cursor:pointer;font-size:13px;color:var(--text-secondary);list-style:none}
 .home-more summary::-webkit-details-marker{display:none}
 .home-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;margin-top:12px}
+.home-week__blocks{margin-top:var(--space-5);padding-top:var(--space-4);border-top:1px solid var(--border-subtle)}
 .home-blocks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .home-block__n{font-size:13px;color:var(--text-secondary)}
 .home-block.on .home-block__n{color:var(--text-strong)}
@@ -1363,9 +1366,11 @@ const fmtH=m=>{const h=Math.floor(m/60),r=m%60;return h?(h+" h"+(r?" "+String(r)
 function homeHello(goalPct,block){
   const d=new Date(), day=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"short"});
   const meta=S.pause?`Plan en pause · ${PAUSE_LBL[S.pause.reason].toLowerCase()}`:`Semaine faite à ${goalPct} %`;
+  const f=formeDuJour(), tone=DS_TONE[f.lvl], col=tone?`var(--state-${tone})`:"var(--graphite-400)";
+  const verdict=S.pause?"":`<div class="home-hello__verdict"><i style="background:${col}"></i>${esc(f.court)}</div>`;
   return `<section class="tc-ambiance tc-ambiance--prune"><div class="home-hello"><div>
     <div class="home-hello__eyebrow">${esc(day[0].toUpperCase()+day.slice(1))} · ${esc(block.name)} · Semaine ${S.currentWeek}</div>
-    <div class="home-hello__title">Bonjour Fabrice</div><div class="home-hello__meta">${esc(meta)}</div></div>
+    <div class="home-hello__title">Bonjour Fabrice</div><div class="home-hello__meta">${esc(meta)}</div>${verdict}</div>
     ${dsRing(goalPct,goalPct+"%")}</div></section>`;
 }
 function homeForme(){
@@ -1373,9 +1378,10 @@ function homeForme(){
   const tsb=typeof p.tsb==="number"?Math.round(p.tsb):null;
   const stamp=w.date?"Garmin · "+new Date(w.date+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}):(S.dataReady?"Pas de donnée reçue":"Lecture des données…");
   const stat=(l,v)=>`<div class="home-stat"><span>${esc(l)}</span><b>${esc(v)}</b></div>`;
-  const big=tsb==null?`<span class="tc-metric tc-metric--xl">—</span>`:`<span class="tc-dotnum tc-dotnum--lg">${(tsb>0?"+":"")+tsb}</span>`;
-  return `<section class="tc-card" id="suivi-data" style="scroll-margin-top:16px">${dsHead("Forme du jour",stamp)}
-    <div class="tc-card__body tc-card__split"><div class="tc-mblock">${dsChip(f.lvl,f.court.split(" · ")[0])}${big}<span class="tc-mblock__caption">${esc(tsb==null?f.sub:"Fraîcheur. "+f.sub)}</span></div>
+  const tone=DS_TONE[f.lvl], col=tone?`var(--state-${tone})`:"var(--text-strong)";
+  const big=tsb==null?`<span class="tc-metric tc-metric--xl">—</span>`:`<span class="tc-dotnum tc-dotnum--lg" style="color:${col}">${(tsb>0?"+":"")+tsb}</span>`;
+  return `<section class="tc-card" id="suivi-data" style="scroll-margin-top:16px">${dsHead("Forme du jour",stamp,dsChip(f.lvl,f.court.split(" · ")[0],true))}
+    <div class="tc-card__body tc-card__split"><div class="tc-mblock">${big}<span class="tc-mblock__caption">${esc(tsb==null?f.sub:"Fraîcheur. "+f.sub)}</span></div>
     <div class="home-stats">${stat("Sommeil",typeof w.sleep_h==="number"?num(w.sleep_h,1)+" h":"—")}${stat("FC repos",typeof w.resting_hr==="number"?num(w.resting_hr,0)+" bpm":"—")}${stat("Charge 7 j",c.load7==null?"—":num(c.load7,0))}${stat("Condition",p.ctl==null?"—":num(p.ctl,0))}</div></div>
     <div class="home-tags"><span class="tc-tag tc-tag--measured">Mesuré</span><span class="tc-tag tc-tag--interpreted">Interprété</span></div></section>`;
 }
@@ -1403,7 +1409,7 @@ function homeNext(){
     <div class="tc-card__body"><div class="home-next__row"><span class="home-next__title">${esc(title)}</span>${chip}</div>${text?`<div class="home-next__text">${esc(text)}</div>`:""}${tgt}</div>
     <div class="tc-card__foot"><button class="tc-btn tc-btn--primary" data-act="open" data-arg="${p.id}">Voir la séance</button></div>${more}</section>`;
 }
-function homeVolume(ws,dur,planned){
+function homeWeek(ws,dur,planned,all){
   const td=(new Date().getDay()+6)%7, L=["L","M","M","J","V","S","D"], perDot=15;
   const cols=L.map((l,i)=>{const day=ws.filter(x=>x.dayEff===i), plan=day.reduce((a,x)=>a+x.minutes,0), done=day.filter(x=>["done","z2"].includes(statusOf(x.id))).reduce((a,x)=>a+x.minutes,0);
     const n=Math.min(8,Math.ceil(plan/perDot)), lit=Math.min(n,Math.round(done/perDot)), miss=day.some(x=>statusOf(x.id)==="missed");
@@ -1411,9 +1417,11 @@ function homeVolume(ws,dur,planned){
     const dots=Array.from({length:8},(_,k)=>`<i${k<lit?' class="is-on"':""}${k>=n?' style="visibility:hidden"':""}></i>`).join("");
     return `<div><div class="tc-dots__col${tone}">${dots}</div><div class="tc-dots__lbl"${i===td?' style="color:var(--text-strong)"':""}>${l}</div></div>`;}).join("");
   const nDone=ws.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
-  return `<section class="tc-card">${dsHead("Volume de la semaine","Un point = 15 min · plein = fait")}
+  return `<section class="tc-card">${dsHead("Semaine "+S.currentWeek,"Un point = 15 min · plein = fait")}
     <div class="tc-card__body" style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px"><div class="tc-dots tc-dots--labeled" role="img" aria-label="${fmtH(dur)} faites sur ${fmtH(planned)}">${cols}</div>
-    <div style="text-align:right"><span class="tc-metric tc-metric--lg">${fmtH(dur)}</span><div class="tc-mblock__caption">sur ${fmtH(planned)} · ${nDone}/${ws.length} séances</div></div></div></section>`;
+    <div style="text-align:right"><span class="tc-metric tc-metric--lg">${fmtH(dur)}</span><div class="tc-mblock__caption">sur ${fmtH(planned)} · ${nDone}/${ws.length} séances</div></div></div>
+    <div class="home-week__blocks"><div class="tc-cap" style="margin-bottom:10px">Progression du programme · 30 semaines</div><div class="home-blocks">${BLOCKS.map(b=>{const pr=blockProgress(b,all),on=(S.currentWeek>=b.range[0]&&S.currentWeek<=b.range[1]);
+      return `<div class="home-block${on?" on":""}"><div class="home-block__n">${esc(b.name)}</div><div class="home-block__t">${esc(b.title)}</div>${dsBar(pr.pct,"",8)}<div class="home-block__p">${pr.pct} %</div></div>`;}).join("")}</div></div></section>`;
 }
 function homeSunday(){
   if(new Date().getDay()!==0||S.bilanDone[S.currentWeek]||S.pause)return "";
@@ -1426,10 +1434,6 @@ function homeRace(){
   if(S.raceDate){const d=new Date(S.raceDate+"T00:00:00");days=Math.ceil((d-Date.now())/864e5);dstr=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});}
   return `<section class="tc-ambiance tc-ambiance--indigo"><div class="tc-cardhead tc-cardhead--ambiance"><div><h3 class="tc-cardhead__title">Course cible</h3><span class="tc-cardhead__meta">${esc(S.raceName)}${dstr?" · "+esc(dstr):""}</span></div><span class="tc-cardhead__aside"><span style="font-size:20px;display:inline-flex">${icon("flag")}</span></span></div>
     <div class="home-race">${days!=null&&days>=0?`<span class="tc-dotnum tc-dotnum--md">J-${days}</span><span style="font-size:13px;color:var(--text-on-ambiance-muted)">${Math.round(days/7)} semaines</span>`:`<span style="font-size:14px;color:var(--text-on-ambiance-muted)">Date à renseigner dans les Réglages</span>`}</div></section>`;
-}
-function homeBlocks(all){
-  return `<section class="tc-card">${dsHead("Progression du programme","30 semaines · 4 blocs")}<div class="tc-card__body home-blocks">${BLOCKS.map(b=>{const pr=blockProgress(b,all),on=(S.currentWeek>=b.range[0]&&S.currentWeek<=b.range[1]);
-    return `<div class="home-block${on?" on":""}"><div class="home-block__n">${esc(b.name)}</div><div class="home-block__t">${esc(b.title)}</div>${dsBar(pr.pct,"",8)}<div class="home-block__p">${pr.pct} %</div></div>`;}).join("")}</div></section>`;
 }
 function screenOverview(){
   const all=allFlat(), block=blockForWeek(S.currentWeek), ws=activeSessions(S.currentWeek);
@@ -1444,9 +1448,8 @@ function screenOverview(){
   ${homeForme()}
   ${homeNext()}
   ${homeSunday()}
-  ${homeVolume(ws,dur,planned)}
+  ${homeWeek(ws,dur,planned,all)}
   ${homeRace()}
-  ${homeBlocks(all)}
   <nav class="tc-menu" aria-label="Raccourcis">${row("go","calendar-liste","list","Toutes les séances")}${row("go","ppg","strength","Bibliothèque PPG")}</nav>
 </div>`;
 }
