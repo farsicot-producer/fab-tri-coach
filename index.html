@@ -415,6 +415,301 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 .rdots{flex:1;display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap}
 .rdots .d{width:7px;height:7px;border-radius:50%;background:var(--data-neutral);cursor:pointer;transition:all .2s;border:1px solid var(--graphite-600)}
 .rdots .d.on{background:var(--swim);border-color:var(--swim);width:22px;border-radius:99px}
+
+/* ════ Design system Tri Coach Dark — composants (copie de components/bundle.css) ════ */
+:focus-visible{outline:none;box-shadow:var(--shadow-focus)}
+.tc-cap{font-size:12px;color:var(--text-muted)}
+:focus-visible{outline:none;box-shadow:var(--shadow-focus)}
+
+/* Icône */
+.tc-icon{display:inline-block;vertical-align:middle;flex:none;color:inherit}
+[data-icon]{display:inline-flex;line-height:0}
+
+/* Bouton */
+.tc-btn{appearance:none;border:0;margin:0;display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);height:var(--size-control);padding:0 var(--space-5);border-radius:var(--radius-pill);font-family:var(--font-sans);font-size:15px;font-weight:500;line-height:1;cursor:pointer;white-space:nowrap;transition:background-color .15s,transform .1s}
+.tc-btn:active{transform:scale(.98)}
+.tc-btn--primary{background:var(--surface-raised);color:var(--action-500);box-shadow:var(--shadow-action-ring)}
+.tc-btn--primary:hover,.tc-btn--primary:active{background:var(--graphite-700);box-shadow:var(--shadow-action-ring-hover)}
+.tc-btn--primary:focus-visible{box-shadow:var(--shadow-action-ring-hover),var(--shadow-focus)}
+.tc-btn--secondary{background:var(--surface-raised);color:var(--text-primary)}
+.tc-btn--secondary:hover{background:var(--graphite-700)}
+.tc-btn--ghost{background:transparent;color:var(--text-primary);box-shadow:inset 0 0 0 1px var(--border-default)}
+.tc-btn--ghost:hover{background:var(--surface-raised)}
+.tc-btn--danger{background:var(--state-danger-bg);color:var(--state-danger)}
+.tc-btn--sm{height:var(--size-control-sm);padding:0 var(--space-4);font-size:14px}
+.tc-btn--block{display:flex;width:100%}
+.tc-btn[aria-disabled="true"]{background:var(--surface-raised);background-image:none;box-shadow:none;color:var(--text-disabled);cursor:default}
+
+/* Bouton rond */
+.tc-iconbtn{appearance:none;border:0;margin:0;width:var(--size-control);height:var(--size-control);border-radius:var(--radius-pill);display:inline-flex;align-items:center;justify-content:center;background:var(--surface-raised);color:var(--text-secondary);cursor:pointer;transition:background-color .15s,color .15s}
+.tc-iconbtn:hover{color:var(--text-primary);background:var(--graphite-700)}
+.tc-iconbtn--sm{width:var(--size-control-sm);height:var(--size-control-sm)}
+.tc-iconbtn--plain{background:transparent}
+.tc-iconbtn[aria-pressed="true"]{color:var(--text-strong);background:var(--graphite-700)}
+
+/* Pastille d'état */
+.tc-chip{--c:var(--state-none);display:inline-flex;align-items:center;gap:var(--space-2);font-size:15px;line-height:1.2;font-weight:400;color:var(--c)}
+.tc-chip__dot{width:var(--size-chip-icon);height:var(--size-chip-icon);border-radius:var(--radius-pill);display:inline-flex;align-items:center;justify-content:center;background:var(--c);flex:none}
+.tc-chip__dot .tc-icon{color:var(--bg-page)}
+.tc-chip--ok{--c:var(--state-ok)}
+.tc-chip--warn{--c:var(--state-warn)}
+.tc-chip--danger{--c:var(--state-danger)}
+.tc-chip--solid{padding:6px var(--space-3) 6px 10px;gap:6px;border-radius:var(--radius-pill);background:var(--c);color:var(--bg-page);font-weight:500}
+.tc-chip--solid .tc-chip__dot{background:transparent;width:auto;height:auto}
+.tc-chip--solid .tc-chip__dot .tc-icon{color:var(--bg-page);width:16px;height:16px;stroke-width:2}
+
+/* Étiquette de nature de donnée */
+.tc-tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--radius-pill);box-shadow:inset 0 0 0 1px var(--border-default);font-size:12px;font-weight:500;letter-spacing:.04em;color:var(--text-secondary)}
+.tc-tag::before{content:"";width:7px;height:7px;border-radius:50%;flex:none}
+.tc-tag--measured::before{background:var(--text-primary)}
+.tc-tag--declared::before{background:linear-gradient(90deg,var(--text-primary) 50%,transparent 50%);box-shadow:inset 0 0 0 1px var(--text-primary)}
+.tc-tag--interpreted::before{box-shadow:inset 0 0 0 1.5px var(--text-secondary)}
+
+/* Chiffre en points */
+.tc-dotnum{font-family:var(--font-dot);font-weight:800;font-variation-settings:"ROND" 100;line-height:.9;color:var(--text-strong);letter-spacing:-.06em}
+.tc-dotnum--hero{font-size:72px}
+.tc-dotnum--lg{font-size:52px}
+.tc-dotnum--md{font-size:28px;line-height:1}
+
+/* Chiffre */
+.tc-metric{display:inline-flex;align-items:baseline;gap:4px;font-family:var(--font-sans);font-weight:300;color:var(--text-strong);line-height:1}
+.tc-metric--xl{font-size:44px;letter-spacing:-.01em}
+.tc-metric--lg{font-size:32px}
+.tc-metric__unit{font-size:16px;font-weight:400;color:var(--text-muted)}
+
+/* Graphique en traits fins */
+.tc-strokes{display:flex;align-items:flex-end;gap:var(--chart-gap);height:56px;padding-left:4px}
+.tc-strokes>i{display:block;width:var(--stroke-chart);min-height:4px;background:var(--chart-idle);border-radius:2px;transform:skewX(var(--chart-skew));transform-origin:bottom}
+.tc-strokes>i.is-on{background:var(--text-primary)}
+.tc-strokes--ok>i.is-on{background:var(--state-ok)}
+.tc-strokes--warn>i.is-on{background:var(--state-warn)}
+.tc-strokes--danger>i.is-on{background:var(--state-danger)}
+.tc-strokes--on-ambiance>i{background:rgba(255,255,255,.22)}
+.tc-strokes--on-ambiance>i.is-on{background:var(--text-on-ambiance)}
+
+/* Histogramme en points */
+.tc-dots{display:flex;align-items:flex-end;gap:var(--chart-dot-gap)}
+.tc-dots--labeled{gap:calc(var(--chart-dot-gap) * 2)}
+.tc-dots__col{display:flex;flex-direction:column-reverse;align-items:center;gap:var(--chart-dot-gap)}
+.tc-dots__col>i{display:block;width:var(--chart-dot);height:var(--chart-dot);border-radius:50%;background:var(--graphite-700)}
+.tc-dots__col>i.is-on{background:var(--text-primary)}
+.tc-dots__col--ok>i.is-on{background:var(--state-ok)}
+.tc-dots__col--warn>i.is-on{background:var(--state-warn)}
+.tc-dots__col--danger>i.is-on{background:var(--state-danger)}
+.tc-dots__lbl{font-size:11px;line-height:1.3;color:var(--text-muted);margin-top:6px;text-align:center;width:var(--chart-dot);display:flex;justify-content:center}
+
+/* Barre de progression */
+.tc-bar{--dot:var(--graphite-700);--on:var(--text-primary);display:flex;align-items:center;gap:var(--chart-dot-gap);width:100%;height:var(--chart-dot)}
+.tc-bar>i{display:block;flex:none;width:var(--chart-dot);height:var(--chart-dot);border-radius:50%;background:var(--dot)}
+.tc-bar>i.is-on{background:var(--on)}
+.tc-bar--action{--on:var(--action-500)}
+.tc-bar--ok{--on:var(--state-ok)}.tc-bar--warn{--on:var(--state-warn)}.tc-bar--danger{--on:var(--state-danger)}
+
+/* Anneau de progression */
+.tc-ring{--dot:var(--graphite-700);--on:var(--text-primary);position:relative;display:inline-flex;align-items:center;justify-content:center}
+.tc-ring__dots{display:block}
+.tc-ring__dots circle{fill:var(--dot)}
+.tc-ring__dots circle.is-on{fill:var(--on)}
+.tc-ring--action{--on:var(--action-500)}.tc-ring--ok{--on:var(--state-ok)}.tc-ring--warn{--on:var(--state-warn)}.tc-ring--danger{--on:var(--state-danger)}
+.tc-ring__val{position:absolute}
+
+/* Champ de saisie */
+.tc-field{display:flex;flex-direction:column;gap:6px;width:100%}
+.tc-field__label{font-size:13px;color:var(--text-secondary)}
+.tc-field__input{appearance:none;height:var(--size-control);padding:0 var(--space-4);border:0;border-radius:var(--radius-md);background:var(--surface-raised);box-shadow:inset 0 0 0 1px var(--border-default);color:var(--text-primary);font-family:var(--font-sans);font-size:16px;font-variant-numeric:tabular-nums}
+.tc-field__input::placeholder{color:var(--text-muted)}
+.tc-field__input:focus{outline:none;box-shadow:var(--shadow-focus)}
+.tc-field__hint{font-size:12px;color:var(--text-muted)}
+.tc-field--error .tc-field__input{box-shadow:inset 0 0 0 1px var(--state-danger)}
+.tc-field--error .tc-field__hint{color:var(--state-danger)}
+
+/* Interrupteur */
+.tc-switch{appearance:none;margin:0;position:relative;width:52px;height:30px;border-radius:var(--radius-pill);background:var(--graphite-700);cursor:pointer;transition:background-color .15s;flex:none}
+.tc-switch::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:var(--text-secondary);transition:transform .15s,background-color .15s}
+.tc-switch:checked{background:var(--graphite-600)}
+.tc-switch:checked::after{transform:translateX(22px);background:var(--text-strong)}
+
+/* ===== MOLÉCULES ===== */
+
+/* En-tête de carte */
+.tc-cardhead{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)}
+.tc-cardhead__title{margin:0;font-family:var(--font-sans);font-size:17px;line-height:1.25;font-weight:300;color:var(--text-secondary);max-width:16ch}
+.tc-cardhead__meta{display:block;margin-top:4px;font-size:13px;line-height:1.4;color:var(--text-muted)}
+.tc-cardhead__aside{display:flex;align-items:center;gap:var(--space-2);color:var(--text-secondary);flex:none}
+.tc-cardhead--ambiance .tc-cardhead__title{font-size:22px;line-height:1.2;font-weight:400;color:var(--text-on-ambiance);max-width:none}
+.tc-cardhead--ambiance .tc-cardhead__meta,.tc-cardhead--ambiance .tc-cardhead__aside{color:var(--text-on-ambiance-muted)}
+
+/* Bloc chiffre */
+.tc-mblock{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2)}
+.tc-mblock>.tc-chip{margin-bottom:var(--space-3)}
+.tc-mblock__caption{font-size:13px;line-height:1.4;color:var(--text-muted)}
+.tc-mblock__row{display:flex;align-items:center;gap:var(--space-2)}
+
+/* Cible allure / FC / watts */
+.tc-targets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-2)}
+.tc-target{display:flex;flex-direction:column;gap:6px;padding:var(--space-3);border-radius:var(--radius-sm);background:var(--surface-raised)}
+.tc-target__label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;letter-spacing:.04em;color:var(--text-secondary)}
+.tc-target__value{font-size:20px;font-weight:300;line-height:1.1;color:var(--text-strong);white-space:nowrap;letter-spacing:-.01em}
+.tc-target__unit{display:block;margin-top:2px;font-size:12px;font-weight:400;letter-spacing:0;color:var(--text-muted)}
+
+/* Étape numérotée */
+.tc-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tc-step{display:grid;grid-template-columns:28px 1fr auto;gap:var(--space-3);align-items:start;padding:var(--space-3) 0;border-top:1px solid var(--border-subtle)}
+.tc-step:first-child{border-top:0}
+.tc-step__num{width:28px;height:28px;border-radius:var(--radius-pill);display:inline-flex;align-items:center;justify-content:center;background:var(--surface-raised);font-size:13px;font-weight:500;color:var(--text-primary)}
+.tc-step__title{font-size:15px;line-height:1.45;color:var(--text-primary)}
+.tc-step__desc{font-size:13px;line-height:1.4;color:var(--text-muted);margin-top:2px}
+.tc-step__dur{font-size:15px;font-weight:300;color:var(--text-strong);white-space:nowrap;padding-top:1px}
+
+/* Échelle d'effort 1–10 */
+.tc-effort{display:flex;flex-direction:column;gap:var(--space-2)}
+.tc-effort__scale{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}
+.tc-effort__btn{appearance:none;border:0;margin:0;height:var(--size-touch-min);border-radius:var(--radius-pill);background:var(--surface-raised);color:var(--text-secondary);font-family:var(--font-sans);font-size:15px;cursor:pointer;position:relative}
+.tc-effort__btn.is-expected::after{content:"";position:absolute;left:50%;bottom:-8px;width:var(--chart-dot);height:var(--chart-dot);margin-left:calc(var(--chart-dot) / -2);border-radius:50%;background:var(--text-secondary)}
+.tc-effort__btn[aria-pressed="true"]{background:var(--text-strong);color:var(--bg-page);font-weight:500}
+.tc-effort__btn[aria-pressed="true"].is-above{background:var(--state-warn)}
+.tc-effort__legend{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-top:6px}
+.tc-effort__note{font-size:13px;color:var(--text-muted)}
+.tc-effort__note--warn{color:var(--state-warn)}
+
+/* Choix du jour */
+.tc-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.tc-day{appearance:none;border:0;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:56px;border-radius:var(--radius-md);background:var(--surface-raised);color:var(--text-primary);font-family:var(--font-sans);cursor:pointer;position:relative}
+.tc-day__d{font-size:12px;color:var(--text-muted)}
+.tc-day__n{font-size:16px;font-weight:400}
+.tc-day.is-slot::after{content:"";position:absolute;bottom:6px;width:var(--chart-dot);height:var(--chart-dot);border-radius:50%;background:var(--text-secondary)}
+.tc-day[aria-pressed="true"]{background:var(--text-strong);color:var(--bg-page)}
+.tc-day[aria-pressed="true"] .tc-day__d{color:var(--graphite-600)}
+.tc-day[aria-pressed="true"].is-slot::after{background:var(--bg-page)}
+.tc-day[aria-disabled="true"]{background:transparent;color:var(--text-disabled);box-shadow:inset 0 0 0 1px var(--border-subtle);cursor:default}
+.tc-day[aria-disabled="true"] .tc-day__d{color:var(--text-disabled)}
+.tc-days__note{font-size:13px;color:var(--text-muted);margin-top:var(--space-2)}
+
+/* Sélecteur à onglets */
+.tc-seg{display:inline-flex;padding:4px;gap:4px;border-radius:var(--radius-pill);background:var(--surface-sunken);box-shadow:inset 0 0 0 1px var(--border-subtle)}
+.tc-seg__btn{appearance:none;border:0;margin:0;height:var(--size-control-sm);padding:0 var(--space-5);border-radius:var(--radius-pill);background:transparent;color:var(--text-secondary);font-family:var(--font-sans);font-size:14px;cursor:pointer}
+.tc-seg__btn[aria-selected="true"]{background:var(--graphite-700);color:var(--text-strong)}
+.tc-seg--block{display:flex}.tc-seg--block .tc-seg__btn{flex:1}
+
+/* Badge séance */
+.tc-sbadge{appearance:none;border:0;margin:0;display:flex;align-items:center;gap:var(--space-2);width:100%;min-height:var(--size-touch-min);padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);background:var(--surface-raised);color:var(--text-primary);font-family:var(--font-sans);text-align:left;cursor:pointer}
+.tc-sbadge__icon{color:var(--text-secondary);display:inline-flex;flex:none}
+.tc-sbadge__end{display:flex;align-items:center;gap:var(--space-2);flex:none}
+.tc-sbadge__main{display:flex;flex-direction:column;min-width:0;flex:1}
+.tc-sbadge__title{font-size:14px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-sbadge__meta{font-size:12px;color:var(--text-muted)}
+.tc-sbadge__tag{flex:none;font-size:11px;font-weight:500;letter-spacing:.04em;padding:2px 8px;border-radius:var(--radius-pill);box-shadow:inset 0 0 0 1px var(--border-default);color:var(--text-secondary)}
+.tc-sbadge__tag--key{box-shadow:none;background:var(--text-strong);color:var(--bg-page)}
+.tc-sbadge--removed{background:transparent;box-shadow:inset 0 0 0 1px var(--border-subtle)}
+.tc-sbadge--removed .tc-sbadge__title{text-decoration:line-through;color:var(--text-muted)}
+.tc-sbadge--rest{background:transparent;color:var(--text-muted);cursor:default}
+
+/* Ligne de menu */
+.tc-menu{display:flex;flex-direction:column;border-radius:var(--radius-lg);background:var(--surface-card);overflow:hidden}
+.tc-mrow{appearance:none;border:0;margin:0;display:flex;align-items:center;gap:var(--space-3);width:100%;min-height:56px;padding:0 var(--space-5);background:transparent;color:var(--text-primary);font-family:var(--font-sans);font-size:15px;text-align:left;cursor:pointer;border-top:1px solid var(--border-subtle)}
+.tc-mrow:first-child{border-top:0}
+.tc-mrow:hover{background:var(--surface-raised)}
+.tc-mrow__icon{color:var(--text-secondary);display:inline-flex}
+.tc-mrow__label{flex:1}
+.tc-mrow__value{font-size:14px;color:var(--text-muted)}
+.tc-mrow__chev{color:var(--text-muted);display:inline-flex}
+.tc-mrow--danger,.tc-mrow--danger .tc-mrow__icon{color:var(--state-danger)}
+
+/* Bandeau info */
+.tc-flash{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) var(--space-3) var(--space-3) var(--space-4);border-radius:var(--radius-md);background:var(--surface-raised);color:var(--text-primary);font-size:14px;line-height:1.45}
+.tc-flash__icon{color:var(--text-secondary);display:inline-flex;padding-top:1px}
+.tc-flash__text{flex:1;padding-top:1px}
+.tc-flash__text strong{font-weight:500;color:var(--text-strong)}
+.tc-flash .tc-iconbtn{margin:-6px -4px -6px 0}
+
+/* Option de panneau */
+.tc-sopt{appearance:none;border:0;margin:0;display:flex;align-items:center;gap:var(--space-3);width:100%;padding:var(--space-3) var(--space-4) var(--space-3) var(--space-3);border-radius:var(--radius-md);background:var(--surface-raised);color:var(--text-primary);font-family:var(--font-sans);text-align:left;cursor:pointer}
+.tc-sopt:hover{background:var(--graphite-700)}
+.tc-sopt__icon{width:40px;height:40px;border-radius:var(--radius-pill);display:inline-flex;align-items:center;justify-content:center;background:var(--surface-sunken);color:var(--text-secondary);flex:none}
+.tc-sopt__main{flex:1;display:flex;flex-direction:column;gap:2px}
+.tc-sopt__title{font-size:16px;line-height:1.3}
+.tc-sopt__desc{font-size:13px;line-height:1.4;color:var(--text-muted)}
+.tc-sopt__chev{color:var(--text-muted);display:inline-flex}
+.tc-sopts{display:flex;flex-direction:column;gap:var(--space-2)}
+
+/* ===== ORGANISMES ===== */
+
+/* Carte d'ambiance */
+.tc-ambiance{position:relative;overflow:hidden;border-radius:var(--radius-xl);padding:var(--space-6);color:var(--text-on-ambiance)}
+.tc-ambiance--indigo{background:var(--ambiance-indigo-core);box-shadow:var(--shadow-indigo-glow)}
+.tc-ambiance--prune{background:radial-gradient(120% 140% at 100% 100%,var(--ambiance-prune-light) 0%,var(--ambiance-prune-mid) 35%,var(--ambiance-prune-deep) 70%,var(--ambiance-prune-ink) 100%)}
+.tc-ambiance .tc-ring,.tc-ambiance .tc-bar{--dot:rgba(255,255,255,.28)}
+
+/* Carte de données */
+.tc-card{position:relative;overflow:hidden;border-radius:var(--radius-lg);padding:var(--space-5);background:var(--surface-card)}
+.tc-card::before{content:"";position:absolute;inset:-40% -40% auto auto;width:80%;height:80%;background:radial-gradient(circle at 70% 30%,var(--surface-sheen),transparent 60%);pointer-events:none}
+.tc-card>*{position:relative}
+.tc-card__body{margin-top:var(--space-4)}
+.tc-card__foot{margin-top:var(--space-5);display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.tc-card__foot .tc-btn--block{display:inline-flex;width:auto}
+.tc-card__split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
+.tc-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-3)}
+
+/* Navigation basse */
+.tc-nav{display:flex;justify-content:space-around;align-items:center;gap:var(--space-2);padding:var(--space-2);border-radius:var(--radius-pill);background:var(--surface-sunken);box-shadow:inset 0 0 0 1px var(--border-subtle),var(--shadow-sheet)}
+.tc-navwrap{position:sticky;bottom:0;padding:var(--space-3) var(--space-4) var(--space-4);background:linear-gradient(to top,var(--bg-page) 60%,transparent)}
+
+/* Panneau du bas */
+.tc-sheetback{display:flex;align-items:flex-end;background:rgba(0,0,0,.6);min-height:100%}
+.tc-sheet{width:100%;border-radius:var(--radius-xl) var(--radius-xl) 0 0;background:var(--surface-sunken);box-shadow:var(--shadow-sheet);padding:var(--space-3) var(--space-4) var(--space-6)}
+.tc-sheet__grip{width:40px;height:4px;border-radius:var(--radius-pill);background:var(--graphite-600);margin:0 auto var(--space-4)}
+.tc-sheet__title{margin:0 0 4px;font-size:22px;font-weight:400;color:var(--text-strong)}
+.tc-sheet__sub{margin:0 0 var(--space-4);font-size:14px;color:var(--text-muted)}
+
+/* ===== GABARITS ===== */
+.tc-app{position:relative;width:100%;max-width:var(--size-column);margin:0 auto;min-height:100%;background:var(--bg-page);display:flex;flex-direction:column}
+.tc-screen{flex:1;display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-6) var(--space-4) var(--space-4)}
+.tc-screen__head{display:flex;flex-direction:column;gap:4px;margin-bottom:var(--space-3)}
+.tc-screen__title{margin:0;font-size:28px;line-height:1.1;font-weight:400;color:var(--text-strong)}
+.tc-screen__sub{margin:0;font-size:14px;color:var(--text-muted)}
+.tc-section{margin:var(--space-3) 0 0;font-size:13px;font-weight:500;letter-spacing:.04em;color:var(--text-secondary)}
+.tc-ohead{display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4) var(--space-4) var(--space-5)}
+.tc-ohead__top{display:flex;justify-content:space-between;align-items:center}
+.tc-ohead__eyebrow{font-size:13px;color:var(--text-muted)}
+.tc-ohead__title{margin:0;font-size:28px;line-height:1.1;font-weight:400;color:var(--text-strong)}
+.tc-ohead__pills{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.tc-pill{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 var(--space-3);border-radius:var(--radius-pill);background:var(--surface-raised);font-size:13px;color:var(--text-secondary)}
+.tc-actionbar{position:sticky;bottom:0;display:flex;gap:var(--space-2);padding:var(--space-3) var(--space-4) var(--space-5);background:linear-gradient(to top,var(--bg-page) 70%,transparent)}
+.tc-actionbar .tc-btn--primary{flex:1}
+.tc-slot{border:1px dashed var(--graphite-600);border-radius:var(--radius-md);padding:var(--space-4);font-size:13px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;text-align:center}
+.tc-targets--2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tc-ambiance .tc-pill{background:rgba(255,255,255,.12);color:var(--text-on-ambiance)}
+.tc-ambiance .tc-target{background:rgba(255,255,255,.07)}
+.tc-ambiance .tc-target__label,.tc-ambiance .tc-target__unit{color:var(--text-on-ambiance-muted)}
+.tc-ambiance .tc-target__value{color:var(--text-on-ambiance)}
+.tc-step__num--key{background:var(--text-strong);color:var(--bg-page)}
+.tc-ambiance--indigo-fade{background:linear-gradient(160deg,var(--ambiance-indigo-edge) 0%,var(--ambiance-indigo-mid) 45%,var(--ambiance-indigo-core) 100%)}
+
+/* Accueil (étape 2) */
+.home{display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4) var(--space-4) var(--space-2)}
+.home .tc-card+.tc-card{margin-top:0}
+.home-hello{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3)}
+.home-hello__eyebrow{font-size:13px;color:var(--text-on-ambiance-muted)}
+.home-hello__title{font-size:24px;font-weight:400;margin-top:4px;color:var(--text-on-ambiance)}
+.home-hello__meta{font-size:14px;color:var(--text-on-ambiance-muted);margin-top:6px}
+.home-stats{display:flex;flex-direction:column;gap:10px;justify-content:flex-end}
+.home-stat{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--text-muted)}
+.home-stat b{font-weight:400;font-size:15px;color:var(--text-strong)}
+.home-tags{display:flex;gap:6px;margin-top:var(--space-4)}
+.home-next__title{font-size:22px;font-weight:400;color:var(--text-strong);line-height:1.2}
+.home-next__row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+.home-next__text{font-size:14px;line-height:1.5;color:var(--text-secondary);margin-top:6px}
+.home-next__tgt{display:inline-flex;margin-top:12px;padding:8px 12px;border-radius:var(--radius-sm);background:var(--surface-raised);font-size:14px;color:var(--text-primary)}
+.home-more{margin-top:var(--space-4);border-top:1px solid var(--border-subtle);padding-top:var(--space-3)}
+.home-more summary{cursor:pointer;font-size:13px;color:var(--text-secondary);list-style:none}
+.home-more summary::-webkit-details-marker{display:none}
+.home-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;margin-top:12px}
+.home-blocks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.home-block__n{font-size:13px;color:var(--text-secondary)}
+.home-block.on .home-block__n{color:var(--text-strong)}
+.home-block__t{font-size:11px;color:var(--text-muted);margin:2px 0 8px;min-height:28px}
+.home-block__p{font-size:12px;color:var(--text-muted);margin-top:6px}
+.home-race{display:flex;justify-content:space-between;align-items:flex-end;margin-top:var(--space-4)}
 </style>
 </head>
 <body>
@@ -463,6 +758,7 @@ const ICONS={
   /* ── UI ── */
   list:_ic("0 0 24 24",'<path d="M9 6.5h11M9 12h11M9 17.5h11"/><circle cx="4.6" cy="6.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="17.5" r="1.1" fill="currentColor" stroke="none"/>'),
   caret:_ic("0 0 24 24",'<path d="M9.5 5.5 16 12l-6.5 6.5"/>'),
+  flag:_ic("0 0 24 24",'<path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1-7 0a5 5 0 0 0-7 0V5z"/><path d="M5 21v-7"/>',1.5),
   back:_ic("0 0 24 24",'<path d="M14.5 5.5 8 12l6.5 6.5"/><path d="M8 12h11" opacity=".9"/>'),
   reset:_ic("0 0 24 24",'<path d="M3.8 12a8.2 8.2 0 1 0 2.6-6"/><path d="M3.4 4.6v4.2h4.2"/>'),
   moon:_ic("0 0 24 24",'<path d="M20 14.2A8.4 8.4 0 0 1 9.8 4 8.4 8.4 0 1 0 20 14.2Z"/>'),
@@ -698,36 +994,6 @@ function formeDuJour(){
   }
   return {R,C,lvl,head,sub,court};
 }
-function heroFeu(){
-  if(S.pause)return `<button class="hero-feu" data-act="go" data-arg="overview"><i style="background:var(--text-disabled)"></i><span>Plan en pause · ${esc(PAUSE_LBL[S.pause.reason].toLowerCase())}</span></button>`;
-  const f=formeDuJour();
-  return `<button class="hero-feu" data-act="toSuivi" aria-label="Forme du jour : ${esc(f.court)}"><i style="background:${LVLC[f.lvl]}"></i><span>${esc(f.court)}</span></button>`;
-}
-function suiviDataCard(){
-  const {R,C,lvl,head,sub}=formeDuJour();
-  const BG={vert:"rgba(63,217,160,0.12)",orange:"rgba(255,159,67,0.14)",rouge:"rgba(255,90,95,0.12)",na:"rgba(130,130,130,.10)"};
-  const BD={vert:"rgba(63,217,160,0.35)",orange:"rgba(255,159,67,0.4)",rouge:"rgba(255,90,95,0.35)",na:"rgba(130,130,130,.28)"};
-  const stamp=S.wellness&&S.wellness.date?"à jour — "+new Date(S.wellness.date+"T00:00:00").toLocaleDateString("fr-FR"):"—";
-  return `<div class="card" id="suivi-data" style="padding:18px;scroll-margin-top:16px">
-    <div class="sd-head">
-      <div><div style="font-family:var(--font-display);font-weight:800;font-size:16px">Suivi data</div>
-      <div style="font-size:11.5px;color:var(--text-secondary);margin-top:2px">${esc(stamp)}</div></div>
-      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-        <span class="sd-badge ${R.state}"><i></i>${esc(R.label)}</span>
-        <span class="sd-badge ${C.state}"><i></i>${esc(C.label)}</span>
-      </div>
-    </div>
-    <div class="sd-verdict" style="background:${BG[lvl]};border:1px solid ${BD[lvl]}">
-      <i class="dot" style="background:${LVLC[lvl]}"></i>
-      <div><div class="sd-vh">${esc(head)}</div><div class="sd-vs">${esc(sub)}</div></div>
-    </div>
-    <div class="sd-br">
-      <div class="sd-b"><h4 style="color:var(--activity-run)">Charge</h4>${C.html}</div>
-      <div class="sd-b"><h4 style="color:var(--activity-bike)">Récupération</h4>${R.html}</div>
-    </div>
-  </div>`;
-}
-
 /* ════════════ Prochaine séance — addon triathlon-coach ════════════
    Backend : /api/next-session (netlify/functions/next-session.mjs).
    Le front envoie la séance PRÉVUE ; le serveur renvoie maintenir / alléger /
@@ -769,56 +1035,6 @@ async function fetchNext(){
   if(key!==S.nextKey)return;            // réponse périmée (paramètres changés entre-temps)
   S.next=j; if(S.view==="overview"&&!S.detailId&&!S.routineOpen)render();
 }
-function nsReason(r){
-  return `<div class="ns-r"><div class="top"><span class="s"><i style="background:${LVLC[r.level]}"></i>${esc(r.signal)}</span><span class="m">${esc(r.mesure)}</span></div>
-    <div class="lec">${esc(r.lecture)}</div></div>`;
-}
-function nextSessionCard(){
-  const p=nextPlanned();
-  const BG={vert:"rgba(63,217,160,0.12)",orange:"rgba(255,159,67,0.14)",rouge:"rgba(255,90,95,0.12)",na:"rgba(130,130,130,.10)"};
-  const BD={vert:"rgba(63,217,160,0.35)",orange:"rgba(255,159,67,0.4)",rouge:"rgba(255,90,95,0.35)",na:"rgba(130,130,130,.28)"};
-  const shell=(stamp,badge,body)=>`<div class="card" style="padding:18px">
-    <div class="sd-head">
-      <div><div style="font-family:var(--font-display);font-weight:800;font-size:16px">Prochaine séance</div>
-      <div style="font-size:11.5px;color:var(--text-secondary);margin-top:2px">${esc(stamp)}</div></div>
-      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">${badge}</div>
-    </div>${body}</div>`;
-  const verdict=(lvl,h,s)=>`<div class="sd-verdict" style="background:${BG[lvl]};border:1px solid ${BD[lvl]}">
-      <i class="dot" style="background:${LVLC[lvl]}"></i><div><div class="sd-vh">${esc(h)}</div><div class="sd-vs">${esc(s)}</div></div></div>`;
-  if(!p)return shell("Programme terminé","",verdict("na","Plus de séance prévue","Les 30 semaines sont bouclées ou toutes les séances restantes sont notées."));
-  const stamp=nsWhen(p)+" · semaine "+p.week;
-  const j=S.next;
-  if(!j)return shell(stamp,`<span class="sd-badge stale"><i></i>Calcul…</span>`,verdict("na","Analyse de ta charge en cours…","Lecture de 90 jours d'activités et de bien-être sur intervals.icu."));
-  if(!j.ok)return shell(stamp,`<span class="sd-badge down"><i></i>Hors ligne</span>`,
-    verdict("na","Recommandation indisponible",(j.error||"Erreur serveur")+". Prévu : "+p.name+" ("+fmtMin(p.minutes)+"). Applique le verdict Suivi data."));
-  const ss=j.session||{}, [h,sub]=NS_DEC[j.decision]||["—",""];
-  const changed=j.decision!=="maintenir";
-  const meta=ss.type==="rest"?"Aucun entraînement structuré":[fmtMin(ss.minutes),ss.zone?NS_ZONE[ss.zone]:null].filter(Boolean).join(" · ");
-  const tgt=(ss.zone&&(ss.sport==="cap"||ss.sport==="velo"))?targetStr(ss.sport,ss.zone):"";
-  const m=SPORT_META[ss.sport];
-  const ico=m?`<span class="ns-ico" style="background:${SPORT_TINT[ss.sport]||"var(--card)"};color:${m.color}">${icon(m.icon)}</span>`
-             :`<span class="ns-ico" style="background:var(--card);color:var(--text-secondary)">${icon("moon")}</span>`;
-  const sess=`<div class="sd-b"><h4>${esc(changed?"Séance recommandée":"Séance du plan")}</h4>
-    <div class="ns-sess">${ico}<div style="min-width:0">
-      <div class="ns-name">${esc(ss.type==="rest"?"Repos":(ss.sportLabel?ss.sportLabel+" — ":"")+(ss.name||""))}</div>
-      <div class="ns-meta">${esc(ss.type==="rest"?ss.name:meta)}</div>
-      ${tgt?`<div class="tgt">${esc(tgt)}</div>`:""}
-      ${ss.alternative?`<div class="ns-alt">${esc(ss.alternative)}</div>`:""}
-      ${changed?`<div class="ns-was">Prévu : ${esc(p.name)} · ${esc(fmtMin(p.minutes))}</div>`:""}
-    </div></div></div>`;
-  const k=j.metrics||{};
-  const kpi=(l,v)=>`<div class="ns-kpi"><div class="k">${esc(l)}</div><div class="v">${esc(v)}</div></div>`;
-  const more=`<details class="ns-more"><summary>Chiffres mesurés &amp; limites des données</summary>
-    <div class="ns-kpis">${kpi("Condition physique",num(k.ctl,0))}${kpi("Fatigue récente",num(k.atl,0))}${kpi("Fraîcheur",num(k.tsb,0))}${kpi("Montée en charge",num(k.acwr_ewma,2))}</div>
-    <div class="ns-kpis">${kpi("Endurance facile",k.low_pct==null?"—":num(k.low_pct,0)+" %")}${kpi("Séances trop semblables",num(k.monotony,1))}${kpi("Progrès condition / sem.",num(k.ctl_ramp_week,1))}${kpi("Séances",j.source?String(j.source.activities):"—")}</div>
-    ${(j.gaps||[]).length?`<ul class="ns-gaps">${j.gaps.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>`:""}
-    <div class="ns-foot">Moteur : triathlon-coach (MIT), ${j.source?j.source.window_days:"—"} j d'historique intervals.icu. Aide à la décision, pas un avis médical : ton ressenti passe avant les chiffres.</div>
-  </details>`;
-  const fresh=j.generatedAt?"Calculé "+new Date(j.generatedAt).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}):"Calculé";
-  return shell(stamp,`<span class="sd-badge ok"><i></i>${esc(fresh)}</span>`,
-    verdict(j.level||"na",h+" — "+sub,ss.change||"")+`<div class="sd-br">${sess}</div>`+more);
-}
-
 /* ════════════ Composants ════════════ */
 function ring(pct,size,label,color){
   const r=(size-8)/2, c=2*Math.PI*r;
@@ -1029,11 +1245,6 @@ function pauseCard(){
     <div class="sub" style="margin-top:6px">${p.reason==="vacances"?"Fais le sport que tu veux : tout ce que ta montre enregistre compte dans ta charge.":"Repos. Reprends quand tu n'as plus de symptôme depuis 24 h."}</div>
     <button class="btn primary block" style="margin-top:14px;width:100%" data-act="endPause">Je reprends</button></div>`;
 }
-function sundayCard(){
-  if(new Date().getDay()!==0||S.bilanDone[S.currentWeek]||S.pause)return "";
-  return `<div class="card sundayc" data-act="go" data-arg="bilan"><div><div class="eyebrow" style="color:var(--text-secondary)">Dimanche</div>
-    <div class="st">Ton bilan de la semaine ${S.currentWeek} est prêt</div><div class="ss">Valide la suite du plan en un geste.</div></div>${icon("caret")}</div>`;
-}
 function imprevuSheet(){
   const f=sessionById(S.detailId); if(!f)return "";
   const opt=(act,arg,t,d)=>`<button class="sopt" data-act="${act}" ${arg!=null?`data-arg="${arg}"`:""}><b>${t}</b><span>${d}</span></button>`;
@@ -1131,70 +1342,112 @@ function blockProgress(blk,all){
   const done=ss.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
   return {done,total:ss.length,pct:ss.length?Math.round(done/ss.length*100):0};
 }
+/* ════════════ Accueil — design system Tri Coach Dark (étape 2) ════════════ */
+const DS_TONE={vert:"ok",orange:"warn",rouge:"danger",na:""};
+const DS_TONE_ICON={ok:"check",warn:"warn",danger:"x","":"clock"};
+function dsIcon(n){return {check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10-10"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v9"/><path d="M12 19v.01"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2 2"/></svg>',
+  moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/></svg>'}[n]||"";}
+function dsChip(lvl,label,solid){const t=DS_TONE[lvl]??lvl;
+  return `<span class="tc-chip${t?" tc-chip--"+t:""}${solid?" tc-chip--solid":""}"><span class="tc-chip__dot" style="color:${solid?"inherit":"var(--bg-page)"}"><span style="width:14px;height:14px;display:inline-flex">${dsIcon(DS_TONE_ICON[t])}</span></span>${esc(label)}</span>`;}
+function dsRing(pct,label){const n=32,d=4,size=96,r=size/2-d/2-1,c=size/2,on=Math.round(Math.max(0,Math.min(100,pct))/100*n);let o="";
+  for(let i=0;i<n;i++){const a=-Math.PI/2+i*2*Math.PI/n;o+=`<circle cx="${(c+r*Math.cos(a)).toFixed(2)}" cy="${(c+r*Math.sin(a)).toFixed(2)}" r="2"${i<on?' class="is-on"':""}/>`;}
+  return `<div class="tc-ring tc-ring--action" role="img" aria-label="${pct} %"><svg class="tc-ring__dots" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">${o}</svg><span class="tc-ring__val tc-dotnum tc-dotnum--md">${esc(label)}</span></div>`;}
+function dsBar(pct,tone,n=24){const on=Math.round(Math.max(0,Math.min(100,pct))/100*n);
+  return `<div class="tc-bar${tone?" tc-bar--"+tone:""}" role="img" aria-label="${pct} %">${Array.from({length:n},(_,i)=>`<i${i<on?' class="is-on"':""}></i>`).join("")}</div>`;}
+function dsHead(title,meta,aside){return `<div class="tc-cardhead"><div><h3 class="tc-cardhead__title">${esc(title)}</h3>${meta?`<span class="tc-cardhead__meta">${esc(meta)}</span>`:""}</div>${aside?`<span class="tc-cardhead__aside">${aside}</span>`:""}</div>`;}
+const fmtH=m=>{const h=Math.floor(m/60),r=m%60;return h?(h+" h"+(r?" "+String(r).padStart(2,"0"):"")):r+" min";};
+
+function homeHello(goalPct,block){
+  const d=new Date(), day=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"short"});
+  const meta=S.pause?`Plan en pause · ${PAUSE_LBL[S.pause.reason].toLowerCase()}`:`Semaine faite à ${goalPct} %`;
+  return `<section class="tc-ambiance tc-ambiance--prune"><div class="home-hello"><div>
+    <div class="home-hello__eyebrow">${esc(day[0].toUpperCase()+day.slice(1))} · ${esc(block.name)} · Semaine ${S.currentWeek}</div>
+    <div class="home-hello__title">Bonjour Fabrice</div><div class="home-hello__meta">${esc(meta)}</div></div>
+    ${dsRing(goalPct,goalPct+"%")}</div></section>`;
+}
+function homeForme(){
+  const f=formeDuJour(), w=S.wellness||{}, c=S.charge||{}, p=c.pmc||{};
+  const tsb=typeof p.tsb==="number"?Math.round(p.tsb):null;
+  const stamp=w.date?"Garmin · "+new Date(w.date+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}):(S.dataReady?"Pas de donnée reçue":"Lecture des données…");
+  const stat=(l,v)=>`<div class="home-stat"><span>${esc(l)}</span><b>${esc(v)}</b></div>`;
+  const big=tsb==null?`<span class="tc-metric tc-metric--xl">—</span>`:`<span class="tc-dotnum tc-dotnum--lg">${(tsb>0?"+":"")+tsb}</span>`;
+  return `<section class="tc-card" id="suivi-data" style="scroll-margin-top:16px">${dsHead("Forme du jour",stamp)}
+    <div class="tc-card__body tc-card__split"><div class="tc-mblock">${dsChip(f.lvl,f.court.split(" · ")[0])}${big}<span class="tc-mblock__caption">${esc(tsb==null?f.sub:"Fraîcheur. "+f.sub)}</span></div>
+    <div class="home-stats">${stat("Sommeil",typeof w.sleep_h==="number"?num(w.sleep_h,1)+" h":"—")}${stat("FC repos",typeof w.resting_hr==="number"?num(w.resting_hr,0)+" bpm":"—")}${stat("Charge 7 j",c.load7==null?"—":num(c.load7,0))}${stat("Condition",p.ctl==null?"—":num(p.ctl,0))}</div></div>
+    <div class="home-tags"><span class="tc-tag tc-tag--measured">Mesuré</span><span class="tc-tag tc-tag--interpreted">Interprété</span></div></section>`;
+}
+function homeNext(){
+  if(S.pause){const pz=S.pause,d=Math.max(0,daysSince(pz.from));
+    return `<section class="tc-card">${dsHead("Plan en pause",PAUSE_LBL[pz.reason]+" depuis le "+fmtDate(pz.from)+" · "+d+" j")}
+      <div class="tc-card__body home-next__text">${pz.reason==="vacances"?"Fais le sport que tu veux : tout ce que ta montre enregistre compte dans ta charge.":"Repos. Reprends quand tu n'as plus de symptôme depuis 24 h."}</div>
+      <div class="tc-card__foot"><button class="tc-btn tc-btn--primary" data-act="endPause">Je reprends</button></div></section>`;}
+  const p=nextPlanned();
+  if(!p)return `<section class="tc-card">${dsHead("Prochaine séance","Programme terminé")}<div class="tc-card__body home-next__text">Les 30 semaines sont bouclées ou toutes les séances restantes sont notées.</div></section>`;
+  const j=S.next, m=SPORT_META[p.sport], ico=`<span style="font-size:20px;display:inline-flex">${icon(m?m.icon:"moon")}</span>`;
+  const stamp=nsWhen(p)+" · "+fmtH(p.minutes);
+  let chip="",title=p.name,text="",tgt="",more="";
+  if(!j){chip=dsChip("na","Calcul…");text="Analyse de ta charge sur 90 jours.";}
+  else if(!j.ok){chip=dsChip("na","Hors ligne");text=(j.error||"Recommandation indisponible")+". Applique le verdict de la Forme du jour.";}
+  else{const ss=j.session||{}, lab=(NS_DEC[j.decision]||["—"])[0];
+    chip=dsChip(j.level||"na",lab,true);
+    title=ss.type==="rest"?"Repos":(ss.name||p.name);
+    text=[ss.change||"",j.decision!=="maintenir"?"Prévu : "+p.name+" · "+fmtH(p.minutes)+".":""].filter(Boolean).join(" ");
+    const t=(ss.zone&&(ss.sport==="cap"||ss.sport==="velo"))?targetStr(ss.sport,ss.zone):"";
+    if(t)tgt=`<div class="home-next__tgt">${esc(t)}</div>`;
+    const k=j.metrics||{}, kp=(l,v)=>`<div class="home-stat"><span>${esc(l)}</span><b>${esc(v)}</b></div>`;
+    more=`<details class="home-more"><summary>Chiffres mesurés et limites des données ›</summary><div class="home-kpis">${kp("Condition physique",num(k.ctl,0))}${kp("Fatigue récente",num(k.atl,0))}${kp("Fraîcheur",num(k.tsb,0))}${kp("Montée en charge",num(k.acwr_ewma,2))}${kp("Endurance facile",k.low_pct==null?"—":num(k.low_pct,0)+" %")}${kp("Séances analysées",j.source?String(j.source.activities):"—")}</div>${(j.gaps||[]).length?`<ul class="tc-cap" style="margin:10px 0 0;padding-left:18px">${j.gaps.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>`:""}<div class="tc-cap" style="margin-top:10px">Aide à la décision, pas un avis médical : ton ressenti passe avant les chiffres.</div></details>`;}
+  return `<section class="tc-card">${dsHead("Prochaine séance",stamp,ico)}
+    <div class="tc-card__body"><div class="home-next__row"><span class="home-next__title">${esc(title)}</span>${chip}</div>${text?`<div class="home-next__text">${esc(text)}</div>`:""}${tgt}</div>
+    <div class="tc-card__foot"><button class="tc-btn tc-btn--primary" data-act="open" data-arg="${p.id}">Voir la séance</button></div>${more}</section>`;
+}
+function homeVolume(ws,dur,planned){
+  const td=(new Date().getDay()+6)%7, L=["L","M","M","J","V","S","D"], perDot=15;
+  const cols=L.map((l,i)=>{const day=ws.filter(x=>x.dayEff===i), plan=day.reduce((a,x)=>a+x.minutes,0), done=day.filter(x=>["done","z2"].includes(statusOf(x.id))).reduce((a,x)=>a+x.minutes,0);
+    const n=Math.min(8,Math.ceil(plan/perDot)), lit=Math.min(n,Math.round(done/perDot)), miss=day.some(x=>statusOf(x.id)==="missed");
+    const tone=i===td&&lit?" tc-dots__col--ok":(miss&&!lit?" tc-dots__col--danger":"");
+    const dots=Array.from({length:8},(_,k)=>`<i${k<lit?' class="is-on"':""}${k>=n?' style="visibility:hidden"':""}></i>`).join("");
+    return `<div><div class="tc-dots__col${tone}">${dots}</div><div class="tc-dots__lbl"${i===td?' style="color:var(--text-strong)"':""}>${l}</div></div>`;}).join("");
+  const nDone=ws.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
+  return `<section class="tc-card">${dsHead("Volume de la semaine","Un point = 15 min · plein = fait")}
+    <div class="tc-card__body" style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px"><div class="tc-dots tc-dots--labeled" role="img" aria-label="${fmtH(dur)} faites sur ${fmtH(planned)}">${cols}</div>
+    <div style="text-align:right"><span class="tc-metric tc-metric--lg">${fmtH(dur)}</span><div class="tc-mblock__caption">sur ${fmtH(planned)} · ${nDone}/${ws.length} séances</div></div></div></section>`;
+}
+function homeSunday(){
+  if(new Date().getDay()!==0||S.bilanDone[S.currentWeek]||S.pause)return "";
+  return `<section class="tc-card">${dsHead("Bilan de la semaine "+S.currentWeek,"Dimanche")}<div class="tc-card__body home-next__text">Ton bilan est prêt : valide la suite du plan en un geste.</div>
+    <div class="tc-card__foot"><button class="tc-btn tc-btn--secondary" data-act="go" data-arg="bilan">Ouvrir le bilan</button></div></section>`;
+}
+function homeRace(){
+  if(!S.raceName)return "";
+  let days=null,dstr="";
+  if(S.raceDate){const d=new Date(S.raceDate+"T00:00:00");days=Math.ceil((d-Date.now())/864e5);dstr=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});}
+  return `<section class="tc-ambiance tc-ambiance--indigo"><div class="tc-cardhead tc-cardhead--ambiance"><div><h3 class="tc-cardhead__title">Course cible</h3><span class="tc-cardhead__meta">${esc(S.raceName)}${dstr?" · "+esc(dstr):""}</span></div><span class="tc-cardhead__aside"><span style="font-size:20px;display:inline-flex">${icon("flag")}</span></span></div>
+    <div class="home-race">${days!=null&&days>=0?`<span class="tc-dotnum tc-dotnum--md">J-${days}</span><span style="font-size:13px;color:var(--text-on-ambiance-muted)">${Math.round(days/7)} semaines</span>`:`<span style="font-size:14px;color:var(--text-on-ambiance-muted)">Date à renseigner dans les Réglages</span>`}</div></section>`;
+}
+function homeBlocks(all){
+  return `<section class="tc-card">${dsHead("Progression du programme","30 semaines · 4 blocs")}<div class="tc-card__body home-blocks">${BLOCKS.map(b=>{const pr=blockProgress(b,all),on=(S.currentWeek>=b.range[0]&&S.currentWeek<=b.range[1]);
+    return `<div class="home-block${on?" on":""}"><div class="home-block__n">${esc(b.name)}</div><div class="home-block__t">${esc(b.title)}</div>${dsBar(pr.pct,"",8)}<div class="home-block__p">${pr.pct} %</div></div>`;}).join("")}</div></section>`;
+}
 function screenOverview(){
   const all=allFlat(), block=blockForWeek(S.currentWeek), ws=activeSessions(S.currentWeek);
   const dur=ws.filter(x=>["done","z2"].includes(statusOf(x.id))).reduce((a,x)=>a+x.minutes,0);
-  const durH=Math.floor(dur/60)+"h"+String(dur%60).padStart(2,"0");
   const planned=ws.reduce((a,x)=>a+x.minutes,0);
-  const plannedH=Math.floor(planned/60)+"h"+String(planned%60).padStart(2,"0");
-  const done=ws.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
-  const totals=Array(7).fill(0); ws.forEach(x=>totals[x.dayEff]+=x.minutes);
-  const mx=Math.max(...totals,1);
   const goalPct=planned>0?Math.min(100,Math.round(dur/planned*100)):0;
-  const TINT={natation:"rgba(94,124,166,.14)",cap:"rgba(192,132,87,.14)",velo:"rgba(107,154,114,.14)",ppg:"rgba(136,120,168,.14)"};
-  const SLBL={natation:"Natation",cap:"Course",velo:"Vélo",ppg:"PPG"};
-  let raceHTML="";
-  if(S.raceName){
-    let cd="", dstr="";
-    if(S.raceDate){const d=new Date(S.raceDate+"T00:00:00");const days=Math.ceil((d-Date.now())/864e5);
-      cd=`<div class="cd"><div class="big num">${days>=0?"J-"+days:"—"}</div><div class="small num">${days>=0?Math.round(days/7)+" sem.":""}</div></div>`;
-      dstr=d.toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});}
-    raceHTML=`<div class="race"><div class="flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 21V4"/><path d="M6 4h12l-2.4 3.5L18 11H6"/></svg></div><div class="info"><div class="re">Course cible</div><div class="rn">${esc(S.raceName)}</div><div class="rd num">${esc(dstr)}</div></div>${cd}</div>`;
-  }
-  return `<div class="screen">
-  <div class="hero">
-    <div class="hero-top">
-      <div class="hero-logo"><svg viewBox="150 150 724 724" width="88" height="88" fill="none" aria-label="Logo FA" style="color:#fff"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g stroke-width="3.5" opacity="0.9"><path d="M180 160 L844 824"></path><path d="M844 160 L180 824"></path></g><g stroke-width="6"><circle cx="445" cy="252" r="42"></circle><circle cx="579" cy="252" r="42"></circle><path d="M445 252 L490 205 L531 252 L445 252"></path><path d="M490 205 H553 L531 252"></path><path d="M553 205 L579 252"></path><path d="M478 187 H499"></path><path d="M553 205 L546 181 H568"></path></g><g stroke-width="6"><path d="M209 486 C232 457 255 451 276 468 C292 481 304 492 329 492"></path><circle cx="344" cy="469" r="15"></circle><path d="M184 515 C204 530 224 500 244 515 C264 530 284 500 304 515 C324 530 344 500 364 515"></path><path d="M184 539 C204 554 224 524 244 539 C264 554 284 524 304 539 C324 554 344 524 364 539"></path></g><g stroke-width="6"><circle cx="824" cy="448" r="15"></circle><path d="M744 480 C764 455 778 451 793 475 C807 496 818 500 837 482"></path><path d="M790 482 C775 505 762 522 751 537 L715 573"></path><path d="M751 537 C777 536 791 544 800 558 L761 578"></path></g><g stroke-width="7"><path d="M425 850 V714 Q425 700 439 700 H519 M425 776 H494"></path><path d="M484 850 L559 700 L634 850 M526 790 H597"></path></g></g></svg></div>
-      <div class="hero-eyebrow">${esc(block.name)} · ${esc(block.title)}</div>
-      <div class="hero-title">Programme de la semaine</div>
-      ${heroFeu()}
-    </div>
-    <div class="hero-bot">
-      <div class="hero-metric"><span class="big num">${durH}</span><span class="of num">/ ${plannedH}</span></div>
-      <div class="hero-sub num">${done} séance${done>1?"s":""} faite${done>1?"s":""} / ${ws.length} prévue${ws.length>1?"s":""} · Semaine ${S.currentWeek}</div>
-      <div class="hero-bar"><i style="width:${goalPct}%"></i></div>
-      <div class="hero-legend"><span>Volume réalisé</span><span class="val num">${goalPct}%</span></div>
-    </div>
-  </div>
-
-  ${S.flash?`<div style="margin-top:0">${flashCard()}</div>`:""}
-  ${raceHTML}
-
-  <div class="card" style="margin-top:22px">
-    <div class="sechead" style="margin:0"><h3>Objectif de la semaine</h3><span class="sub"><span class="num" style="color:var(--text-primary);font-weight:700">${durH}</span> / ${plannedH}</span></div>
-    <div class="pbar" style="margin-top:12px"><i style="width:${goalPct}%"></i></div>
-    <div class="bars">${totals.map((mn,i)=>{const f=ws.find(x=>x.dayEff===i);
-      if(!f)return `<div class="col2"><div class="bar" style="height:10%;background:var(--data-neutral)"></div><span class="g">${icon("moon")}</span></div>`;
-      const h=Math.max(10,Math.round(mn/mx*100)), st=statusOf(f.id);
-      const bg=(st==="done"||st==="z2")?"var(--lime)":st==="missed"?"var(--data-neutral)":(TINT[f.sport]||SPORT_META[f.sport].color);
-      return `<div class="col2" data-act="open" data-arg="${f.id}"><div class="bar" style="height:${h}%;background:${bg}"></div><span class="g" style="color:${SPORT_META[f.sport].color}">${icon(SPORT_META[f.sport].icon)}</span></div>`;}).join("")}</div>
-    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border-subtle);font-size:13px;color:var(--text-secondary);line-height:1.5"><b style="color:var(--text-primary)">Conseil</b> — privilégie la qualité technique et la régularité. L'intensité doit rester utile, pas héroïque.</div>
-  </div>
-
-
-  <div style="margin-top:22px">${S.pause?pauseCard():nextSessionCard()}</div>
-
-  ${sundayCard()}
-
-  <div style="margin-top:22px">${suiviDataCard()}</div>
-
-  <div class="card" style="padding:18px;margin-top:22px"><div style="font-family:var(--font-display);font-weight:800;font-size:16px;margin-bottom:12px">Progression du programme</div><div class="blocks4">${BLOCKS.map(b=>{const pr=blockProgress(b,all),on=(S.currentWeek>=b.range[0]&&S.currentWeek<=b.range[1]);
-    return `<div class="b${on?" on":""}"><div class="bn">${esc(b.name)}</div><div class="bs">${esc(b.title)}</div><div class="bt"><i style="width:${pr.pct}%"></i></div><div class="bp num">${pr.pct}%</div></div>`;}).join("")}</div></div>
-
-  <div class="menu" style="margin-top:22px">
-    <div class="mrow" data-act="go" data-arg="calendar-liste"><span class="mi">${icon("list")}</span><span class="ml">Toutes les séances</span><span class="mc">${icon("caret")}</span></div>
-    <div class="mrow" data-act="go" data-arg="ppg"><span class="mi">${icon("strength")}</span><span class="ml">PPG</span><span class="mc">${icon("caret")}</span></div>
-  </div>
+  const flash=S.flash?`<div class="tc-flash" role="status"><span class="tc-flash__text">${esc(S.flash)}</span><button class="tc-iconbtn tc-iconbtn--sm tc-iconbtn--plain" data-act="flashClose" aria-label="Fermer">${dsIcon("x")}</button></div>`:"";
+  const row=(act,arg,ic,l)=>`<button class="tc-mrow" data-act="${act}" data-arg="${arg}"><span class="tc-mrow__icon" style="font-size:20px">${icon(ic)}</span><span class="tc-mrow__label">${l}</span><span class="tc-mrow__chev" style="font-size:16px">${icon("caret")}</span></button>`;
+  return `<div class="home">
+  ${homeHello(goalPct,block)}
+  ${flash}
+  ${homeForme()}
+  ${homeNext()}
+  ${homeSunday()}
+  ${homeVolume(ws,dur,planned)}
+  ${homeRace()}
+  ${homeBlocks(all)}
+  <nav class="tc-menu" aria-label="Raccourcis">${row("go","calendar-liste","list","Toutes les séances")}${row("go","ppg","strength","Bibliothèque PPG")}</nav>
 </div>`;
 }
 function dayPicker(session,cur){
