@@ -1,11 +1,13 @@
-const CACHE_NAME = "tri2026-pwa-v2";
+const CACHE_NAME = "tri2026-pwa-v3";
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./icons/maskable-512.png"
+  "./icons/maskable-512.png",
+  "./assets/fonts/Urbanist-Variable.woff2",
+  "./assets/fonts/Doto-Variable.woff2"
 ];
 
 self.addEventListener("install", (event) => {
