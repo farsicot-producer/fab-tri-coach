@@ -1244,7 +1244,7 @@ function screenBilan(){
     const hs=last.map(x=>r?Math.round(18+(x-mn)/r*82):60);
     const bars=hs.length?`<div class="tc-strokes${tone?" tc-strokes--"+tone:""}" style="height:40px" aria-hidden="true">${hs.map((h,i)=>`<i style="height:${h}%"${i===hs.length-1?' class="is-on"':""}></i>`).join("")}</div>`:"";
     const sign=key==="tsb"&&v>0?"+":"";
-    return `<div class="evo2"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px"><div><div class="tc-cap">${lbl}</div><span class="tc-metric tc-metric--lg">${v==null?"—":sign+num(v,0)}</span></div>${bars}</div>
+    return `<div class="evo2"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px"><div><div class="tc-cap" style="color:var(--text-strong)">${lbl}</div><span class="tc-metric tc-metric--lg">${v==null?"—":sign+num(v,0)}</span></div>${bars}</div>
       <div class="tc-mblock__caption" style="margin-top:8px">${txt}${delta!=null?` Sur ${series.length} jours : ${delta>=0?"+":""}${num(delta,0)}.`:""}</div></div>`;};
   const adj=S.adj.slice().reverse();
   const adjHtml=adj.length?adj.map(o=>{const s=o.sid?sessionById(o.sid):null;
