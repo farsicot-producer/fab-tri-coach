@@ -1472,30 +1472,35 @@ function screenCalendar(){
   return `<div class="home">${head}${dsSeg(["Semaine","Liste"],S.calendarMode,"calmode")}${body}</div>`;
 }
 function screenSettings(){
-  return `<div class="screen">
-   <div class="h1" style="margin-bottom:16px">Réglages</div>
-   <div class="card" style="padding:18px">
-     <div class="h-card" style="font-size:15px;margin-bottom:12px">Zones d'entraînement</div>
-     <div class="flabel">Fréquence cardiaque max (bpm)</div>
-     <input class="field" id="fFcMax" value="${esc(S.fcMax)}" placeholder="ex. 175"><div style="height:12px"></div>
-     <div class="flabel">Allure seuil course à pied (min/km)</div>
-     <input class="field" id="fPace" value="${esc(S.pace)}" placeholder="ex. 5:10"><div style="height:12px"></div>
-     <div class="flabel">FTP vélo (watts)</div>
-     <input class="field" id="fFtp" value="${esc(S.ftp)}" placeholder="ex. 220">
-     <button class="btn primary block" style="margin-top:14px" data-act="saveZones">Enregistrer mes zones</button>
+  const chev=`<span class="tc-mrow__chev">${SVG20('<path d="M9 6l6 6l-6 6"/>',16)}</span>`;
+  const row=(act,arg,ic,l,v,cls)=>`<button class="tc-mrow${cls?" "+cls:""}" data-act="${act}"${arg?` data-arg="${arg}"`:""}><span class="tc-mrow__icon" style="font-size:20px">${ic}</span><span class="tc-mrow__label">${l}</span>${v?`<span class="tc-mrow__value">${esc(v)}</span>`:""}${cls?"":chev}</button>`;
+  const field=(id,l,v,ph,hint,mode,type)=>`<label class="tc-field"><span class="tc-field__label">${l}</span><input class="tc-field__input" id="${id}" value="${esc(v)}" placeholder="${ph}"${mode?` inputmode="${mode}"`:""}${type?` type="${type}"`:""}><span class="tc-field__hint">${hint}</span></label>`;
+  const raceV=S.raceDate?new Date(S.raceDate+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long"}):"";
+  const w=S.wellness||{}, c=S.charge||{};
+  const last=c.updatedAt?new Date(c.updatedAt).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):w.date?fmtDate(w.date):"";
+  const syncTxt=last?"Dernière : "+last:(S.dataReady?"Aucune donnée reçue":"Lecture en cours…");
+  return `<div class="home">
+   <header class="tc-screen__head"><h1 class="tc-screen__title">Réglages</h1></header>
+   <h2 class="tc-section">Entraînement</h2>
+   <div class="tc-menu">
+     ${row("scrollTo","set-zones",SVG20(IC_HEART,20),"Zones d'entraînement",S.fcMax?"FC max "+S.fcMax:"À renseigner")}
+     ${row("scrollTo","set-race",icon("flag"),"Course cible",raceV||"À renseigner")}
+     ${row("go","ppg",icon("strength"),"Bibliothèque PPG")}
    </div>
-   <div class="card" style="padding:18px">
-     <div class="h-card" style="font-size:15px;margin-bottom:12px">Course cible</div>
-     <div class="flabel">Nom de l'épreuve</div>
-     <input class="field" id="fRace" value="${esc(S.raceName)}" placeholder="ex. Triathlon M de …"><div style="height:12px"></div>
-     <div class="flabel">Date de la course</div>
-     <input class="field" id="fRaceDate" type="date" value="${esc(S.raceDate)}">
-     <button class="btn primary block" style="margin-top:14px" data-act="saveRace">Enregistrer la course</button>
-   </div>
-   <div class="menu">
-     <button type="button" class="mrow" data-act="go" data-arg="ppg"><span class="mi">${icon("strength")}</span><span class="ml">Bibliothèque PPG</span><span class="mc">${icon("caret")}</span></button>
-     <button type="button" class="mrow danger" data-act="resetTracking"><span class="mi">${icon("reset")}</span><span class="ml">Réinitialiser le suivi</span><span class="mc">${icon("caret")}</span></button>
-     <button type="button" class="mrow danger" data-act="resetProgram"><span class="mi">${icon("reset")}</span><span class="ml">Réinitialiser le programme</span><span class="mc">${icon("caret")}</span></button>
+   <section class="tc-card" id="set-zones" style="scroll-margin-top:16px"><h3 class="tc-cardhead__title" style="max-width:none;margin-bottom:16px">Zones d'entraînement</h3><div style="display:flex;flex-direction:column;gap:14px">
+     ${field("fFcMax","FC max",S.fcMax,"ex. 175","En battements par minute, mesurée lors d'un test.","numeric")}
+     ${field("fFtp","Puissance seuil vélo",S.ftp,"ex. 220","En watts (FTP).","numeric")}
+     ${field("fPace","Allure seuil course",S.pace,"ex. 5:10","Par kilomètre, au format min:s.")}</div>
+     <div class="tc-card__foot"><button class="tc-btn tc-btn--secondary tc-btn--block" style="width:100%" data-act="saveZones">Enregistrer</button></div></section>
+   <section class="tc-card" id="set-race" style="scroll-margin-top:16px"><h3 class="tc-cardhead__title" style="max-width:none;margin-bottom:16px">Course cible</h3><div style="display:flex;flex-direction:column;gap:14px">
+     ${field("fRace","Nom de l'épreuve",S.raceName,"ex. Triathlon M de …","Affiché sur l'accueil.")}
+     ${field("fRaceDate","Date de la course",S.raceDate,"","Sert au compte à rebours.","","date")}</div>
+     <div class="tc-card__foot"><button class="tc-btn tc-btn--secondary tc-btn--block" style="width:100%" data-act="saveRace">Enregistrer</button></div></section>
+   <h2 class="tc-section">Données</h2>
+   <div class="tc-menu">
+     <div class="tc-mrow" style="cursor:default"><span class="tc-mrow__icon" style="font-size:20px">${SVG20('<path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>',20)}</span><span class="tc-mrow__label">Synchronisation Garmin<div class="tc-cap">${esc(syncTxt)} · via intervals.icu</div></span></div>
+     ${row("resetTracking","",icon("reset"),"Réinitialiser le suivi","","tc-mrow--danger")}
+     ${row("resetProgram","",icon("reset"),"Réinitialiser le programme","","tc-mrow--danger")}
    </div>
   </div>`;
 }
@@ -1747,6 +1752,7 @@ const ACTIONS={
   week:a=>{S.currentWeek=Number(a);persist();render();},
   "week-go":a=>{S.currentWeek=Number(a);S.calendarMode="Semaine";persist();render();},
   calmode:a=>{S.calendarMode=a;render();},
+  scrollTo:a=>{const e=document.getElementById(a);if(e)e.scrollIntoView({behavior:"smooth",block:"start"});},
   saveZones:()=>{S.fcMax=(document.getElementById("fFcMax")||{}).value||"";
     S.pace=(document.getElementById("fPace")||{}).value||"";
     S.ftp=(document.getElementById("fFtp")||{}).value||"";persist();render();},
