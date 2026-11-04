@@ -358,6 +358,7 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 /* Histogramme en points */
 .tc-dots{display:flex;align-items:flex-end;gap:var(--chart-dot-gap)}
 .tc-dots--labeled{gap:calc(var(--chart-dot-gap) * 2)}
+.tc-dots--lg{--chart-dot:6px;--chart-dot-gap:7px}
 .tc-dots__col{display:flex;flex-direction:column-reverse;align-items:center;gap:var(--chart-dot-gap)}
 .tc-dots__col>i{display:block;width:var(--chart-dot);height:var(--chart-dot);border-radius:50%;background:var(--graphite-700)}
 .tc-dots__col>i.is-on{background:var(--text-primary)}
@@ -1369,7 +1370,7 @@ function homeWeek(ws,dur,planned,all){
     return `<div><div class="tc-dots__col${tone}">${dots}</div><div class="tc-dots__lbl"${i===td?' style="color:var(--text-strong)"':""}>${l}</div></div>`;}).join("");
   const nDone=ws.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
   return `<section class="tc-card">${dsHead("Semaine "+S.currentWeek,"Un point = 15 min · plein = fait")}
-    <div class="tc-card__body" style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px"><div class="tc-dots tc-dots--labeled" role="img" aria-label="${fmtH(dur)} faites sur ${fmtH(planned)}">${cols}</div>
+    <div class="tc-card__body" style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px"><div class="tc-dots tc-dots--labeled tc-dots--lg" role="img" aria-label="${fmtH(dur)} faites sur ${fmtH(planned)}">${cols}</div>
     <div style="text-align:right"><span class="tc-metric tc-metric--lg">${fmtH(dur)}</span><div class="tc-mblock__caption">sur ${fmtH(planned)} · ${nDone}/${ws.length} séances</div></div></div>
     <div class="home-week__blocks"><div class="tc-cap" style="margin-bottom:10px">Progression du programme · 30 semaines</div><div class="home-blocks">${BLOCKS.map(b=>{const pr=blockProgress(b,all),on=(S.currentWeek>=b.range[0]&&S.currentWeek<=b.range[1]);
       return `<div class="home-block${on?" on":""}"><div class="home-block__n">${esc(b.name)}</div><div class="home-block__t">${esc(b.title)}</div>${dsBar(pr.pct,"",8)}<div class="home-block__p">${pr.pct} %</div></div>`;}).join("")}</div></div></section>`;
