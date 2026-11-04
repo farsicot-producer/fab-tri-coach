@@ -1335,7 +1335,7 @@ function homeForme(){
   return `<section class="tc-card" id="suivi-data" style="scroll-margin-top:16px">${dsHead("Forme du jour",stamp,dsChip(f.lvl,f.court.split(" · ")[0],true))}
     <div class="tc-card__body tc-card__split"><div class="tc-mblock">${big}<span class="tc-mblock__caption">${esc(tsb==null?f.sub:"Fraîcheur. "+f.sub)}</span></div>
     <div class="home-stats">${stat("Sommeil",typeof w.sleep_h==="number"?num(w.sleep_h,1)+" h":"—")}${stat("FC repos",typeof w.resting_hr==="number"?num(w.resting_hr,0)+" bpm":"—")}${stat("Charge 7 j",c.load7==null?"—":num(c.load7,0))}${stat("Condition",p.ctl==null?"—":num(p.ctl,0))}</div></div>
-    <div class="home-tags"><span class="tc-tag tc-tag--measured">Mesuré</span><span class="tc-tag tc-tag--interpreted">Interprété</span></div></section>`;
+    </section>`;
 }
 function homeNext(){
   if(S.pause){const pz=S.pause,d=Math.max(0,daysSince(pz.from));
