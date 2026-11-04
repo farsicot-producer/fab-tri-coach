@@ -1453,7 +1453,7 @@ function screenCalendar(){
     const act=ws.filter(x=>!x.dropped), done=act.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
     const pct=act.length?Math.round(done/act.length*100):0;
     const nav=(d,lbl,path,dis)=>`<button class="tc-iconbtn tc-iconbtn--sm" aria-label="${lbl}"${dis?" disabled":` data-act="week" data-arg="${n+d}"`}>${SVG20(path,20)}</button>`;
-    body=`<section class="tc-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:17px;color:var(--text-strong)">${esc(range)}</div><div class="tc-cap">${done} séance${done>1?"s":""} sur ${act.length} faite${done>1?"s":""} · ${esc(block.title)}</div></div>
+    body=`<section class="tc-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:17px;color:var(--text-strong)">Semaine ${n}</div><div class="tc-cap">${done} séance${done>1?"s":""} sur ${act.length} faite${done>1?"s":""} · ${esc(block.title)}</div></div>
       <div style="display:flex;gap:6px">${nav(-1,"Semaine précédente",'<path d="M15 6l-6 6l6 6"/>',n<=1)}${nav(1,"Semaine suivante",'<path d="M9 6l6 6l-6 6"/>',n>=30)}</div></div>
       <div style="margin-top:14px">${dsBar(pct,"")}</div></section>
       ${DAY_LONG.map((nm,i)=>{const ss=ws.filter(x=>x.dayEff===i);
