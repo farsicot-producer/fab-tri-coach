@@ -547,6 +547,7 @@ code{font-family:ui-monospace,monospace;font-size:.9em}
 .tc-actionbar .tc-btn--primary{flex:1}
 .tc-slot{border:1px dashed var(--graphite-600);border-radius:var(--radius-md);padding:var(--space-4);font-size:13px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;text-align:center}
 .tc-targets--2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tc-targets--1{grid-template-columns:1fr}
 .tc-ambiance .tc-pill{background:rgba(255,255,255,.12);color:var(--text-on-ambiance)}
 .tc-ambiance .tc-target{background:rgba(255,255,255,.07)}
 .tc-ambiance .tc-target__label,.tc-ambiance .tc-target__unit{color:var(--text-on-ambiance-muted)}
@@ -1569,6 +1570,51 @@ function routineGo(i){
  const sl=ov.querySelectorAll(".rslide")[routineIdx];if(sl)sl.scrollTop=0;
 }
 
+/* ── Détail séance : cartes du design system ── */
+const SVG20=(d,w)=>`<svg class="tc-icon" width="${w||18}" height="${w||18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const IC_HEART='<path d="M3 12h4l3 8l4 -16l3 8h4"/>', IC_CLOCK='<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/>', IC_BOLT='<path d="M13 3v7h6l-8 11v-7H5l8-11"/>', IC_RUN='<path d="M13 4a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M4 17l5 1l.75 -1.5"/><path d="M15 21v-4l-4 -3l1 -6"/><path d="M7 12v-3l5 -1l3 3l3 1"/>';
+function detailDecision(session,intention){
+  const np=nextPlanned(), j=S.next;
+  let chip,text;
+  if(np&&np.id===session.id&&j&&j.ok&&!j.none){const d=NS_DEC[j.decision]||["—",""],ss=j.session||{};
+    chip=dsChip(j.level||"na",d[0],true);text=ss.change||(d[1].charAt(0).toUpperCase()+d[1].slice(1)+".");}
+  else{const f=formeDuJour();chip=dsChip(f.lvl,f.court.split(" · ")[0],true);text=f.lvl==="na"?intention:f.sub;}
+  const R=buildRecup(),C=buildCharge(),w=L=>L.length?L.reduce((a,c)=>pire(a,c),"na"):null,PCT={vert:80,orange:50,rouge:25};
+  const g=(l,lv)=>lv&&lv!=="na"?`<div style="flex:1;min-width:0"><div class="tc-cap" style="margin-bottom:6px">${l}</div>${dsBar(PCT[lv],DS_TONE[lv],14)}</div>`:"";
+  const gauges=g("Récupération",w(R.levels))+g("Charge",w(C.levels));
+  return `<section class="tc-card"><div style="margin-bottom:12px">${chip}</div>
+    <div style="font-size:15px;line-height:1.5;color:var(--text-primary)">${text}</div>
+    ${text!==intention?`<div class="tc-mblock__caption" style="margin-top:8px">${intention}</div>`:""}
+    ${gauges?`<div style="display:flex;gap:14px;margin-top:14px">${gauges}</div>`:""}</section>`;
+}
+function detailTargets(session,mz){
+  const sp=session.sport; if(sp!=="cap"&&sp!=="velo")return "";
+  const z=userZones(), T=[];
+  if(sp==="cap"&&z.pace){const[a,b]=PACE_OFF[mz];T.push([IC_RUN,"Allure",fmtPace(z.pace+a)+"–"+fmtPace(z.pace+b),"/km"]);}
+  if(sp==="velo"&&z.ftp){const[a,b]=FTP_PCT[mz];T.push([IC_BOLT,"Puissance",Math.round(z.ftp*a)+"–"+Math.round(z.ftp*b),"W"]);}
+  if(z.fc){const[a,b]=HR_PCT[mz];T.push([IC_HEART,"Cœur",Math.round(z.fc*a)+"–"+Math.round(z.fc*b),"bpm"]);}
+  T.push([IC_CLOCK,"Zone",mz.toUpperCase(),(NS_ZONE[mz]||"").replace(/^Z\d\s*/,"")]);
+  const note=T.length<2?`<div class="tc-days__note" style="color:var(--text-on-ambiance-muted)">Renseigne allure, FTP et FC max dans Réglages pour afficher tes cibles.</div>`:"";
+  return `<section class="tc-ambiance tc-ambiance--indigo-fade"><h3 class="tc-cardhead__title" style="max-width:none;margin-bottom:14px;color:var(--text-on-ambiance);font-size:17px">Cibles</h3>
+    <div class="tc-targets${T.length===2?" tc-targets--2":T.length===1?" tc-targets--1":""}">${T.map(([ic,l,v,u])=>`<div class="tc-target"><span class="tc-target__label">${SVG20(ic,16)}${l}</span><span class="tc-target__value">${v}<span class="tc-target__unit">${esc(u)}</span></span></div>`).join("")}</div>${note}</section>`;
+}
+function repStrokes(name){const m=/(\d+)\s*[×x]\s*(\d+)/.exec(name||"");if(!m)return "";const n=Math.min(+m[1],10),h=[],on=[];
+  for(let i=0;i<n;i++){on.push(h.length);h.push(100);if(i<n-1)h.push(25);}
+  return `<div class="tc-strokes" style="height:28px;margin-top:10px" aria-hidden="true">${h.map((v,i)=>`<i style="height:${v}%"${on.includes(i)?' class="is-on"':""}></i>`).join("")}</div>`;}
+function detailDays(session,cur,week){
+  const slot=SLOT[session.sport]||"libre";
+  const ok=slot==="weekend"?[5,6]:slot==="club"?[1,3]:[0,1,2,3,4,5,6];
+  const note=slot==="club"?"Créneau club : mardi ou jeudi soir.":slot==="weekend"?"Sortie vélo : samedi ou dimanche.":"Jour libre, y compris le même jour qu'une natation.";
+  const now=new Date(),td=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-td+(week-S.currentWeek)*7);
+  const L=["L","M","M","J","V","S","D"];
+  return `<section class="tc-card"><h3 class="tc-cardhead__title" style="max-width:none;margin-bottom:14px">Changer de jour</h3><div class="tc-days">${L.map((l,d)=>{const dt=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+d),can=ok.includes(d);
+    return `<button class="tc-day"${d===cur?' aria-pressed="true"':""}${can?` data-act="setDay" data-arg="${d}"`:' aria-disabled="true"'} aria-label="${DAY_FULL[d]} ${dt.getDate()}"><span class="tc-day__d">${l}</span><span class="tc-day__n">${dt.getDate()}</span></button>`;}).join("")}</div>
+    <div class="tc-days__note">${note}</div></section>`;
+}
+function dsEffort(s){const v=S.rpe[s.id],e=expectedEffort(s);
+  return `<div class="tc-effort" role="group" aria-label="Effort ressenti"><div class="tc-effort__scale">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="tc-effort__btn${n===e?" is-expected":""}" aria-pressed="${v===n}" data-act="rpe" data-arg="${n}">${n}</button>`).join("")}</div>
+    <div class="tc-effort__legend"><span>Très facile</span><span>Maximal</span></div>
+    <span class="tc-effort__note${v&&v>=e+2?" tc-effort__note--warn":""}">${v?`${v}/10 · ${EFFORT_HINT[v]}. `:""}Attendu : autour de ${e}/10 (${EFFORT_HINT[e].toLowerCase()}).</span></div>`;}
 function overlayDetail(){
   const f=sessionById(S.detailId); if(!f)return "";
   const {week,session}=f, st=statusOf(session.id), blk=blockForWeek(week);
@@ -1606,22 +1652,17 @@ function overlayDetail(){
     <div style="padding:16px 16px 28px;display:flex;flex-direction:column;gap:12px">
       ${flashCard()}
       ${session.adjMotif?`<div class="adjnote"><b>${session.dropped?"Retirée du plan":"Ajustée par le plan"}</b>${esc(session.adjMotif)}${session.adjOp&&!S.adj.find(o=>o.id===session.adjOp&&o.kind==="weekReduce")?`<div style="margin-top:10px"><button class="cta ghost sm" data-act="undo" data-arg="${session.adjOp}">${session.dropped?"Remettre la séance":"Annuler l'ajustement"}</button></div>`:""}</div>`:""}
-      ${session.dropped?"":`<div class="o-note">${intention}</div>`}
+      ${session.dropped||st?"":detailDecision(session,intention)}
       ${session.sport==="natation"?`<button class="rt-open" data-act="openRoutine"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg></span><span class="tx"><h4>Échauffement</h4><p>Routine mobilité + activation · ${ROUTINE_NATATION.length} étapes</p></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span></button>`:""}
-      ${obj?`<div class="card"><div style="font-size:17px;font-weight:400;color:var(--text-strong);margin-bottom:6px">Objectif</div><div style="font-size:14px;color:var(--text-secondary);line-height:1.5">${esc(obj.desc)}</div>${tgMain?`<div class="tgt">${esc(tgMain)}</div>`:""}</div>`:""}
-      ${body.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Déroulé</h3></div>`+body.map((x,i)=>{const zt=(session.sport==="cap"||session.sport==="velo")?targetStr(session.sport,zoneForStep(x.title,mz)):"";return `<div class="step"><div class="n num">${i+1}</div><div class="st"><h4>${esc(String(x.title).replace(/^\d+\.\s*/,""))}</h4><p>${esc(x.desc)}</p>${zt?`<div class="tgt">${esc(zt)}</div>`:""}</div></div>`;}).join(""):""}
+      ${detailTargets(session,mz)}
+      ${(obj||body.length)?`<section class="tc-card"><h3 class="tc-cardhead__title" style="max-width:none;margin-bottom:${obj?"6px":"4px"}">Déroulé</h3>${obj?`<div class="tc-mblock__caption" style="margin-bottom:6px">${esc(obj.desc)}</div>`:""}${body.length?`<ol class="tc-steps">${body.map((x,i)=>{const t=String(x.title).replace(/^\d+\.\s*/,"");const zt=(session.sport==="cap"||session.sport==="velo")?targetStr(session.sport,zoneForStep(x.title,mz)):"";const key=session.type==="quality"&&/corps|bloc|vélo|course/i.test(t)&&!/échauff|retour/i.test(t);return `<li class="tc-step"><span class="tc-step__num${key?" tc-step__num--key":""}">${i+1}</span><div><div class="tc-step__title">${esc(t)}</div><div class="tc-step__desc">${esc(x.desc)}</div>${zt?`<div class="tc-step__desc" style="color:var(--text-secondary)">${esc(zt)}</div>`:""}${key?repStrokes(session.name):""}</div><span></span></li>`;}).join("")}</ol>`:""}</section>`:""}
       ${exs.length?`<div class="sechead" style="margin:8px 2px 0"><h3>Exercices PPG</h3></div>`+ppgHead+ppgRows:""}
-      ${session.dropped?"":`<div style="margin-top:8px">
-        <div class="cta-lbl">Statut de la séance</div>
-        <div class="cta-row">
-          <button class="cta done ${st==="done"?"sel":"ghost"}" data-act="st" data-arg="done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg>Faite</button>
-          <button class="cta adapt ${st==="z2"?"sel":"ghost"}" data-act="st" data-arg="z2">Faite en facile</button>
-        </div>
-        ${(st==="done"||st==="z2")?effortBlock(session):`<button class="cta ghost imp-btn" data-act="sheetOpen" data-arg="imprevu">Imprévu</button>`}
-        ${dayPicker(session,cur)}
-        ${st?`<button class="cta ghost" style="width:100%;margin-top:10px" data-act="st" data-arg="">Réinitialiser le statut</button>`:""}
-      </div>`}
+      ${session.dropped?"":detailDays(session,cur,week)}
+      ${session.dropped?"":(st==="done"||st==="z2")?`<section class="tc-card"><h3 class="tc-cardhead__title" style="max-width:none;margin-bottom:14px">Effort ressenti</h3>${dsEffort(session)}
+        <div class="tc-card__foot" style="justify-content:flex-end"><button class="tc-btn tc-btn--ghost" data-act="st" data-arg="">Réinitialiser le statut</button></div></section>`
+        :st==="missed"?`<section class="tc-card"><div class="tc-card__body home-next__text">Séance notée comme ratée.</div><div class="tc-card__foot" style="justify-content:flex-end"><button class="tc-btn tc-btn--ghost" data-act="st" data-arg="">Réinitialiser le statut</button></div></section>`:""}
     </div>
+    ${session.dropped||st?"":`<div class="tc-actionbar"><button class="tc-btn tc-btn--primary" data-act="st" data-arg="done">${dsIcon("check").replace('<svg ','<svg width="20" height="20" ')}C'est fait</button><button class="tc-btn tc-btn--ghost" data-act="st" data-arg="z2">En facile</button><button class="tc-btn tc-btn--ghost" data-act="sheetOpen" data-arg="imprevu">Imprévu</button></div>`}
   </div>`;
 }
 </script>
