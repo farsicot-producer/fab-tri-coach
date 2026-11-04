@@ -1357,7 +1357,7 @@ function homeNext(){
     more=`<details class="home-more"><summary>Chiffres mesurés et limites des données ›</summary><div class="home-kpis">${kp("Condition physique",num(k.ctl,0))}${kp("Fatigue récente",num(k.atl,0))}${kp("Fraîcheur",num(k.tsb,0))}${kp("Montée en charge",num(k.acwr_ewma,2))}${kp("Endurance facile",k.low_pct==null?"—":num(k.low_pct,0)+" %")}${kp("Séances analysées",j.source?String(j.source.activities):"—")}</div>${(j.gaps||[]).length?`<ul class="tc-cap" style="margin:10px 0 0;padding-left:18px">${j.gaps.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>`:""}<div class="tc-cap" style="margin-top:10px">Aide à la décision, pas un avis médical : ton ressenti passe avant les chiffres.</div></details>`;}
   return `<section class="tc-card">${dsHead("Prochaine séance",stamp,ico)}
     <div class="tc-card__body"><div class="home-next__row"><span class="home-next__title">${esc(title)}</span>${chip}</div>${text?`<div class="home-next__text">${esc(text)}</div>`:""}${tgt}</div>
-    <div class="tc-card__foot"><button class="tc-btn tc-btn--primary" data-act="open" data-arg="${p.id}">Voir la séance</button></div>${more}</section>`;
+    <div class="tc-card__foot" style="justify-content:flex-end"><button class="tc-btn tc-btn--primary" data-act="open" data-arg="${p.id}"><svg class="tc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16l13 -8z"/></svg>Voir la séance</button></div>${more}</section>`;
 }
 function homeWeek(ws,dur,planned,all){
   const td=(new Date().getDay()+6)%7, L=["L","M","M","J","V","S","D"], perDot=15;
