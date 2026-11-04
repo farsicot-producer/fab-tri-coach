@@ -1247,32 +1247,44 @@ function screenBilan(){
     const sign=key==="tsb"&&v>0?"+":"";
     return `<div class="evo2"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px"><div><div class="tc-cap" style="color:var(--text-strong)">${lbl}</div><span class="tc-metric tc-metric--lg">${v==null?"—":sign+num(v,0)}</span></div>${bars}</div>
       <div class="tc-mblock__caption" style="margin-top:8px">${txt}${delta!=null?` Sur ${series.length} jours : ${delta>=0?"+":""}${num(delta,0)}.`:""}</div></div>`;};
-  const adj=S.adj.slice().reverse();
-  const adjHtml=adj.length?adj.map(o=>{const s=o.sid?sessionById(o.sid):null;
-    const what=s?`S${o.week} · ${DAY_NAMES[s.session.dayEff]} · ${s.session.name}`:`Semaine ${o.week}`;
-    return `<div class="adjr"><div class="aw">${esc(what)}<span>${new Date(o.ts).toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}</span></div>
-      <div class="am">${esc(o.motif)}</div><button class="cta ghost sm" data-act="undo" data-arg="${o.id}">Annuler</button></div>`;}).join("")
-    :`<div class="sub">Aucun ajustement pour l'instant. Ils apparaîtront ici avec leur motif, et tu pourras les annuler.</div>`;
   const done=S.bilanDone[n];
-  return `<div class="screen">
-    <div class="h1" style="margin-bottom:4px">Bilan</div>
-    <div class="sub" style="margin-bottom:16px">Semaine ${n} · ${esc(blk.name)} — ${esc(blk.title)}</div>
+  const now=new Date(),tdi=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-tdi);
+  const sun=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+6);
+  const range=mon.getMonth()===sun.getMonth()?`${mon.getDate()} – ${sun.toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}`:`${mon.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})} – ${sun.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}`;
+  /* Ambiance : séances faites + minutes par jour */
+  const perDay=[0,1,2,3,4,5,6].map(d=>{const L=b.act.filter(x=>x.dayEff===d);return {min:L.reduce((t,x)=>t+x.minutes,0),done:L.some(x=>["done","z2"].includes(statusOf(x.id)))};});
+  const mx=Math.max(1,...perDay.map(x=>x.min));
+  const strokes=`<div class="tc-strokes tc-strokes--on-ambiance" aria-hidden="true">${perDay.map(x=>`<i style="height:${x.min?Math.round(20+x.min/mx*80):8}%"${x.done?' class="is-on"':""}></i>`).join("")}</div>`;
+  const meta=done?"Validé":b.partial?"Provisoire · validable dimanche":"Prêt à valider";
+  /* Séances */
+  const SYM={done:["✓","var(--state-ok)"],z2:["!","var(--state-warn)"],missed:["×","var(--state-danger)"],dropped:["–","var(--text-muted)"],todo:["·","var(--text-muted)"]};
+  const steps=b.all.slice().sort((x,c)=>x.dayEff-c.dayEff).map(x=>{
+    const st=x.dropped?"dropped":statusOf(x.id)||"todo", sy=SYM[st]||SYM.todo, r=S.rpe[x.id], e=expectedEffort(x);
+    const lbl=(STATUS_META[st==="todo"?"":st]||STATUS_META[""]).label;
+    const desc=[DAY_FULL[x.dayEff].charAt(0).toUpperCase()+DAY_FULL[x.dayEff].slice(1),lbl,r!=null?`effort ${r} · attendu ${e}${r>=e+2?", plus dur que prévu":""}`:""].filter(Boolean).join(" · ");
+    return `<div class="tc-step" data-act="open" data-arg="${x.id}" role="button" tabindex="0" style="cursor:pointer"><span class="tc-step__num" style="color:${sy[1]}">${sy[0]}</span><div><div class="tc-step__title">${esc(x.name)}</div><div class="tc-step__desc">${esc(desc)}</div></div><span class="tc-step__dur">${fmtH(x.minutes)}</span></div>`;}).join("");
+  /* Ajustements */
+  const adj=S.adj.slice().reverse();
+  const adjHtml=adj.length?`<div class="tc-menu">${adj.map(o=>{const f=o.sid?sessionById(o.sid):null;
+    const what=f?f.session.name:`Semaine ${o.week}`, ic=f?(SPORT_META[f.session.sport]||{}).icon:"calendar";
+    const when=(f?DAY_FULL[f.session.dayEff].charAt(0).toUpperCase()+DAY_FULL[f.session.dayEff].slice(1)+" · S"+o.week:"Semaine "+o.week)+" · "+new Date(o.ts).toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
+    return `<div class="tc-mrow" style="cursor:default"><span class="tc-mrow__icon" style="font-size:20px">${icon(ic||"list")}</span><span class="tc-mrow__label">${esc(what)}<div class="tc-cap">${esc(when)}</div><div class="tc-cap" style="margin-top:2px">${esc(o.motif)}</div></span><button class="tc-btn tc-btn--secondary tc-btn--sm" data-act="undo" data-arg="${o.id}">Annuler</button></div>`;}).join("")}</div>`
+    :`<div class="tc-cap" style="padding:0 var(--space-1)">Aucun ajustement pour l'instant. Ils apparaîtront ici avec leur motif, et tu pourras les annuler.</div>`;
+  const prop=`<section class="tc-card">${dsHead(b.dec.key==="end"?"Fin du programme":`Proposition pour la semaine ${b.dec.key==="redo"?n:n+1}`,b.partial&&!done?"Provisoire":null,'<span class="tc-tag tc-tag--interpreted">Interprété</span>')}
+    <div class="tc-card__body" style="font-size:15px;line-height:1.5;color:var(--text-primary)"><strong style="font-weight:500;color:var(--text-strong)">${esc(b.dec.label)}.</strong> ${esc(b.dec.desc)}</div>
+    <div class="tc-mblock__caption" style="margin-top:10px">Fraîcheur ${b.tsb==null?"—":(b.tsb>0?"+":"")+num(b.tsb,0)} : ${esc(freshnessText(b.tsb))}</div>
+    ${done?`<div class="tc-card__foot">${dsChip("vert","Validé",true)}</div>`:b.dec.key==="end"?"":`<div class="tc-card__foot"><button class="tc-btn tc-btn--primary tc-btn--block" style="width:100%" data-act="validateBilan">Valider le bilan</button></div>${new Date().getDay()===0?"":`<div class="tc-days__note" style="text-align:center">Le bilan se valide normalement le dimanche.</div>`}`}
+  </section>`;
+  return `<div class="home">
+    <header class="tc-screen__head"><h1 class="tc-screen__title">Bilan</h1><p class="tc-screen__sub">Semaine ${n} · ${esc(range)}</p></header>
     ${flashCard()}
     ${S.pause?pauseCard():""}
-    <div class="card" style="padding:18px">
-      <div class="h-card">Bilan de la semaine</div>
-      <div class="bl">${tag("mes")} ${b.doneL.length} séance${b.doneL.length>1?"s":""} sur ${b.all.length} · ${fmtMin(b.minDone)} sur ${fmtMin(b.minPlan)}${b.partial?` · ${b.conf} % des séances prévues à ce jour`:` · ${b.conf} % faites`}${b.dropped.length?` · ${b.dropped.length} retirée${b.dropped.length>1?"s":""} par le plan`:""}.</div>
-      <div class="bl">${tag("dec")} ${esc(effLine)}${b.felt?` Charge ressentie : ${num(b.felt,0)}.`:""}</div>
-      <div class="bl">${tag("int")} Fraîcheur ${b.tsb==null?"—":(b.tsb>0?"+":"")+num(b.tsb,0)} : ${esc(freshnessText(b.tsb))}</div>
-      <div class="brows">${rows}</div>
-      <div class="decision">
-        <div class="eyebrow">${b.partial?"Décision provisoire":"Décision proposée"}</div>
-        <div class="dl">${esc(b.dec.label)}</div><div class="sub">${esc(b.dec.desc)}</div>
-        ${done?`<div class="dok">✓ Validé</div>`:b.dec.key==="end"?"":`<button class="btn primary" style="width:100%;margin-top:12px" data-act="validateBilan">Valider</button>
-        <div class="slotnote" style="text-align:center">${new Date().getDay()===0?"":"Le bilan se valide normalement le dimanche."}</div>`}
-      </div>
-    </div>
-    <section class="tc-card" style="margin-top:22px">${dsHead("Évolution","Montre (intervals.icu) · un point par jour",'<span class="tc-tag tc-tag--measured">Mesuré</span>')}
+    <section class="tc-ambiance tc-ambiance--indigo"><div class="tc-cardhead tc-cardhead--ambiance"><div><h3 class="tc-cardhead__title">Bilan de la semaine</h3><span class="tc-cardhead__meta">${esc(meta)}</span></div><span class="tc-cardhead__aside">${SVG20('<path d="M4 19l16 0"/><path d="M4 15l4 -6l4 2l4 -5l4 4"/>',20)}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:18px;gap:16px"><div><span class="tc-dotnum tc-dotnum--lg">${b.doneL.length}/${b.act.length}</span><div style="font-size:13px;color:var(--text-on-ambiance-muted);margin-top:6px">séances faites · ${fmtH(b.minDone)} sur ${fmtH(b.minPlan)}</div></div>${strokes}</div></section>
+    <section class="tc-card">${dsHead("Séances",null,'<span class="tc-tag tc-tag--declared">Déclaré</span>')}
+      <div class="tc-card__body tc-steps">${steps}</div>
+      <div class="tc-mblock__caption" style="margin-top:10px">${esc(effLine)}${b.felt?` Charge ressentie : ${num(b.felt,0)}.`:""}</div></section>
+    <section class="tc-card">${dsHead("Évolution","Montre (intervals.icu) · un point par jour",'<span class="tc-tag tc-tag--measured">Mesuré</span>')}
       <div class="tc-card__body" style="display:flex;flex-direction:column;gap:22px">
       ${evo("Condition physique","ctl","ok","Ce que tu as construit sur 6 semaines. Doit monter doucement pendant les blocs.")}
       ${evo("Fatigue récente","atl","warn","La charge des 7 derniers jours. Monte vite, redescend vite.")}
@@ -1280,10 +1292,10 @@ function screenBilan(){
       ${H.length<2?`<div class="slotnote">Les barres se construisent : reviens dans quelques jours.</div>`:""}
       </div>
     </section>
-    <div class="card" style="padding:18px;margin-top:22px">
-      <div class="h-card" style="margin-bottom:10px">Ajustements du plan</div>${adjHtml}
-    </div>
-    <details class="card reperes" style="margin-top:22px"><summary>Repères du plan</summary>
+    ${prop}
+    <h2 class="tc-section">Ajustements du plan</h2>
+    ${adjHtml}
+    <details class="card reperes" style="margin-top:12px"><summary>Repères du plan</summary>
       ${RULES.map(r=>`<div style="margin-top:12px"><div style="font-size:15px;font-weight:400;color:var(--text-strong)">${esc(r.title)}</div><div class="sub">${esc(r.desc)}</div></div>`).join("")}
       <div style="margin-top:12px"><div style="font-size:15px;font-weight:400;color:var(--text-strong)">4. Séance clé, support, facultative</div><div class="sub">Une séance clé se décale si possible et se supprime en dernier. Une séance support se réduit mais ne se rattrape pas. Une facultative saute en premier. La natation club n'est jamais arbitrée.</div></div>
     </details>
