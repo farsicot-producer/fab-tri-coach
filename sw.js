@@ -1,4 +1,4 @@
-const CACHE_NAME = "tri2026-pwa-v4";
+const CACHE_NAME = "tri2026-pwa-v5";
 const ASSETS = [
   "./",
   "./index.html",
