@@ -30,7 +30,7 @@
   --shadow-indigo-glow:inset 0 0 60px 14px rgba(90,88,168,.95),inset 0 0 18px 3px rgba(150,145,230,.55);
   --shadow-action-ring:inset 0 0 0 1px rgba(242,210,61,.6); --shadow-action-ring-hover:inset 0 0 0 1.5px #f7e06a;
   --size-control:44px; --size-control-sm:36px; --size-touch-min:44px; --size-column:440px;
-  --chart-dot:4px; --chart-dot-gap:5px; --chart-skew:-14deg; --chart-gap:6px;
+  --stroke-chart:1.5px; --chart-dot:4px; --chart-dot-gap:5px; --chart-skew:-14deg; --chart-gap:6px;
 
   /* ── Alias de l'ancien thème (étape 1 : l'app passe en sombre sans toucher aux composants) ── */
   --ink:var(--text-strong); --ink-surface:var(--graphite-700);
@@ -1226,12 +1226,6 @@ function effortBlock(s){
     <div class="effort">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="${v===n?"on":""}${n>=exp+2?" hi":""}" data-act="rpe" data-arg="${n}">${n}</button>`).join("")}</div>
     <div class="slotnote">${v?`${v}/10 · ${EFFORT_HINT[v]}. `:""}Attendu pour cette séance : autour de ${exp}/10 (${EFFORT_HINT[exp].toLowerCase()}).</div>`;
 }
-function sparkline(vals,color){
-  if(vals.length<2)return "";
-  const w=280,h=56,mn=Math.min(...vals),mx=Math.max(...vals),r=mx-mn||1;
-  const pts=vals.map((v,i)=>`${(i/(vals.length-1)*w).toFixed(1)},${(h-4-(v-mn)/r*(h-8)).toFixed(1)}`).join(" ");
-  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
-}
 function screenBilan(){
   const n=S.currentWeek, b=bilanFor(n), blk=blockForWeek(n);
   const tag=t=>`<span class="dtag ${t}">${{mes:"Mesuré",dec:"Déclaré",int:"Interprété"}[t]}</span>`;
@@ -1244,10 +1238,14 @@ function screenBilan(){
     `Effort ressenti moyen ${num(b.effAvg,1)}/10 pour ${num(b.expAvg,1)} attendu : ${b.effAvg>=b.expAvg+1.5?"plus dur que prévu.":b.effAvg<=b.expAvg-1.5?"plus facile que prévu.":"conforme."}`;
   const p=(S.charge&&S.charge.pmc)||{};
   const keys=Object.keys(S.hist).sort(), H=keys.map(k=>S.hist[k]);
-  const evo=(lbl,key,color,txt)=>{const v=p[key];const series=H.map(h=>h[key]).filter(x=>typeof x==="number");
+  const evo=(lbl,key,tone,txt)=>{const v=p[key];const series=H.map(h=>h[key]).filter(x=>typeof x==="number");
     const delta=series.length>=2?series[series.length-1]-series[0]:null;
-    return `<div class="evo"><div class="et"><span>${lbl}</span><b class="num">${v==null?"—":num(v,0)}</b></div>
-      ${sparkline(series,color)}<div class="ex">${txt}${delta!=null?` Sur ${series.length} jours : ${delta>=0?"+":""}${num(delta,0)}.`:""}</div></div>`;};
+    const last=series.slice(-10),mn=Math.min(...last),mx=Math.max(...last),r=mx-mn;
+    const hs=last.map(x=>r?Math.round(18+(x-mn)/r*82):60);
+    const bars=hs.length?`<div class="tc-strokes${tone?" tc-strokes--"+tone:""}" style="height:40px" aria-hidden="true">${hs.map((h,i)=>`<i style="height:${h}%"${i===hs.length-1?' class="is-on"':""}></i>`).join("")}</div>`:"";
+    const sign=key==="tsb"&&v>0?"+":"";
+    return `<div class="evo2"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px"><div><div class="tc-cap">${lbl}</div><span class="tc-metric tc-metric--lg">${v==null?"—":sign+num(v,0)}</span></div>${bars}</div>
+      <div class="tc-mblock__caption" style="margin-top:8px">${txt}${delta!=null?` Sur ${series.length} jours : ${delta>=0?"+":""}${num(delta,0)}.`:""}</div></div>`;};
   const adj=S.adj.slice().reverse();
   const adjHtml=adj.length?adj.map(o=>{const s=o.sid?sessionById(o.sid):null;
     const what=s?`S${o.week} · ${DAY_NAMES[s.session.dayEff]} · ${s.session.name}`:`Semaine ${o.week}`;
@@ -1273,14 +1271,14 @@ function screenBilan(){
         <div class="slotnote" style="text-align:center">${new Date().getDay()===0?"":"Le bilan se valide normalement le dimanche."}</div>`}
       </div>
     </div>
-    <div class="card" style="padding:18px;margin-top:22px">
-      <div class="h-card" style="margin-bottom:4px">Évolution</div>
-      <div class="sub" style="margin-bottom:6px">Données de ta montre (intervals.icu), un point par jour à l'ouverture de l'app.</div>
-      ${evo("Condition physique","ctl","var(--state-ok)","Ce que tu as construit sur 6 semaines. Doit monter doucement pendant les blocs.")}
-      ${evo("Fatigue récente","atl","var(--state-warn)","La charge des 7 derniers jours. Monte vite, redescend vite.")}
-      ${evo("Fraîcheur","tsb","var(--text-primary)","Condition physique moins fatigue récente. Négatif : chargé ; positif : frais.")}
-      ${H.length<2?`<div class="slotnote">La courbe se construit : reviens dans quelques jours.</div>`:""}
-    </div>
+    <section class="tc-card" style="margin-top:22px">${dsHead("Évolution","Montre (intervals.icu) · un point par jour",'<span class="tc-tag tc-tag--measured">Mesuré</span>')}
+      <div class="tc-card__body" style="display:flex;flex-direction:column;gap:22px">
+      ${evo("Condition physique","ctl","ok","Ce que tu as construit sur 6 semaines. Doit monter doucement pendant les blocs.")}
+      ${evo("Fatigue récente","atl","warn","La charge des 7 derniers jours. Monte vite, redescend vite.")}
+      ${evo("Fraîcheur","tsb","","Condition physique moins fatigue récente. Négatif : chargé ; positif : frais.")}
+      ${H.length<2?`<div class="slotnote">Les barres se construisent : reviens dans quelques jours.</div>`:""}
+      </div>
+    </section>
     <div class="card" style="padding:18px;margin-top:22px">
       <div class="h-card" style="margin-bottom:10px">Ajustements du plan</div>${adjHtml}
     </div>
