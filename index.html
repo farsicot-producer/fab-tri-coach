@@ -1336,6 +1336,12 @@ function homeForme(){
     <div class="home-stats">${stat("Sommeil",typeof w.sleep_h==="number"?num(w.sleep_h,1)+" h":"—")}${stat("FC repos",typeof w.resting_hr==="number"?num(w.resting_hr,0)+" bpm":"—")}${stat("Charge 7 j",c.load7==null?"—":num(c.load7,0))}${stat("Condition",p.ctl==null?"—":num(p.ctl,0))}</div></div>
     </section>`;
 }
+function nextTargets(sp,zone){if((sp!=="cap"&&sp!=="velo")||!HR_PCT[zone])return "";const z=userZones(),T=[];
+  if(sp==="cap"&&z.pace){const[a,b]=PACE_OFF[zone];T.push([IC_RUN,"Allure",fmtPace(z.pace+a)+"–"+fmtPace(z.pace+b),"/km"]);}
+  if(sp==="velo"&&z.ftp){const[a,b]=FTP_PCT[zone];T.push([IC_BOLT,"Puissance",Math.round(z.ftp*a)+"–"+Math.round(z.ftp*b),"W"]);}
+  if(z.fc){const[a,b]=HR_PCT[zone];T.push([IC_HEART,"Cœur",Math.round(z.fc*a)+"–"+Math.round(z.fc*b),"bpm"]);}
+  if(!T.length)return "";
+  return `<div class="tc-targets${T.length===2?" tc-targets--2":" tc-targets--1"}" style="margin-top:14px">${T.map(([ic,l,v,u])=>`<div class="tc-target"><span class="tc-target__label">${SVG20(ic,16)}${l}</span><span class="tc-target__value">${v}<span class="tc-target__unit">${esc(u)}</span></span></div>`).join("")}</div>`;}
 function homeNext(){
   if(S.pause){const pz=S.pause,d=Math.max(0,daysSince(pz.from));
     return `<section class="tc-card">${dsHead("Plan en pause",PAUSE_LBL[pz.reason]+" depuis le "+fmtDate(pz.from)+" · "+d+" j")}
@@ -1345,20 +1351,19 @@ function homeNext(){
   if(!p)return `<section class="tc-card">${dsHead("Prochaine séance","Programme terminé")}<div class="tc-card__body home-next__text">Les 30 semaines sont bouclées ou toutes les séances restantes sont notées.</div></section>`;
   const j=S.next, m=SPORT_META[p.sport], ico=`<span style="font-size:20px;display:inline-flex">${icon(m?m.icon:"moon")}</span>`;
   const stamp=nsWhen(p)+" · "+fmtH(p.minutes);
-  let chip="",title=p.name,text="",tgt="",more="";
+  let chip="",title=p.name,text="",tgt=nextTargets(p.sport,mainZone(p)),more="";
   if(!j){chip=dsChip("na","Calcul…");text="Analyse de ta charge sur 90 jours.";}
   else if(!j.ok){chip=dsChip("na","Hors ligne");text=(j.error||"Recommandation indisponible")+". Applique le verdict de la Forme du jour.";}
   else{const ss=j.session||{}, lab=(NS_DEC[j.decision]||["—"])[0];
     chip=dsChip(j.level||"na",lab,true);
     title=ss.type==="rest"?"Repos":(ss.name||p.name);
-    text=[ss.change||"",j.decision!=="maintenir"?"Prévu : "+p.name+" · "+fmtH(p.minutes)+".":""].filter(Boolean).join(" ");
-    const t=(ss.zone&&(ss.sport==="cap"||ss.sport==="velo"))?targetStr(ss.sport,ss.zone):"";
-    if(t)tgt=`<div class="home-next__tgt">${esc(t)}</div>`;
+    text=j.decision==="maintenir"?"":[ss.change||"","Prévu : "+p.name+" · "+fmtH(p.minutes)+"."].filter(Boolean).join(" ");
+    tgt=nextTargets(ss.sport||p.sport,ss.zone||mainZone(p));
     const k=j.metrics||{}, kp=(l,v)=>`<div class="home-stat"><span>${esc(l)}</span><b>${esc(v)}</b></div>`;
     more=`<details class="home-more"><summary>Chiffres mesurés et limites des données ›</summary><div class="home-kpis">${kp("Condition physique",num(k.ctl,0))}${kp("Fatigue récente",num(k.atl,0))}${kp("Fraîcheur",num(k.tsb,0))}${kp("Montée en charge",num(k.acwr_ewma,2))}${kp("Endurance facile",k.low_pct==null?"—":num(k.low_pct,0)+" %")}${kp("Séances analysées",j.source?String(j.source.activities):"—")}</div>${(j.gaps||[]).length?`<ul class="tc-cap" style="margin:10px 0 0;padding-left:18px">${j.gaps.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>`:""}<div class="tc-cap" style="margin-top:10px">Aide à la décision, pas un avis médical : ton ressenti passe avant les chiffres.</div></details>`;}
   return `<section class="tc-card">${dsHead("Prochaine séance",stamp,ico)}
     <div class="tc-card__body"><div class="home-next__row"><span class="home-next__title">${esc(title)}</span>${chip}</div>${text?`<div class="home-next__text">${esc(text)}</div>`:""}${tgt}</div>
-    <div class="tc-card__foot" style="justify-content:flex-end"><button class="tc-btn tc-btn--primary" data-act="open" data-arg="${p.id}"><svg class="tc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16l13 -8z"/></svg>Voir la séance</button></div>${more}</section>`;
+    <div class="tc-card__foot" style="justify-content:flex-end"><button class="tc-btn tc-btn--primary" data-act="open" data-arg="${p.id}"><svg class="tc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16l13 -8z"/></svg>Démarrer la séance</button><button class="tc-btn tc-btn--ghost" data-act="openImprevu" data-arg="${p.id}">Imprévu</button></div>${more}</section>`;
 }
 function homeWeek(ws,dur,planned,all){
   const td=(new Date().getDay()+6)%7, L=["L","M","M","J","V","S","D"], perDot=15;
@@ -1699,6 +1704,7 @@ function render(){
 
 const ACTIONS={
   open:a=>{S.detailId=a;render();},
+  openImprevu:a=>{S.detailId=a;S.sheet="imprevu";render();},
   closeDetail:()=>{S.detailId=null;S.sheet=null;S.flash=null;render();},
   flashClose:()=>{S.flash=null;render();},
   sheetOpen:a=>{S.sheet=a;render();},
