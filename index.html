@@ -1429,40 +1429,47 @@ function dayPicker(session,cur){
     <div class="daychips">${days.map(d=>`<button class="${d===cur?"on":""}" data-act="setDay" data-arg="${d}">${DAY_NAMES[d]}</button>`).join("")}</div>
     <div class="slotnote">${note}</div>`;
 }
+function dsSeg(opts,val,handler){return `<div class="tc-seg tc-seg--block" role="tablist">${opts.map(o=>`<button class="tc-seg__btn" role="tab" aria-selected="${o===val}" data-act="${handler}" data-arg="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;}
+function dsBadge(s,isToday){
+  const m=SPORT_META[s.sport]||{}, st=statusOf(s.id), sm=STATUS_META[st]||STATUS_META[""];
+  const ic=`<span class="tc-sbadge__icon" style="font-size:20px">${icon(m.icon||"list")}</span>`;
+  if(s.dropped)return `<button class="tc-sbadge tc-sbadge--removed" data-act="open" data-arg="${s.id}">${ic}<span class="tc-sbadge__main"><span class="tc-sbadge__title">${esc(s.name)}</span><span class="tc-sbadge__meta">${fmtH(s.minutes)} · Retirée</span></span></button>`;
+  const tags=[];
+  if(s.prio==="cle"&&!st)tags.push(`<span class="tc-sbadge__tag tc-sbadge__tag--key">Clé</span>`);
+  if(s.prio==="facultative")tags.push(`<span class="tc-sbadge__tag">Facultative</span>`);
+  if(s.adjMotif)tags.push(`<span class="tc-sbadge__tag">Ajustée</span>`);
+  const chip=st==="done"?dsChip("vert",""):st==="z2"?dsChip("orange",""):st==="missed"?dsChip("rouge",""):"";
+  const end=tags.join("")+chip;
+  return `<button class="tc-sbadge" data-act="open" data-arg="${s.id}"${isToday?' style="box-shadow:inset 0 0 0 1px var(--graphite-600)"':""}>${ic}<span class="tc-sbadge__main"><span class="tc-sbadge__title">${esc(s.name)}</span><span class="tc-sbadge__meta">${fmtH(s.minutes)} · ${esc(sm.label)}</span></span>${end?`<span class="tc-sbadge__end">${end}</span>`:""}</button>`;
+}
 function screenCalendar(){
-  const block=blockForWeek(S.currentWeek), ws=weekSessions(S.currentWeek);
+  const n=S.currentWeek, block=blockForWeek(n), ws=weekSessions(n);
+  const head=`<header class="tc-screen__head"><h1 class="tc-screen__title">Calendrier</h1><p class="tc-screen__sub">${esc(block.name)} · Semaine ${n} sur 30</p></header>`;
   let body="";
   if(S.calendarMode==="Semaine"){
-    const pills=[];for(let n=block.range[0];n<=block.range[1];n++)pills.push(n);
-    body=`<div style="margin-top:16px">
-      <div style="font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:10px">${esc(block.name)} — ${esc(block.title)}</div>
-      <div class="pills">${pills.map(n=>`<button data-act="week" data-arg="${n}" class="${n===S.currentWeek?"on":""}">${n}</button>`).join("")}</div>
-      <div style="display:flex;flex-direction:column;gap:16px;margin-top:18px">
-      ${DAY_NAMES.map((nm,i)=>{
-        const ss=ws.filter(x=>x.dayEff===i);
-        return `<div><div class="eyebrow" style="margin-bottom:8px">${nm}</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-          ${ss.length?ss.map(s=>activityBadge(s,i)).join(""):`<div class="day-rest">Repos</div>`}
-          </div></div>`;}).join("")}
-      </div></div>`;
+    const now=new Date(),td=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-td);
+    const day=d=>new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+d);
+    const sun=day(6), range=mon.getMonth()===sun.getMonth()?`${mon.getDate()} – ${sun.toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}`:`${mon.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})} – ${sun.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}`;
+    const act=ws.filter(x=>!x.dropped), done=act.filter(x=>["done","z2"].includes(statusOf(x.id))).length;
+    const pct=act.length?Math.round(done/act.length*100):0;
+    const nav=(d,lbl,path,dis)=>`<button class="tc-iconbtn tc-iconbtn--sm" aria-label="${lbl}"${dis?" disabled":` data-act="week" data-arg="${n+d}"`}>${SVG20(path,20)}</button>`;
+    body=`<section class="tc-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:17px;color:var(--text-strong)">${esc(range)}</div><div class="tc-cap">${done} séance${done>1?"s":""} sur ${act.length} faite${done>1?"s":""} · ${esc(block.title)}</div></div>
+      <div style="display:flex;gap:6px">${nav(-1,"Semaine précédente",'<path d="M15 6l-6 6l6 6"/>',n<=1)}${nav(1,"Semaine suivante",'<path d="M9 6l6 6l-6 6"/>',n>=30)}</div></div>
+      <div style="margin-top:14px">${dsBar(pct,"")}</div></section>
+      ${DAY_LONG.map((nm,i)=>{const ss=ws.filter(x=>x.dayEff===i);
+        return `<h2 class="tc-section">${nm.charAt(0).toUpperCase()+nm.slice(1)} ${day(i).getDate()}${i===td?" · aujourd'hui":""}</h2>
+        ${ss.length?ss.map(x=>dsBadge(x,i===td)).join(""):`<div class="tc-sbadge tc-sbadge--rest"><span class="tc-sbadge__icon" style="font-size:20px">${icon("moon")}</span><span class="tc-sbadge__main"><span class="tc-sbadge__title">Repos</span></span></div>`}`;}).join("")}`;
   } else {
     const rows=[];
-    for(let n=1;n<=30;n++){
-      const w=buildWeek(n), blk=blockForWeek(n);
+    for(let k=1;k<=30;k++){
+      const w=buildWeek(k), blk=blockForWeek(k);
       const done=w.filter(x=>["done","z2"].includes(statusOf(x.id))).length, tot=w.length;
-      const dots=w.map(x=>{const ds=statusOf(x.id),on=(ds==="done"||ds==="z2");
-        return `<i style="background:${SPORT_META[x.sport].color};opacity:${on?1:.32}"></i>`;}).join("");
-      const cc=done===0?"var(--text-muted)":(done>=tot?"var(--state-ok)":"var(--text-primary)");
-      rows.push(`<button type="button" class="wk${n===S.currentWeek?" cur":""}" data-act="week-go" data-arg="${n}">
-        <div><div class="n num">Semaine ${n}</div>
-        <div class="b">${esc(blk.name)} — ${esc(blk.title)}</div>
-        <div class="dots">${dots}</div></div>
-        <div class="cnt num" style="color:${cc}">${done}/${tot}</div></button>`);
+      rows.push(`<button class="tc-sbadge" data-act="week-go" data-arg="${k}"${k===n?' style="box-shadow:inset 0 0 0 1px var(--graphite-600)"':""}><span class="tc-sbadge__icon" style="font-size:20px">${icon("calendar")}</span><span class="tc-sbadge__main"><span class="tc-sbadge__title">Semaine ${k}${k===n?" · en cours":""}</span><span class="tc-sbadge__meta">${esc(blk.name)} · ${esc(blk.title)}</span></span><span class="tc-sbadge__end">${done>=tot&&tot?dsChip("vert",""):""}<span class="tc-sbadge__meta" style="font-size:14px;color:${done?"var(--text-strong)":"var(--text-muted)"}">${done}/${tot}</span></span></button>`);
+      if(k===blk.range[1]&&k<30)rows.push(`<h2 class="tc-section">${esc(blockForWeek(k+1).name)} · ${esc(blockForWeek(k+1).title)}</h2>`);
     }
-    body=`<div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">${rows.join("")}</div>`;
+    body=`<h2 class="tc-section">${esc(blockForWeek(1).name)} · ${esc(blockForWeek(1).title)}</h2>${rows.join("")}`;
   }
-  return `<div class="screen"><div class="h1" style="margin-bottom:14px">Calendrier</div>
-    ${seg(["Semaine","Liste"],S.calendarMode,"calmode")}${body}</div>`;
+  return `<div class="home">${head}${dsSeg(["Semaine","Liste"],S.calendarMode,"calmode")}${body}</div>`;
 }
 function screenSettings(){
   return `<div class="screen">
