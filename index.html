@@ -1637,7 +1637,7 @@ function detailDays(session,cur,week){
   const now=new Date(),td=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-td+(week-S.currentWeek)*7);
   const L=["L","M","M","J","V","S","D"];
   return `<section class="tc-card"><h3 class="tc-cardhead__title" style="max-width:none;margin-bottom:14px">Changer de jour</h3><div class="tc-days">${L.map((l,d)=>{const dt=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+d),can=ok.includes(d);
-    return `<button class="tc-day"${d===cur?' aria-pressed="true"':""}${can?` data-act="setDay" data-arg="${d}"`:' aria-disabled="true"'} aria-label="${DAY_FULL[d]} ${dt.getDate()}"><span class="tc-day__d">${l}</span><span class="tc-day__n">${dt.getDate()}</span></button>`;}).join("")}</div>
+    return `<button class="tc-day"${d===cur?' aria-pressed="true"':""}${can?` data-act="setDay" data-arg="${d}"`:' aria-disabled="true"'} aria-label="${DAY_FULL[d]}"><span class="tc-day__n" style="font-size:15px">${["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"][d]}</span></button>`;}).join("")}</div>
     <div class="tc-days__note">${note}</div></section>`;
 }
 function dsEffort(s){const v=S.rpe[s.id],e=expectedEffort(s);
