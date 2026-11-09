@@ -11,7 +11,6 @@
 //    (lib/next-session-rules.mjs) : maintenir · alléger · remplacer · repos.
 //
 // Paramètres (query) :
-//   token     READ_TOKEN si défini côté Netlify (même garde que /api/load)
 //   sport     natation | cap | velo | ppg        (séance prévue)
 //   type      endurance | technique | quality | mobility | strength
 //   minutes   durée prévue
@@ -24,10 +23,11 @@
 //   debug=1   renvoie aussi la sortie complète du moteur
 //
 // Variables d'environnement : INTERVALS_API_KEY (obligatoire),
-// INTERVALS_ATHLETE_ID (optionnel, défaut "0"), READ_TOKEN (optionnel).
+// INTERVALS_ATHLETE_ID (optionnel, défaut "0"), ACCESS_CODE (obligatoire).
 // ─────────────────────────────────────────────────────────────────────────
 import { computeMetrics } from "./lib/coach-metrics.mjs";
 import { decide, gapsFr } from "./lib/next-session-rules.mjs";
+import { isAuthorized } from "./lib/access.mjs";
 
 const API_KEY = process.env.INTERVALS_API_KEY;
 const ATHLETE_ID = process.env.INTERVALS_ATHLETE_ID || "0";
@@ -103,7 +103,7 @@ export default async (req) => {
   const url = new URL(req.url);
   const q = k => url.searchParams.get(k);
 
-  if (process.env.READ_TOKEN && q("token") !== process.env.READ_TOKEN) return json({ ok: false, error: "unauthorized" }, 401);
+  if (!isAuthorized(req)) return json({ ok: false, error: "unauthorized" }, 401);
   if (!API_KEY) return json({ ok: false, error: "INTERVALS_API_KEY manquant (variable d'environnement Netlify)" }, 500);
 
   const planned = {

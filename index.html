@@ -995,13 +995,12 @@ async function fetchNext(){
   const key=S.nextKey, p=nextPlanned();
   if(!p){S.next={ok:true,none:true};render();return;}
   const prm=new URLSearchParams({sport:p.sport,type:p.type,minutes:String(p.minutes),name:p.name,zone:mainZone(p),id:p.id});
-  if(READ_TOKEN)prm.set("token",READ_TOKEN);
   if(S.fcMax)prm.set("fcmax",S.fcMax); if(S.ftp)prm.set("ftp",S.ftp); if(S.pace)prm.set("pace",S.pace);
   if(daysSince(CLEARANCE_CARDIAQUE)>MOIS_CLEARANCE_MAX*30)prm.set("cap","1");
   if(S.feel==="fatigue")prm.set("feel","fatigue");
   const lv=suiviLevel(); if(lv!=="na"&&p.offset===0)prm.set("suivi",lv);  // le feu du matin ne vaut que pour la séance du jour
   let j;
-  try{const r=await fetch("/api/next-session?"+prm.toString(),{cache:"no-store"});j=await r.json();}
+  try{const r=await api("/api/next-session?"+prm.toString());j=await r.json();}
   catch(_){j={ok:false,error:"Réseau indisponible"};}
   if(key!==S.nextKey)return;            // réponse périmée (paramètres changés entre-temps)
   S.next=j; if(S.view==="overview"&&!S.detailId&&!S.routineOpen)render();
@@ -1719,7 +1718,15 @@ function confirmModal(){
     </div>
   </div></div>`;
 }
+const LOCK={on:false,err:false};
+function lockScreen(){
+  return `<div class="home"><header class="tc-screen__head"><h1 class="tc-screen__title">Code d'accès</h1></header>
+   <section class="tc-card"><form onsubmit="event.preventDefault();ACTIONS.unlock()" style="display:flex;flex-direction:column;gap:16px">
+    <label class="tc-field"><span class="tc-field__label">Ton code</span><input class="tc-field__input" id="lock-code" type="password" autocomplete="current-password" autofocus><span class="tc-field__hint">${LOCK.err?"Code incorrect. Réessaie.":"À saisir une seule fois sur cet appareil. Il protège tes données de santé."}</span></label>
+    <button class="tc-btn tc-btn--primary tc-btn--block" type="submit">Accéder à mes données</button></form></section></div>`;
+}
 function render(){
+  if(LOCK.on){document.getElementById("app").innerHTML=lockScreen();document.getElementById("overlay").innerHTML="";document.getElementById("navwrap").classList.add("hidden");return;}
   const fn=SCREENS[S.view]||screenOverview;
   document.getElementById("app").innerHTML=fn();
   const ov=document.querySelector(".ovl"), keep=ov&&S.detailId===render._last?ov.scrollTop:0; render._last=S.detailId;
@@ -1736,6 +1743,7 @@ function render(){
 /* ════════════ Actions ════════════ */
 
 const ACTIONS={
+  unlock:()=>{const v=(document.getElementById("lock-code").value||"").trim();if(!v)return;try{localStorage.setItem(LS_CODE,v);}catch(_){}LOCK.on=false;LOCK.err=false;render();startData();},
   open:a=>{S.detailId=a;render();},
   openImprevu:a=>{S.detailId=a;S.sheet="imprevu";render();},
   closeDetail:()=>{S.detailId=null;S.sheet=null;S.flash=null;render();},
@@ -1801,20 +1809,26 @@ document.getElementById("nav").addEventListener("click",e=>{
 });
 
 /* ════════════ Données ════════════ */
-const READ_TOKEN='0q}"9Mux460l';  // variable d'environnement READ_TOKEN (Netlify)
-function q(u){return READ_TOKEN?u+"?token="+encodeURIComponent(READ_TOKEN):u;}
-async function grab(u){try{const r=await fetch(q(u),{cache:"no-store"});if(!r.ok)return null;return await r.json();}catch(_){return null;}}
+const LS_CODE="tri-access-code";   // code d'accès : saisi une fois par appareil, jamais écrit dans le code
+function accessCode(){try{return localStorage.getItem(LS_CODE)||"";}catch(_){return "";}}
+function api(u){return fetch(u,{cache:"no-store",headers:{"x-access-code":encodeURIComponent(accessCode())}});}
+function denied(){if(accessCode()){try{localStorage.removeItem(LS_CODE);}catch(_){}LOCK.err=true;}LOCK.on=true;render();}
+async function grab(u){try{const r=await api(u);if(r.status===401){denied();return null;}if(!r.ok)return null;return await r.json();}catch(_){return null;}}
 async function loadData(){
   const [w,c]=await Promise.all([grab("/api/wellness"),grab("/api/load")]);
+  if(LOCK.on)return;
   S.wellness=w; S.charge=c; S.dataReady=true; recordHistory(); render();
+}
+function startData(){
+  loadData();
+  api("/api/intervals-sync").then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok)loadData();}).catch(()=>{});
 }
 function boot(){
   document.querySelectorAll("#nav button[data-ic]").forEach(b=>{b.innerHTML=icon(b.dataset.ic);});
+  LOCK.on=!accessCode();
   render();
-  loadData();
-  fetch("/api/intervals-sync",{cache:"no-store"})
-    .then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok)loadData();}).catch(()=>{});
-  setInterval(loadData,30*60*1000);
+  if(!LOCK.on)startData();
+  setInterval(()=>{if(!LOCK.on)loadData();},30*60*1000);
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 </script>

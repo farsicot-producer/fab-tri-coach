@@ -13,8 +13,10 @@
 // Variables d'environnement (Netlify → Site settings → Environment variables) :
 //   INTERVALS_API_KEY    (obligatoire)  ta clé API intervals.icu (Developer Settings)
 //   INTERVALS_ATHLETE_ID (optionnel)    défaut "0" = se résout depuis la clé
+//   ACCESS_CODE          (obligatoire)  code d'accès de l'app
 // ─────────────────────────────────────────────────────────────────────────
 import { getStore } from "@netlify/blobs";
+import { isAuthorized } from "./lib/access.mjs";
 
 const STORE  = "tri";
 const K_LOAD = "icu:charge";
@@ -213,6 +215,7 @@ function buildWellness(wellness) {
 
 // ═══════════════════════════════ Handler ════════════════════════════════════
 export default async (req) => {
+  if (!isAuthorized(req)) return json({ ok: false, error: "unauthorized" }, 401);
   if (!API_KEY) {
     return json({ ok: false, error: "INTERVALS_API_KEY manquant (variable d'environnement Netlify)" }, 500);
   }
@@ -240,9 +243,7 @@ export default async (req) => {
         activities: (activities || []).length,
         activityFieldsPresent: [...aKeys].sort(),
         lastActivity: (activities || []).slice(-1)[0] || null,
-        recentWellness: process.env.READ_TOKEN && new URL(req.url).searchParams.get("token") === process.env.READ_TOKEN
-          ? (wellness || []).slice(-15).map(w => ({ id: w.id, restingHR: w.restingHR, sleepSecs: w.sleepSecs, updated: w.updated }))
-          : undefined
+        recentWellness: (wellness || []).slice(-15).map(w => ({ id: w.id, restingHR: w.restingHR, sleepSecs: w.sleepSecs, updated: w.updated }))
       });
     }
 
