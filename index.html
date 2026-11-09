@@ -907,7 +907,7 @@ function setDay(id,d){const f=sessionById(id);if(!f)return;S.adj=S.adj.filter(o=
 <script>
 "use strict";
 /* ════════════ Suivi data — seuils & état ════════════ */
-const CLEARANCE_CARDIAQUE="2019-01-01", MOIS_CLEARANCE_MAX=12;
+const CLEARANCE_CARDIAQUE="2026-11-09", MOIS_CLEARANCE_MAX=12;
 const SEUILS={sleep:{vert:6.5,orange:6.0},sleepDelta:{vert:-0.5,orange:-1.5},fcRepos:{vert:3,orange:5},fcTrend:{vert:3,orange:7},tsb:{vert:-10,orange:-25}};
 const NIV={vert:0,orange:1,rouge:2,na:-1};
 const pire=(a,b)=>NIV[a]>=NIV[b]?a:b;
@@ -915,49 +915,56 @@ const num=(n,d=1)=>n==null?"—":(Math.round(n*10**d)/10**d).toLocaleString("fr-
 const daysSince=iso=>Math.floor((Date.now()-new Date(iso))/864e5);
 const LVLC={vert:"var(--state-success)",orange:"var(--state-warning)",rouge:"var(--state-danger)",na:"var(--text-muted)"};
 
+const signe=(n,d=0)=>(n>0?"+":"")+num(n,d);
 function buildRecup(){
-  const d=S.wellness, L=[];
-  if(!d||d.empty||(d.sleep_h==null&&d.resting_hr==null))
-    return {levels:L,state:"down",label:"Récup — aucune donnée"};
+  const d=S.wellness, L=[], sig=[];
+  const add=(lvl,txt)=>{L.push(lvl);sig.push({lvl,txt});};
+  if(!d||d.empty||(d.sleep_h==null&&d.resting_hr==null&&!d.night_pending))
+    return {levels:L,signals:sig,state:"down",label:"Récup — aucune donnée"};
+  // Nuit pas encore remontée : la FC repos du jour est partielle, on ne la juge pas.
+  if(d.night_pending)return {levels:L,signals:sig,state:"wait",label:"Récup — en attente de ta nuit"};
   const sl=typeof d.sleep_h==="number"?d.sleep_h:null, bsl=typeof d.sleep_baseline_7d==="number"?d.sleep_baseline_7d:null;
   const hr=typeof d.resting_hr==="number"?d.resting_hr:null, bhr=typeof d.resting_hr_baseline_7d==="number"?d.resting_hr_baseline_7d:null;
   const tr=typeof d.resting_hr_trend_7d==="number"?d.resting_hr_trend_7d:null;
   // Niveaux conservés pour le verdict « le plus conservateur gagne », même si non affichés en direct.
-  let lvl=sl==null?"na":sl>=SEUILS.sleep.vert?"vert":sl>=SEUILS.sleep.orange?"orange":"rouge"; if(lvl!=="na")L.push(lvl);
-  let hrDelta=null;
-  if(sl!=null&&bsl!=null){const del=Math.round((sl-bsl)*10)/10; L.push(del<SEUILS.sleepDelta.orange?"rouge":del<SEUILS.sleepDelta.vert?"orange":"vert");}
-  if(hr!=null&&bhr!=null){hrDelta=Math.round((hr-bhr)*10)/10; L.push(hrDelta>SEUILS.fcRepos.orange?"rouge":hrDelta>SEUILS.fcRepos.vert?"orange":"vert");}
-  if(tr!=null)L.push(tr>SEUILS.fcTrend.orange?"rouge":tr>SEUILS.fcTrend.vert?"orange":"vert");
-  return {levels:L,state:"ok",label:"Récup à jour"};
+  if(sl!=null)add(sl>=SEUILS.sleep.vert?"vert":sl>=SEUILS.sleep.orange?"orange":"rouge","Sommeil "+num(sl,1)+" h");
+  if(sl!=null&&bsl!=null){const del=Math.round((sl-bsl)*10)/10; add(del<SEUILS.sleepDelta.orange?"rouge":del<SEUILS.sleepDelta.vert?"orange":"vert","Sommeil "+signe(del,1)+" h par rapport à ta moyenne");}
+  if(hr!=null&&bhr!=null){const del=Math.round((hr-bhr)*10)/10; add(del>SEUILS.fcRepos.orange?"rouge":del>SEUILS.fcRepos.vert?"orange":"vert","FC repos "+signe(del)+" bpm par rapport à ta moyenne");}
+  if(tr!=null)add(tr>SEUILS.fcTrend.orange?"rouge":tr>SEUILS.fcTrend.vert?"orange":"vert","FC repos "+signe(tr,1)+" bpm sur 7 jours");
+  return {levels:L,signals:sig,state:"ok",label:"Récup à jour"};
 }
 function buildCharge(){
-  const s=S.charge, L=[];
+  const s=S.charge, L=[], sig=[];
   if(!s||s.empty)
-    return {levels:L,state:"down",label:"Charge — aucune donnée"};
+    return {levels:L,signals:sig,state:"down",label:"Charge — aucune donnée"};
   const p=s.pmc||{};
   const tsb=typeof p.tsb==="number"?p.tsb:null;
-  const tsbLvl=tsb==null?null:tsb<SEUILS.tsb.orange?"rouge":tsb<SEUILS.tsb.vert?"orange":"vert";
-  if(tsbLvl)L.push(tsbLvl);
+  if(tsb!=null){const lv=tsb<SEUILS.tsb.orange?"rouge":tsb<SEUILS.tsb.vert?"orange":"vert";L.push(lv);sig.push({lvl:lv,txt:"Fraîcheur "+signe(tsb)});}
   const last=s.lastActivity||{};
   const state=s.updatedAt&&daysSince(s.updatedAt)>3?"stale":"ok";
-  return {levels:L,state,label:last.date?"Charge · "+new Date(last.date+"T00:00:00").toLocaleDateString("fr-FR"):"Charge à jour"};
+  return {levels:L,signals:sig,state,label:last.date?"Charge · "+new Date(last.date+"T00:00:00").toLocaleDateString("fr-FR"):"Charge à jour"};
 }
 function formeDuJour(){
   const R=buildRecup(), C=buildCharge();
   const clearOld=daysSince(CLEARANCE_CARDIAQUE)>MOIS_CLEARANCE_MAX*30;
   let lvl=R.levels.concat(C.levels).reduce((a,c)=>pire(a,c),"na");
   let head,sub,court;
-  if(lvl==="na"){head="Pas de données — juge à la sensation";court=S.dataReady?"Pas de données · écoute tes sensations":"Lecture de tes données…";
+  // Le plus conservateur gagne : un signal de charge orange ou rouge reste affiché pendant l'attente.
+  const attente=R.state==="wait"&&NIV[lvl]<NIV.orange;
+  if(attente){lvl="na";head="En attente de ta nuit";court="En attente de synchro";
+    sub="Ta nuit n'est pas encore arrivée. Ouvre Garmin Connect pour synchroniser ta montre, puis recharge l'app.";}
+  else if(lvl==="na"){head="Pas de données — juge à la sensation";court=S.dataReady?"Pas de données · écoute tes sensations":"Lecture de tes données…";
     sub="Aucun signal reçu aujourd'hui. Cale l'intensité sur ton ressenti.";}
   else{
     const M={vert:["Feu vert — exécute le plan","Tout est bon. Fais la séance prévue, intensité comprise.","Feu vert · fais la séance prévue"],
-      orange:["Feu orange — allège 10–15 %","Un signal n'est pas bon. Garde le volume, enlève l'intensité.","Feu orange · allège la séance"],
-      rouge:["Feu rouge — Z1–Z2 courte ou repos","Un signal est au rouge. Consulte si ça dure 3 à 5 jours.","Feu rouge · repos ou très facile"]};
+      orange:["Feu orange — allège 10–15 %","Garde le volume, enlève l'intensité.","Feu orange · allège la séance"],
+      rouge:["Feu rouge — Z1–Z2 courte ou repos","Consulte si ça dure 3 à 5 jours.","Feu rouge · repos ou très facile"]};
     [head,sub,court]=M[lvl];
+    if(lvl!=="vert"){const cause=R.signals.concat(C.signals).filter(x=>x.lvl===lvl).map(x=>x.txt).join(" · ");if(cause)sub=cause+". "+sub;}
     if(lvl==="vert"&&clearOld){head="Aérobie seulement — intensité bloquée";court="Feu orange · endurance seulement";
       sub="Signaux bons, mais clairance cardiaque trop ancienne (> "+MOIS_CLEARANCE_MAX+" mois). Reste en aérobie tant qu'un bloc intense n'est pas revalidé.";lvl="orange";}
   }
-  return {R,C,lvl,head,sub,court};
+  return {R,C,lvl,head,sub,court,attente};
 }
 /* ════════════ Prochaine séance — addon triathlon-coach ════════════
    Backend : /api/next-session (netlify/functions/next-session.mjs).
@@ -967,7 +974,7 @@ const NS_DEC={maintenir:["Maintenir","exécute la séance prévue"],alleger:["Al
   remplacer:["Remplacer","récupération active à la place"],repos:["Repos","priorité à la récupération"]};
 const NS_ZONE={z1:"Z1 récupération",z2:"Z2 endurance",z3:"Z3 tempo",z4:"Z4 seuil",z5:"Z5 VO2"};
 const DAY_FULL=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
-function suiviLevel(){const R=buildRecup(),C=buildCharge();return R.levels.concat(C.levels).reduce((a,c)=>pire(a,c),"na");}
+function suiviLevel(){const f=formeDuJour();return f.attente?"na":f.lvl;}
 function nextPlanned(){
   const td=(new Date().getDay()+6)%7;
   for(const w of [S.currentWeek,S.currentWeek+1]){
@@ -981,7 +988,7 @@ function nextPlanned(){
 function nsWhen(p){const d=p.offset===0?"Aujourd'hui":p.offset===1?"Demain":DAY_FULL[p.dayEff][0].toUpperCase()+DAY_FULL[p.dayEff].slice(1);
   return p.week!==S.currentWeek?d+" (sem. "+p.week+")":d;}
 function nsKey(){const p=nextPlanned();if(!p)return "none";
-  return [p.id,p.minutes,S.feel,suiviLevel(),S.fcMax,S.pace,S.ftp].join("|");}
+  return [p.id,p.minutes,p.offset,S.feel,suiviLevel(),S.fcMax,S.pace,S.ftp].join("|");}
 let nsTimer=null;
 function ensureNext(){const k=nsKey();if(k===S.nextKey)return;S.nextKey=k;S.next=null;clearTimeout(nsTimer);nsTimer=setTimeout(fetchNext,200);}
 async function fetchNext(){
@@ -992,7 +999,7 @@ async function fetchNext(){
   if(S.fcMax)prm.set("fcmax",S.fcMax); if(S.ftp)prm.set("ftp",S.ftp); if(S.pace)prm.set("pace",S.pace);
   if(daysSince(CLEARANCE_CARDIAQUE)>MOIS_CLEARANCE_MAX*30)prm.set("cap","1");
   if(S.feel==="fatigue")prm.set("feel","fatigue");
-  const lv=suiviLevel(); if(lv!=="na")prm.set("suivi",lv);
+  const lv=suiviLevel(); if(lv!=="na"&&p.offset===0)prm.set("suivi",lv);  // le feu du matin ne vaut que pour la séance du jour
   let j;
   try{const r=await fetch("/api/next-session?"+prm.toString(),{cache:"no-store"});j=await r.json();}
   catch(_){j={ok:false,error:"Réseau indisponible"};}
@@ -1339,13 +1346,13 @@ function homeHello(goalPct,block){
 function homeForme(){
   const f=formeDuJour(), w=S.wellness||{}, c=S.charge||{}, p=c.pmc||{};
   const tsb=typeof p.tsb==="number"?Math.round(p.tsb):null;
-  const stamp=w.date?"Garmin · "+new Date(w.date+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}):(S.dataReady?"Pas de donnée reçue":"Lecture des données…");
+  const stamp=w.night_pending?"Garmin · nuit en attente":w.date?"Garmin · "+new Date(w.date+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}):(S.dataReady?"Pas de donnée reçue":"Lecture des données…");
   const stat=(l,v)=>`<div class="home-stat"><span>${esc(l)}</span><b>${esc(v)}</b></div>`;
   const tone=DS_TONE[f.lvl], col=tone?`var(--state-${tone})`:"var(--text-strong)";
   const big=tsb==null?`<span class="tc-metric tc-metric--xl">—</span>`:`<span class="tc-dotnum tc-dotnum--lg" style="color:${col}">${(tsb>0?"+":"")+tsb}</span>`;
   return `<section class="tc-card" id="suivi-data" style="scroll-margin-top:16px">${dsHead("Forme du jour",stamp,dsChip(f.lvl,f.court.split(" · ")[0],true))}
-    <div class="tc-card__body tc-card__split"><div class="tc-mblock">${big}<span class="tc-mblock__caption">${esc(tsb==null?f.sub:"Fraîcheur. "+f.sub)}</span></div>
-    <div class="home-stats">${stat("Sommeil",typeof w.sleep_h==="number"?num(w.sleep_h,1)+" h":"—")}${stat("FC repos",typeof w.resting_hr==="number"?num(w.resting_hr,0)+" bpm":"—")}${stat("Charge 7 j",c.load7==null?"—":num(c.load7,0))}${stat("Condition",p.ctl==null?"—":num(p.ctl,0))}</div></div>
+    <div class="tc-card__body tc-card__split"><div class="tc-mblock">${big}${tsb==null?"":`<span class="tc-mblock__caption">Fraîcheur</span>`}<span class="tc-mblock__caption" style="color:var(--text-primary)">${esc(f.sub)}</span></div>
+    <div class="home-stats">${stat("Sommeil",!w.night_pending&&typeof w.sleep_h==="number"?num(w.sleep_h,1)+" h":"—")}${stat("FC repos",!w.night_pending&&typeof w.resting_hr==="number"?num(w.resting_hr,0)+" bpm":"—")}${stat("Charge 7 j",c.load7==null?"—":num(c.load7,0))}${stat("Condition",p.ctl==null?"—":num(p.ctl,0))}</div></div>
     </section>`;
 }
 function nextTargets(sp,zone){if((sp!=="cap"&&sp!=="velo")||!HR_PCT[zone])return "";const z=userZones(),T=[];
@@ -1603,14 +1610,16 @@ function routineGo(i){
 const SVG20=(d,w)=>`<svg class="tc-icon" width="${w||18}" height="${w||18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const IC_HEART='<path d="M3 12h4l3 8l4 -16l3 8h4"/>', IC_CLOCK='<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/>', IC_BOLT='<path d="M13 3v7h6l-8 11v-7H5l8-11"/>', IC_RUN='<path d="M13 4a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M4 17l5 1l.75 -1.5"/><path d="M15 21v-4l-4 -3l1 -6"/><path d="M7 12v-3l5 -1l3 3l3 1"/>';
 function detailDecision(session,intention){
-  const np=nextPlanned(), j=S.next;
+  const np=nextPlanned(), j=S.next, wk=Number((String(session.id).match(/^w(\d+)s/)||[])[1]);
+  const estDuJour=wk===S.currentWeek&&(session.dayEff??session.day)===(new Date().getDay()+6)%7;
   let chip,text;
   if(np&&np.id===session.id&&j&&j.ok&&!j.none){const d=NS_DEC[j.decision]||["—",""],ss=j.session||{};
     chip=dsChip(j.level||"na",d[0],true);text=ss.change||(d[1].charAt(0).toUpperCase()+d[1].slice(1)+".");}
-  else{const f=formeDuJour();chip=dsChip(f.lvl,f.court.split(" · ")[0],true);text=f.lvl==="na"?intention:f.sub;}
+  else if(estDuJour){const f=formeDuJour();chip=dsChip(f.lvl,f.court.split(" · ")[0],true);text=f.lvl==="na"&&!f.attente?intention:f.sub;}
+  else{chip=dsChip("na","Verdict le jour de la séance",true);text=intention;}
   const R=buildRecup(),C=buildCharge(),w=L=>L.length?L.reduce((a,c)=>pire(a,c),"na"):null,PCT={vert:80,orange:50,rouge:25};
   const g=(l,lv)=>lv&&lv!=="na"?`<div style="flex:1;min-width:0"><div class="tc-cap" style="margin-bottom:6px">${l}</div>${dsBar(PCT[lv],DS_TONE[lv],14)}</div>`:"";
-  const gauges=g("Récupération",w(R.levels))+g("Charge",w(C.levels));
+  const gauges=estDuJour?g("Récupération",w(R.levels))+g("Charge",w(C.levels)):"";
   return `<section class="tc-card"><div style="margin-bottom:12px">${chip}</div>
     <div style="font-size:15px;line-height:1.5;color:var(--text-primary)">${text}</div>
     ${text!==intention?`<div class="tc-mblock__caption" style="margin-top:8px">${intention}</div>`:""}

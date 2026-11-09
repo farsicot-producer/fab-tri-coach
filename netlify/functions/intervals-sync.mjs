@@ -139,10 +139,19 @@ const F = {
 function buildWellness(wellness) {
   const desc = wellness.slice().sort((a, b) => (a.id < b.id ? 1 : -1)); // récent -> ancien
   const val  = (w, keys) => { for (const k of keys) if (w[k] != null) return w[k]; return null; };
-  const latest = keys => { for (const w of desc) { const v = val(w, keys); if (v != null) return v; } return null; };
-  const base7  = keys => {
+
+  // Garmin crée la ligne du jour dès la nuit, avec une FC repos calculée sur
+  // quelques heures. Tant que le sommeil de la nuit n'est pas arrivé, cette FC
+  // repos est partielle : elle ne compte ni comme valeur ni dans les moyennes.
+  const todayParis = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris" }).format(new Date());
+  const todayRow = desc.length && desc[0].id === todayParis ? desc[0] : null;
+  const night_pending = desc.length > 0 && (!todayRow || val(todayRow, F.sleepSecs) == null);
+  const rhrRows = todayRow && night_pending ? desc.slice(1) : desc;
+
+  const latest = (keys, rows = desc) => { for (const w of rows) { const v = val(w, keys); if (v != null) return v; } return null; };
+  const base7  = (keys, rows = desc) => {
     const v = [];
-    for (const w of desc) { const x = val(w, keys); if (x != null) { v.push(x); if (v.length >= 7) break; } }
+    for (const w of rows) { const x = val(w, keys); if (x != null) { v.push(x); if (v.length >= 7) break; } }
     return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
   };
 
@@ -151,11 +160,11 @@ function buildWellness(wellness) {
   let sleep_h = null;
   if (sleepSecs != null) sleep_h = sleepSecs > 100 ? sleepSecs / 3600 : sleepSecs;
 
-  const rhr = latest(F.restingHR);
+  const rhr = latest(F.restingHR, rhrRows);
   const hrv = latest(F.hrv);
   const ctl = latest(F.ctl);
   const atl = latest(F.atl);
-  const b7rhr = base7(F.restingHR);
+  const b7rhr = base7(F.restingHR, rhrRows);
   const b7hrv = base7(F.hrv);
 
   // Baseline sommeil 7 j (en heures) — sert de repère de régularité
@@ -168,7 +177,7 @@ function buildWellness(wellness) {
 
   // Tendance FC repos : moyenne des 7 derniers jours vs les 7 précédents
   const rhrAll = [];
-  for (const w of desc) { const v = val(w, F.restingHR); if (v != null) rhrAll.push(v); }
+  for (const w of rhrRows) { const v = val(w, F.restingHR); if (v != null) rhrAll.push(v); }
   let rhrTrend = null;
   if (rhrAll.length >= 10) {
     const recent = rhrAll.slice(0, 7);
@@ -182,6 +191,7 @@ function buildWellness(wellness) {
   return {
     updatedAt: new Date().toISOString(),
     date: desc.length ? desc[0].id : null,
+    night_pending,
     sleep_h: sleep_h != null ? round(sleep_h, 1) : null,
     sleep_score: latest(F.sleepScore),
     sleep_quality: latest(F.sleepQual),
@@ -229,7 +239,10 @@ export default async (req) => {
         lastWellness: (wellness || []).slice(-1)[0] || null,
         activities: (activities || []).length,
         activityFieldsPresent: [...aKeys].sort(),
-        lastActivity: (activities || []).slice(-1)[0] || null
+        lastActivity: (activities || []).slice(-1)[0] || null,
+        recentWellness: process.env.READ_TOKEN && new URL(req.url).searchParams.get("token") === process.env.READ_TOKEN
+          ? (wellness || []).slice(-15).map(w => ({ id: w.id, restingHR: w.restingHR, sleepSecs: w.sleepSecs, updated: w.updated }))
+          : undefined
       });
     }
 

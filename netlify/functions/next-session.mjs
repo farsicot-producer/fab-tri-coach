@@ -131,7 +131,9 @@ export default async (req) => {
         `icu_average_watts,icu_weighted_avg_watts,icu_training_load,icu_rpe,icu_hr_zone_times`),
       icu(`/wellness?oldest=${oldest}&newest=${today}`),
     ]);
-    const wellness = (Array.isArray(well) ? well : []).map(toWellness).filter(w => w.date);
+    const wellness = (Array.isArray(well) ? well : []).map(toWellness).filter(w => w.date)
+      // Nuit pas encore remontée : la FC repos du jour est partielle, on l'écarte.
+      .map(w => (w.date === today && w.sleep_sec == null ? { ...w, resting_hr_bpm: null } : w));
 
     // Seuils : ceux saisis dans l'app ; FC repos = médiane 28 j mesurée
     const fcmax = parseInt(q("fcmax"), 10) || null;
