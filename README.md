@@ -25,13 +25,13 @@ En bref :
    en respectant l'arborescence ci-dessus.
 2. Pousse le tout sur un dépôt GitHub (interface web).
 3. Relie ce dépôt à ton site Netlify (Build & deploy → Link repository).
-4. Pose `INGEST_TOKEN` et `READ_TOKEN` dans les variables Netlify, puis redéploie.
-5. Mets ton `READ_TOKEN` dans `public/health-sync.js` (constante en haut du fichier).
+4. Pose `INGEST_TOKEN` et `ACCESS_CODE` dans les variables Netlify, puis redéploie.
+5. Saisis le code d'accès une fois sur chaque appareil, à l'ouverture de l'app. Il ne doit jamais être écrit dans le code.
 
 ## Endpoints
 
 - `POST /api/health/ingest` — header `Authorization: Bearer <INGEST_TOKEN>`
-- `GET  /api/health/latest` — header `Authorization: Bearer <READ_TOKEN>` **ou** `?token=<READ_TOKEN>`
+- `GET  /api/health/latest` — header `Authorization: Bearer <ACCESS_CODE>`
   Renvoie : `date, sleep_h, resting_hr, hrv_ms, steps, resting_hr_baseline_7d, hrv_baseline_30d, days_in_history`.
 
 ## Note

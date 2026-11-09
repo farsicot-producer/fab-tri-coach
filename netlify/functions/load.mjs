@@ -5,17 +5,13 @@
 // (Remplace la version qui calculait le TRIMP depuis Apple Health.)
 // ─────────────────────────────────────────────────────────────────────────
 import { getStore } from "@netlify/blobs";
+import { isAuthorized } from "./lib/access.mjs";
 
 const STORE = "tri";
 const KEY   = "icu:charge";
 
 export default async (req) => {
-  // Garde optionnelle : si READ_TOKEN est défini en variable d'env, on l'exige.
-  if (process.env.READ_TOKEN) {
-    const url = req && req.url ? new URL(req.url) : null;
-    const tok = url ? url.searchParams.get("token") : null;
-    if (tok !== process.env.READ_TOKEN) return json({ error: "unauthorized" }, 401);
-  }
+  if (!isAuthorized(req)) return json({ error: "unauthorized" }, 401);
   const store  = getStore({ name: STORE, consistency: "strong" });
   const charge = await store.get(KEY, { type: "json" });
   return json(charge || { empty: true });

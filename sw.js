@@ -1,4 +1,4 @@
-const CACHE_NAME = "tri2026-pwa-v6";
+const CACHE_NAME = "tri2026-pwa-v7";
 const ASSETS = [
   "./",
   "./index.html",
@@ -26,6 +26,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  if (new URL(event.request.url).pathname.startsWith("/api/")) return;   // données : jamais en cache
   event.respondWith(
     caches.match(event.request).then((cached) => {
       return cached || fetch(event.request).then((response) => {
