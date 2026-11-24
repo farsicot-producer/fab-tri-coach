@@ -1233,6 +1233,27 @@ function effortBlock(s){
     <div class="effort">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="${v===n?"on":""}${n>=exp+2?" hi":""}" data-act="rpe" data-arg="${n}">${n}</button>`).join("")}</div>
     <div class="slotnote">${v?`${v}/10 · ${EFFORT_HINT[v]}. `:""}Attendu pour cette séance : autour de ${exp}/10 (${EFFORT_HINT[exp].toLowerCase()}).</div>`;
 }
+/* Trajets du quotidien (Move IQ) : affichés à part, hors objectif et hors condition physique */
+function weekBoundsISO(){const now=new Date(),tdi=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-tdi),sun=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+6);
+  const f=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");return {from:f(mon),to:f(sun)};}
+function moveiqCard(){
+  const m=S.moveiq, wk=weekBoundsISO();
+  const LBL={velo:"Vélo",marche:"Marche",course:"Course",natation:"Natation",autre:"Autre"};
+  const head=dsHead("Trajets du quotidien","Montre · détection automatique Move IQ",'<span class="tc-tag tc-tag--measured">Mesuré</span>');
+  const foot=`<div class="tc-mblock__caption" style="margin-top:10px">Ne compte ni dans l'objectif de la semaine ni dans la condition physique. Trajets de 10 min et plus.</div>`;
+  if(!m||m.empty||m.error||m.from!==wk.from)
+    return `<section class="tc-card">${head}<div class="tc-card__body">${dsChip("na","Données indisponibles")}<div class="tc-mblock__caption" style="margin-top:10px">La récupération Garmin n'a pas encore tourné ou a échoué.</div></div></section>`;
+  if(!m.count)
+    return `<section class="tc-card">${head}<div class="tc-card__body"><div class="tc-cap">Aucun trajet détecté cette semaine.</div>${foot}</div></section>`;
+  const order=["velo","marche","course","natation","autre"];
+  const rows=order.filter(t=>m.by_type&&m.by_type[t]).map(t=>{const x=m.by_type[t];
+    return `<div class="tc-step"><span class="tc-step__num">${x.count}</span><div><div class="tc-step__title">${LBL[t]}</div><div class="tc-step__desc">${x.count} trajet${x.count>1?"s":""}</div></div><span class="tc-step__dur">${fmtH(x.minutes)}</span></div>`;}).join("");
+  const hr=m.hr_avg!=null?`<div class="tc-mblock__caption" style="margin-top:10px">FC moyenne estimée : ${m.hr_avg} bpm <span class="tc-tag tc-tag--interpreted">Interprété</span><br>Mesure de fond de la montre, plus espacée qu'en activité : valeur indicative.</div>`:"";
+  const upd=m.updated_at?new Date(m.updated_at).toLocaleString("fr-FR",{weekday:"short",hour:"2-digit",minute:"2-digit"}):"";
+  return `<section class="tc-card">${head}
+    <div class="tc-card__body"><div style="display:flex;align-items:baseline;gap:12px"><span class="tc-dotnum tc-dotnum--md">${fmtH(m.minutes)}</span><span class="tc-cap">${m.count} trajet${m.count>1?"s":""}${upd?" · mis à jour "+esc(upd):""}</span></div>
+    <div class="tc-steps" style="margin-top:8px">${rows}</div>${hr}${foot}</div></section>`;
+}
 function screenBilan(){
   const n=S.currentWeek, b=bilanFor(n), blk=blockForWeek(n);
   const tag=t=>`<span class="dtag ${t}">${{mes:"Mesuré",dec:"Déclaré",int:"Interprété"}[t]}</span>`;
@@ -1254,9 +1275,6 @@ function screenBilan(){
     return `<div class="evo2"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px"><div><div class="tc-cap" style="color:var(--text-strong)">${lbl}</div><span class="tc-metric tc-metric--lg">${v==null?"—":sign+num(v,0)}</span></div>${bars}</div>
       <div class="tc-mblock__caption" style="margin-top:8px">${txt}${delta!=null?` Sur ${series.length} jours : ${delta>=0?"+":""}${num(delta,0)}.`:""}</div></div>`;};
   const done=S.bilanDone[n];
-  const now=new Date(),tdi=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-tdi);
-  const sun=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+6);
-  const range=mon.getMonth()===sun.getMonth()?`${mon.getDate()} – ${sun.toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}`:`${mon.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})} – ${sun.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}`;
   /* Ambiance : séances faites + minutes par jour */
   const perDay=[0,1,2,3,4,5,6].map(d=>{const L=b.act.filter(x=>x.dayEff===d);return {min:L.reduce((t,x)=>t+x.minutes,0),done:L.some(x=>["done","z2"].includes(statusOf(x.id)))};});
   const mx=Math.max(1,...perDay.map(x=>x.min));
@@ -1282,7 +1300,7 @@ function screenBilan(){
     ${done?`<div class="tc-card__foot">${dsChip("vert","Validé",true)}</div>`:b.dec.key==="end"?"":`<div class="tc-card__foot"><button class="tc-btn tc-btn--primary tc-btn--block" style="width:100%" data-act="validateBilan">Valider le bilan</button></div>${new Date().getDay()===0?"":`<div class="tc-days__note" style="text-align:center">Le bilan se valide normalement le dimanche.</div>`}`}
   </section>`;
   return `<div class="home">
-    <header class="tc-screen__head"><h1 class="tc-screen__title">Bilan</h1><p class="tc-screen__sub">Semaine ${n} · ${esc(range)}</p></header>
+    <header class="tc-screen__head"><h1 class="tc-screen__title">Bilan</h1><p class="tc-screen__sub">Semaine ${n}</p></header>
     ${flashCard()}
     ${S.pause?pauseCard():""}
     <section class="tc-ambiance tc-ambiance--indigo"><div class="tc-cardhead tc-cardhead--ambiance"><div><h3 class="tc-cardhead__title">Bilan de la semaine</h3><span class="tc-cardhead__meta">${esc(meta)}</span></div><span class="tc-cardhead__aside">${SVG20('<path d="M4 19l16 0"/><path d="M4 15l4 -6l4 2l4 -5l4 4"/>',20)}</span></div>
@@ -1290,6 +1308,7 @@ function screenBilan(){
     <section class="tc-card">${dsHead("Séances",null,'<span class="tc-tag tc-tag--declared">Déclaré</span>')}
       <div class="tc-card__body tc-steps">${steps}</div>
       <div class="tc-mblock__caption" style="margin-top:10px">${esc(effLine)}${b.felt?` Charge ressentie : ${num(b.felt,0)}.`:""}</div></section>
+    ${moveiqCard()}
     <section class="tc-card">${dsHead("Évolution","Montre (intervals.icu) · un point par jour",'<span class="tc-tag tc-tag--measured">Mesuré</span>')}
       <div class="tc-card__body" style="display:flex;flex-direction:column;gap:22px">
       ${evo("Condition physique","ctl","ok","Ce que tu as construit sur 6 semaines. Doit monter doucement pendant les blocs.")}
@@ -1815,9 +1834,10 @@ function api(u){return fetch(u,{cache:"no-store",headers:{"x-access-code":encode
 function denied(){if(accessCode()){try{localStorage.removeItem(LS_CODE);}catch(_){}LOCK.err=true;}LOCK.on=true;render();}
 async function grab(u){try{const r=await api(u);if(r.status===401){denied();return null;}if(!r.ok)return null;return await r.json();}catch(_){return null;}}
 async function loadData(){
-  const [w,c]=await Promise.all([grab("/api/wellness"),grab("/api/load")]);
+  const wk=weekBoundsISO();
+  const [w,c,mq]=await Promise.all([grab("/api/wellness"),grab("/api/load"),grab(`/api/moveiq?from=${wk.from}&to=${wk.to}`)]);
   if(LOCK.on)return;
-  S.wellness=w; S.charge=c; S.dataReady=true; recordHistory(); render();
+  S.wellness=w; S.charge=c; S.moveiq=mq; S.dataReady=true; recordHistory(); render();
 }
 function startData(){
   loadData();

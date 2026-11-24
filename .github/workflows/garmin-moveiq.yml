@@ -1,0 +1,52 @@
+# Récupère les trajets Move IQ (Garmin Connect) et les envoie à l'app.
+# Secrets à créer dans GitHub › Settings › Secrets and variables › Actions :
+#   GARMIN_EMAIL, GARMIN_PASSWORD, INGEST_TOKEN (même valeur que dans Netlify)
+# Lancement manuel possible : onglet Actions › « Trajets Move IQ » › Run workflow.
+name: Trajets Move IQ
+
+on:
+  schedule:
+    - cron: "47 5 * * *"    # ~6 h 47 à Paris (heure d'hiver)
+    - cron: "47 19 * * *"   # ~20 h 47 à Paris
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "Afficher les noms de champs bruts renvoyés par Garmin"
+        type: boolean
+        default: false
+
+concurrency:
+  group: garmin-moveiq
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "garminconnect>=0.3.20,<0.4"
+
+      # Garde la session Garmin d'une exécution à l'autre : moins de connexions,
+      # donc moins de risques de blocage par Garmin.
+      - name: Session Garmin (cache)
+        uses: actions/cache@v4
+        with:
+          path: ~/.garminconnect
+          key: garmin-session-${{ github.run_id }}
+          restore-keys: garmin-session-
+
+      - name: Récupérer et envoyer les trajets
+        env:
+          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+          GARMINTOKENS: ~/.garminconnect
+          INGEST_URL: https://tri-coach-fab.netlify.app/api/moveiq/ingest
+          INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+          DEBUG_SAMPLE: ${{ inputs.debug && '1' || '0' }}
+        run: python scripts/garmin_moveiq.py

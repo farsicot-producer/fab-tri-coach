@@ -38,3 +38,25 @@ En bref :
 
 Garmin remonte rarement la VFC (HRV) dans Apple Santé : `hrv_ms` sera souvent `null`.
 C'est géré proprement — le briefing s'appuie alors sur le sommeil et la FC repos.
+
+## Trajets du quotidien (Move IQ)
+
+Les trajets à vélo ou à pied que la montre détecte toute seule (Move IQ) ne passent pas
+par intervals.icu. Une GitHub Action les récupère sur Garmin Connect et les affiche dans
+le Bilan (carte « Trajets du quotidien »). Ils ne comptent **ni** dans l'objectif de la
+semaine **ni** dans la condition physique.
+
+```
+.github/workflows/garmin-moveiq.yml   lancement 2 fois par jour (+ bouton manuel)
+scripts/garmin_moveiq.py              lecture Garmin Connect (API non officielle) → POST
+netlify/functions/moveiq-ingest.mjs   POST /api/moveiq/ingest  (Bearer INGEST_TOKEN)
+netlify/functions/moveiq.mjs          GET  /api/moveiq?from=&to=  (code d'accès)
+netlify/functions/lib/moveiq.mjs      fusion 60 j + cumul (module pur)
+```
+
+Mise en route : GitHub › Settings › Secrets and variables › Actions, créer
+`GARMIN_EMAIL`, `GARMIN_PASSWORD` et `INGEST_TOKEN` (même valeur que dans Netlify),
+puis Actions › « Trajets Move IQ » › Run workflow.
+
+Limite : l'API Garmin Connect utilisée n'est pas officielle. Elle peut être bloquée ou
+changer sans préavis ; la carte affiche alors « Données indisponibles ».
