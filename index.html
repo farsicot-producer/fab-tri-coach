@@ -1275,9 +1275,6 @@ function screenBilan(){
     return `<div class="evo2"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px"><div><div class="tc-cap" style="color:var(--text-strong)">${lbl}</div><span class="tc-metric tc-metric--lg">${v==null?"—":sign+num(v,0)}</span></div>${bars}</div>
       <div class="tc-mblock__caption" style="margin-top:8px">${txt}${delta!=null?` Sur ${series.length} jours : ${delta>=0?"+":""}${num(delta,0)}.`:""}</div></div>`;};
   const done=S.bilanDone[n];
-  const now=new Date(),tdi=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-tdi);
-  const sun=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+6);
-  const range=mon.getMonth()===sun.getMonth()?`${mon.getDate()} – ${sun.toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}`:`${mon.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})} – ${sun.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}`;
   /* Ambiance : séances faites + minutes par jour */
   const perDay=[0,1,2,3,4,5,6].map(d=>{const L=b.act.filter(x=>x.dayEff===d);return {min:L.reduce((t,x)=>t+x.minutes,0),done:L.some(x=>["done","z2"].includes(statusOf(x.id)))};});
   const mx=Math.max(1,...perDay.map(x=>x.min));
@@ -1303,7 +1300,7 @@ function screenBilan(){
     ${done?`<div class="tc-card__foot">${dsChip("vert","Validé",true)}</div>`:b.dec.key==="end"?"":`<div class="tc-card__foot"><button class="tc-btn tc-btn--primary tc-btn--block" style="width:100%" data-act="validateBilan">Valider le bilan</button></div>${new Date().getDay()===0?"":`<div class="tc-days__note" style="text-align:center">Le bilan se valide normalement le dimanche.</div>`}`}
   </section>`;
   return `<div class="home">
-    <header class="tc-screen__head"><h1 class="tc-screen__title">Bilan</h1><p class="tc-screen__sub">Semaine ${n} · ${esc(range)}</p></header>
+    <header class="tc-screen__head"><h1 class="tc-screen__title">Bilan</h1><p class="tc-screen__sub">Semaine ${n}</p></header>
     ${flashCard()}
     ${S.pause?pauseCard():""}
     <section class="tc-ambiance tc-ambiance--indigo"><div class="tc-cardhead tc-cardhead--ambiance"><div><h3 class="tc-cardhead__title">Bilan de la semaine</h3><span class="tc-cardhead__meta">${esc(meta)}</span></div><span class="tc-cardhead__aside">${SVG20('<path d="M4 19l16 0"/><path d="M4 15l4 -6l4 2l4 -5l4 4"/>',20)}</span></div>
