@@ -42,3 +42,15 @@
   from = "/api/next-session"
   to = "/.netlify/functions/next-session"
   status = 200
+
+# ── Trajets du quotidien (Move IQ Garmin, via GitHub Action non officielle) ──
+# Affichés dans le Bilan ; ne comptent ni dans l'objectif ni dans la condition physique.
+[[redirects]]
+  from = "/api/moveiq/ingest"
+  to = "/.netlify/functions/moveiq-ingest"
+  status = 200
+
+[[redirects]]
+  from = "/api/moveiq"
+  to = "/.netlify/functions/moveiq"
+  status = 200
