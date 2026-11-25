@@ -69,6 +69,9 @@ def parse_ts(v, assume_local):
 
 
 def duration_sec(ev, start, end):
+    # Les heures de début et de fin font foi : l'unité du champ « duration » n'est pas documentée.
+    if start and end and end > start:
+        return (end - start).total_seconds()
     if "durationInMilliseconds" in ev and ev["durationInMilliseconds"]:
         return float(ev["durationInMilliseconds"]) / 1000
     v = first(ev, "durationInSeconds", "duration", "elapsedDuration")
@@ -176,16 +179,23 @@ def main():
             end = parse_ts(first(ev, "endTimestampGMT", "endTimeGMT"), False) \
                 or parse_ts(first(ev, "endTimestampLocal", "endTimeLocal", "endTime"), True)
             sec = duration_sec(ev, start, end)
+            label = f"{ds} {first(ev, 'activityType')}/{first(ev, 'activitySubType')} duration={ev.get('duration')}"
             if not start or not sec or sec < 60:
+                if debug:
+                    print(f"  écarté (durée illisible ou < 1 min) : {label}")
                 continue
             end = start + timedelta(seconds=sec)
             if any(overlap(start, end, r0, r1) > 0.5 * sec for r0, r1 in recorded):
+                if debug:
+                    print(f"  écarté (activité déjà enregistrée) : {label}")
                 continue  # déjà une activité enregistrée
+            if debug:
+                print(f"  gardé : {label} → {round(sec / 60)} min")
             avg, n = hr_avg(hr, start, end)
             out.append({
                 "date": start.astimezone(TZ).date().isoformat(),
                 "start": start.astimezone(TZ).strftime("%Y-%m-%dT%H:%M"),
-                "type": norm_type(first(ev, "activityType", "activityTypeKey", "activityName", "subType")),
+                "type": norm_type(first(ev, "activityType", "activityTypeKey", "activityName", "subType", "activitySubType")),
                 "raw_type": str(first(ev, "activityType", "activityTypeKey", "activityName", "subType") or ""),
                 "minutes": round(sec / 60),
                 "hr_avg": avg,
