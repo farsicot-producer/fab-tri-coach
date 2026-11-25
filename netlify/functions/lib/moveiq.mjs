@@ -30,8 +30,12 @@ export function mergeMoveIQ(existing, incoming, keepDays = 60, today = new Date(
 }
 
 // Cumul entre deux dates incluses (YYYY-MM-DD).
+// Seuls le vélo et la marche sont des trajets du quotidien : la natation et la course
+// détectées automatiquement sont le plus souvent des bouts de séance non chronométrés.
+export const TRAJET_TYPES = ["velo", "marche"];
+
 export function summarize(hist, from, to) {
-  const evs = (hist.events || []).filter(e => e.date >= from && e.date <= to);
+  const evs = (hist.events || []).filter(e => e.date >= from && e.date <= to && TRAJET_TYPES.includes(e.type));
   const byType = {};
   for (const e of evs) {
     const t = byType[e.type] || (byType[e.type] = { count: 0, minutes: 0 });

@@ -1240,12 +1240,12 @@ function moveiqCard(){
   const m=S.moveiq, wk=weekBoundsISO();
   const LBL={velo:"Vélo",marche:"Marche",course:"Course",natation:"Natation",autre:"Autre"};
   const head=dsHead("Trajets du quotidien","Montre · détection automatique Move IQ",'<span class="tc-tag tc-tag--measured">Mesuré</span>');
-  const foot=`<div class="tc-mblock__caption" style="margin-top:10px">Ne compte ni dans l'objectif de la semaine ni dans la condition physique. Trajets de 10 min et plus.</div>`;
+  const foot=`<div class="tc-mblock__caption" style="margin-top:10px">Ne compte ni dans l'objectif de la semaine ni dans la condition physique. Vélo et marche, trajets de 10 min et plus.</div>`;
   if(!m||m.empty||m.error||m.from!==wk.from)
     return `<section class="tc-card">${head}<div class="tc-card__body">${dsChip("na","Données indisponibles")}<div class="tc-mblock__caption" style="margin-top:10px">La récupération Garmin n'a pas encore tourné ou a échoué.</div></div></section>`;
   if(!m.count)
     return `<section class="tc-card">${head}<div class="tc-card__body"><div class="tc-cap">Aucun trajet détecté cette semaine.</div>${foot}</div></section>`;
-  const order=["velo","marche","course","natation","autre"];
+  const order=["velo","marche"];
   const rows=order.filter(t=>m.by_type&&m.by_type[t]).map(t=>{const x=m.by_type[t];
     return `<div class="tc-step"><span class="tc-step__num">${x.count}</span><div><div class="tc-step__title">${LBL[t]}</div><div class="tc-step__desc">${x.count} trajet${x.count>1?"s":""}</div></div><span class="tc-step__dur">${fmtH(x.minutes)}</span></div>`;}).join("");
   const hr=m.hr_avg!=null?`<div class="tc-mblock__caption" style="margin-top:10px">FC moyenne estimée : ${m.hr_avg} bpm <span class="tc-tag tc-tag--interpreted">Interprété</span><br>Mesure de fond de la montre, plus espacée qu'en activité : valeur indicative.</div>`:"";
